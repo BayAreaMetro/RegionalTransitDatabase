@@ -53,7 +53,7 @@ Then run the [Count Trips at Stops](https://github.com/Esri/public-transit-tools
 
 #### Database details:   
 
-##### Ideas for Future Maps/Visualization:  
+##### Ideas for Future Maps/Visualization:   
 
 -  AM Peak/PM Peak transit stop frequency for all stops within a half mile distance of the intersection animated over a Weekday (or entire Week) by hour. These data are output by the Step 2 [Points tool](https://github.com/Esri/public-transit-tools/blob/6451cf1de24d4e5b7337df402135f351a7eaf181/better-bus-buffers/scripts/BBB_CountTripsAtPoints.py))      
 sql/Regional Transit Database Processing for 2016 final.sql
