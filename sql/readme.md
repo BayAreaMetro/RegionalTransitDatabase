@@ -6,7 +6,7 @@ STOPS.sql
 STOP_TIMES.sql    
 TRIPS.sql    
 
-### main processing script   
+### route processing script   
 process.md - documentation of the script      
 process.sql   
 
