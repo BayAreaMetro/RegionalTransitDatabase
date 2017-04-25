@@ -33,11 +33,23 @@ Run Preprocess [stop_times](https://github.com/Esri/public-transit-tools/tree/64
 
 After running this tool for each operator, run the [Simple Interpolation Tool](https://github.com/Esri/public-transit-tools/blob/6451cf1de24d4e5b7337df402135f351a7eaf181/interpolate-blank-stop-times/scripts/simple_interpolate.py) to create the new stop_times.txt datasets. Be sure to rename the old stop_times.txt to stop_times_OLD.txt   
 
-##### Step 2. Better Bus Buffers   
+##### To Calculate Stop Headways: 
+
+This steo is only run for compbined 
 
 Run the Preprocess GTFS Data for each operator.   
 
 Then run the [Count Trips at Stops](https://github.com/Esri/public-transit-tools/blob/master/better-bus-buffers/scripts/BBB_CountTripsAtStops.py) or [Points](https://github.com/Esri/public-transit-tools/blob/6451cf1de24d4e5b7337df402135f351a7eaf181/better-bus-buffers/scripts/BBB_CountTripsAtPoints.py) to calculate the Stop or Intersection frequency for Transit Service.   
+
+##### To Calculate Route headways:  
+
+Follow SQL in here. Unclear exactly which scripts is used to load first, but potentially in ETL\. 
+
+https://github.com/MetropolitanTransportationCommission/RegionalTransitDatabase/tree/master/sql  
+
+Then run "Step 3" in `process.sql`, which outputs the route headways calculated.  
+
+
 
 ##### Step 3. Build single Transit Stop FC with all Transit Frequency Output  
 
