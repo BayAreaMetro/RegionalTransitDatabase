@@ -29,7 +29,7 @@ RTD April 2017
 
 ##### Step 1. Interpolate Blank Stop Times   
 
-Run Preprocess [stop_times](https://github.com/MetropolitanTransportationCommission/RegionalTransitDatabase/blob/06839cf5c2bb3dc15e72f64683754ff8ea168811/sql/RTD%202016%20BULK%20INSERT%20AND%20UPDATE%20FOR%20STOP_TIMES%20TABLE.sql) for all bus operators. No need to run for Ferry and Rail operators as these do not have any blank stop times in the stop_times.txt datasets.   
+Run Preprocess [stop_times](https://github.com/Esri/public-transit-tools/blob/6451cf1de24d4e5b7337df402135f351a7eaf181/interpolate-blank-stop-times/scripts/simple_interpolate.py) for all bus operators. No need to run for Ferry and Rail operators as these do not have any blank stop times in the stop_times.txt datasets.   
 
 After running this tool for each operator, run the [Simple Interpolation Tool](https://github.com/Esri/public-transit-tools/blob/6451cf1de24d4e5b7337df402135f351a7eaf181/interpolate-blank-stop-times/scripts/simple_interpolate.py) to create the new stop_times.txt datasets. Be sure to rename the old stop_times.txt to stop_times_OLD.txt   
 
