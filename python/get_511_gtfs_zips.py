@@ -1,3 +1,4 @@
+#dodo: move this script/process to a container or service such as lambda
 from credentials import APIKEY
 import zipfile
 import shutil
