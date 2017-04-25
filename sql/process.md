@@ -64,7 +64,7 @@ Where ((Avg_Weekday_AM_Headway <=15) and (Avg_Weekday_PM_Headway <=15))-- and (M
 
 ### Step 8. Insert Planned and Under Construction Transit Stops   
 
-## A bunch of Fixes to data in `dbo.TPA_Transit_Stops_2016_Build`
+### A bunch of Fixes to data in `dbo.TPA_Transit_Stops_2016_Build`
 
 -  Fix the column name in the TPA_Future_Transit_Stops Table  
 
@@ -86,7 +86,7 @@ view(table): `dbo.TPA_Transit_Stops_2016_Build`
 
 A BUNCH of spatial data work goes here (indexes, within, etc)
 
-# The following all assign boolean categorical style fields based on the spatial work from the above step
+##### The following all assign boolean categorical style fields based on the spatial work from the above step
 - Flag bus stops that are TPA Eligible   
 - Flag stops that do not meet the distance criteria   
 - Flag stops that do not meet the headway criteria   
