@@ -9,6 +9,8 @@ Tools for Processing 511 RTD API Datasets
 
 ### Problem Statement  
 
+Calculate frequency of service for stops and routes.  
+
 ### Data Sources   
 
 [511 API Documentation](https://metrotrans-my.sharepoint.com/personal/ksmith_mtc_ca_gov/_layouts/15/guestaccess.aspx?guestaccesstoken=LaSLmz8PqjHcCy3J9t5JWiVYbBx2wq7AOn7XAeSI65c%3d&docid=2_1b3fffc8d501f42949c5c14bb423aa445)
@@ -27,11 +29,33 @@ RTD April 2017
 
 #### [2016](https://metrotrans-my.sharepoint.com/personal/ksmith_mtc_ca_gov/_layouts/15/WopiFrame.aspx?sourcedoc=%7B2FB81C2E-8CF6-4BA4-8994-6B36F7E1B647%7D&file=511%20Data%20API%20Documentation.docx&action=default)
 
-##### Step 1. Interpolate Blank Stop Times   
+#### Steps:   
+
+##### Interpolate Blank Stop Times   
 
 Run Preprocess [stop_times](https://github.com/Esri/public-transit-tools/tree/6451cf1de24d4e5b7337df402135f351a7eaf181/interpolate-blank-stop-times/scripts) for all bus operators. No need to run for Ferry and Rail operators as these do not have any blank stop times in the stop_times.txt datasets.   
 
 After running this tool for each operator, run the [Simple Interpolation Tool](https://github.com/Esri/public-transit-tools/blob/6451cf1de24d4e5b7337df402135f351a7eaf181/interpolate-blank-stop-times/scripts/simple_interpolate.py) to create the new stop_times.txt datasets. Be sure to rename the old stop_times.txt to stop_times_OLD.txt   
+
+##### To Calculate Route headways:   
+
+###### Import the text files into the DB:   
+
+https://github.com/MetropolitanTransportationCommission/RegionalTransitDatabase/tree/master/sql/etl   
+
+###### Processing for Route Data  
+
+Not on GTFS and not provided by ESRI toolkit.  
+
+Data Cleaning, etc, based upon some review.  
+
+`process.sql` to output the table schema here: https://github.com/MetropolitanTransportationCommission/RegionalTransitDatabase/blob/master/sql/process.sql#L403-L431   
+
+If there are views or tables that are missing the processing script they may be in the utility scripts in the sql directory.  
+
+###### Building the Route Lines  
+
+
 
 ##### To Calculate Stop Headways: 
 
@@ -40,15 +64,6 @@ This steo is only run for compbined
 Run the Preprocess GTFS Data for each operator.   
 
 Then run the [Count Trips at Stops](https://github.com/Esri/public-transit-tools/blob/master/better-bus-buffers/scripts/BBB_CountTripsAtStops.py) or [Points](https://github.com/Esri/public-transit-tools/blob/6451cf1de24d4e5b7337df402135f351a7eaf181/better-bus-buffers/scripts/BBB_CountTripsAtPoints.py) to calculate the Stop or Intersection frequency for Transit Service.   
-
-##### To Calculate Route headways:  
-
-Follow SQL in here. Unclear exactly which scripts is used to load first, but potentially in ETL\. 
-
-https://github.com/MetropolitanTransportationCommission/RegionalTransitDatabase/tree/master/sql  
-
-Then run "Step 3" in `process.sql`, which outputs the route headways calculated.  
-
 
 
 ##### Step 3. Build single Transit Stop FC with all Transit Frequency Output  
