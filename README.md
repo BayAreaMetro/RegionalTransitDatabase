@@ -57,9 +57,7 @@ If there are views or tables that are missing the processing script they may be 
 
 Take the points for each route from above and process them in network analyst to get routes.  
 
-##### To Calculate Stop Headways(Tabled momentarily):  
-
-This stepis only run for compbined 
+##### To Calculate Stop Headways(Tabled momentarily):   
 
 Run the Preprocess GTFS Data for each operator.   
 
