@@ -53,13 +53,13 @@ Data Cleaning, etc, based upon some review.
 
 If there are views or tables that are missing the processing script they may be in the utility scripts in the sql directory.  
 
-###### Building the Route Lines  
+###### Building the Route Lines   
 
+Take the points for each route from above and process them in network analyst to get routes.  
 
+##### To Calculate Stop Headways(Tabled momentarily):  
 
-##### To Calculate Stop Headways: 
-
-This steo is only run for compbined 
+This stepis only run for compbined 
 
 Run the Preprocess GTFS Data for each operator.   
 
