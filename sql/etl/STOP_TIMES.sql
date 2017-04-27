@@ -4,7 +4,7 @@
 --select * From dbo.stop_times --qry run time 1 min. 47 secs. for 2827141
 truncate Table dbo.[stop_times]
 Bulk Insert [dbo].[stop_times]
-From '\\Mac\Home\Documents\MTC\_Section\Planning\Projects\TPA_2016\511 API Data\GTFS Processing\3D\3D_stop_times.txt'
+From 'C:\temp\RegionalTransitDatabase\data\gtfs\3D\3D_stop_times.txt'
 With
 (
 			FIRSTROW = 2,
@@ -17,7 +17,7 @@ update [dbo].stop_times
 set agency_id = N'3D'
 where agency_id =N''
 Bulk Insert [dbo].[stop_times]
-From '\\Mac\Home\Documents\MTC\_Section\Planning\Projects\TPA_2016\511 API Data\GTFS Processing\AC\AC_stop_times.txt'
+From 'C:\temp\RegionalTransitDatabase\data\gtfs\AC\AC_stop_times.txt'
 With
 (
 			FIRSTROW = 2,
@@ -28,7 +28,7 @@ update [dbo].stop_times
 set agency_id = N'AC'
 where agency_id =N''
 Bulk Insert [dbo].[stop_times]
-From '\\Mac\Home\Documents\MTC\_Section\Planning\Projects\TPA_2016\511 API Data\GTFS Processing\AM\AM_stop_times.txt'
+From 'C:\temp\RegionalTransitDatabase\data\gtfs\AM\AM_stop_times.txt'
 With
 (
 			FIRSTROW = 2,
@@ -39,7 +39,7 @@ update [dbo].stop_times
 set agency_id = N'AM'
 where agency_id =N''
 Bulk Insert [dbo].[stop_times]
-From '\\Mac\Home\Documents\MTC\_Section\Planning\Projects\TPA_2016\511 API Data\GTFS Processing\AT\AT_stop_times.txt'
+From 'C:\temp\RegionalTransitDatabase\data\gtfs\AT\AT_stop_times.txt'
 With
 (
 			FIRSTROW = 2,
@@ -50,7 +50,7 @@ update [dbo].stop_times
 set agency_id = N'AT'
 where agency_id =N''
 Bulk Insert [dbo].[stop_times]
-From '\\Mac\Home\Documents\MTC\_Section\Planning\Projects\TPA_2016\511 API Data\GTFS Processing\AY\AY_stop_times.txt'
+From 'C:\temp\RegionalTransitDatabase\data\gtfs\AY\AY_stop_times.txt'
 With
 (
 			FIRSTROW = 2,
@@ -61,7 +61,7 @@ update [dbo].stop_times
 set agency_id = N'AY'
 where agency_id =N''
 Bulk Insert [dbo].[stop_times]
-From '\\Mac\Home\Documents\MTC\_Section\Planning\Projects\TPA_2016\511 API Data\GTFS Processing\BA\BA_stop_times.txt'
+From 'C:\temp\RegionalTransitDatabase\data\gtfs\BA\BA_stop_times.txt'
 With
 (
 			FIRSTROW = 2,
@@ -72,7 +72,7 @@ update [dbo].stop_times
 set agency_id = N'BA'
 where agency_id =N''
 Bulk Insert [dbo].[stop_times]
-From '\\Mac\Home\Documents\MTC\_Section\Planning\Projects\TPA_2016\511 API Data\GTFS Processing\BG\BG_stop_times.txt'
+From 'C:\temp\RegionalTransitDatabase\data\gtfs\BG\BG_stop_times.txt'
 With
 (
 			FIRSTROW = 2,
@@ -83,7 +83,7 @@ update [dbo].stop_times
 set agency_id = N'BG'
 where agency_id =N''
 Bulk Insert [dbo].[stop_times]
-From '\\Mac\Home\Documents\MTC\_Section\Planning\Projects\TPA_2016\511 API Data\GTFS Processing\CC\CC_stop_times.txt'
+From 'C:\temp\RegionalTransitDatabase\data\gtfs\CC\CC_stop_times.txt'
 With
 (
 			FIRSTROW = 2,
@@ -94,7 +94,7 @@ update [dbo].stop_times
 set agency_id = N'CC'
 where agency_id =N''
 Bulk Insert [dbo].[stop_times]
-From '\\Mac\Home\Documents\MTC\_Section\Planning\Projects\TPA_2016\511 API Data\GTFS Processing\CE\CE_stop_times.txt'
+From 'C:\temp\RegionalTransitDatabase\data\gtfs\CE\CE_stop_times.txt'
 With
 (
 			FIRSTROW = 2,
@@ -105,7 +105,7 @@ update [dbo].stop_times
 set agency_id = N'CE'
 where agency_id =N''
 Bulk Insert [dbo].[stop_times]
-From '\\Mac\Home\Documents\MTC\_Section\Planning\Projects\TPA_2016\511 API Data\GTFS Processing\CT\CT_stop_times.txt'
+From 'C:\temp\RegionalTransitDatabase\data\gtfs\CT\CT_stop_times.txt'
 With
 (
 			FIRSTROW = 2,
@@ -116,7 +116,7 @@ update [dbo].stop_times
 set agency_id = N'CT'
 where agency_id =N''
 Bulk Insert [dbo].[stop_times]
-From '\\Mac\Home\Documents\MTC\_Section\Planning\Projects\TPA_2016\511 API Data\GTFS Processing\DE\DE_stop_times.txt'
+From 'C:\temp\RegionalTransitDatabase\data\gtfs\DE\DE_stop_times.txt'
 With
 (
 			FIRSTROW = 2,
@@ -127,7 +127,7 @@ update [dbo].stop_times
 set agency_id = N'DE'
 where agency_id =N''
 Bulk Insert [dbo].[stop_times]
-From '\\Mac\Home\Documents\MTC\_Section\Planning\Projects\TPA_2016\511 API Data\GTFS Processing\EM\EM_stop_times.txt'
+From 'C:\temp\RegionalTransitDatabase\data\gtfs\EM\EM_stop_times.txt'
 With
 (
 			FIRSTROW = 2,
@@ -138,7 +138,7 @@ update [dbo].stop_times
 set agency_id = N'EM'
 where agency_id =N''
 Bulk Insert [dbo].[stop_times]
-From '\\Mac\Home\Documents\MTC\_Section\Planning\Projects\TPA_2016\511 API Data\GTFS Processing\FS\FS_stop_times.txt'
+From 'C:\temp\RegionalTransitDatabase\data\gtfs\FS\FS_stop_times.txt'
 With
 (
 			FIRSTROW = 2,
@@ -149,7 +149,7 @@ update [dbo].stop_times
 set agency_id = N'FS'
 where agency_id =N''
 Bulk Insert [dbo].[stop_times]
-From '\\Mac\Home\Documents\MTC\_Section\Planning\Projects\TPA_2016\511 API Data\GTFS Processing\GF\stop_times.txt'
+From 'C:\temp\RegionalTransitDatabase\data\gtfs\GF\stop_times.txt'
 With
 (
 			FIRSTROW = 2,
@@ -160,7 +160,7 @@ update [dbo].stop_times
 set agency_id = N'GF'
 where agency_id =N''
 Bulk Insert [dbo].[stop_times]
-From '\\Mac\Home\Documents\MTC\_Section\Planning\Projects\TPA_2016\511 API Data\GTFS Processing\GG\GG_stop_times.txt'
+From 'C:\temp\RegionalTransitDatabase\data\gtfs\GG\GG_stop_times.txt'
 With
 (
 			FIRSTROW = 2,
@@ -171,7 +171,7 @@ update [dbo].stop_times
 set agency_id = N'GG'
 where agency_id =N''
 Bulk Insert [dbo].[stop_times]
-From '\\Mac\Home\Documents\MTC\_Section\Planning\Projects\TPA_2016\511 API Data\GTFS Processing\HF\HF_stop_times.txt'
+From 'C:\temp\RegionalTransitDatabase\data\gtfs\HF\HF_stop_times.txt'
 With
 (
 			FIRSTROW = 2,
@@ -182,7 +182,7 @@ update [dbo].stop_times
 set agency_id = N'HF'
 where agency_id =N''
 Bulk Insert [dbo].[stop_times]
-From '\\Mac\Home\Documents\MTC\_Section\Planning\Projects\TPA_2016\511 API Data\GTFS Processing\MA\MA_stop_times.txt'
+From 'C:\temp\RegionalTransitDatabase\data\gtfs\MA\MA_stop_times.txt'
 With
 (
 			FIRSTROW = 2,
@@ -193,7 +193,7 @@ update [dbo].stop_times
 set agency_id = N'MA'
 where agency_id =N''
 Bulk Insert [dbo].[stop_times]
-From '\\Mac\Home\Documents\MTC\_Section\Planning\Projects\TPA_2016\511 API Data\GTFS Processing\MS\MS_stop_times.txt'
+From 'C:\temp\RegionalTransitDatabase\data\gtfs\MS\MS_stop_times.txt'
 With
 (
 			FIRSTROW = 2,
@@ -204,7 +204,7 @@ update [dbo].stop_times
 set agency_id = N'MS'
 where agency_id =N''
 Bulk Insert [dbo].[stop_times]
-From '\\Mac\Home\Documents\MTC\_Section\Planning\Projects\TPA_2016\511 API Data\GTFS Processing\PE\PE_stop_times.txt'
+From 'C:\temp\RegionalTransitDatabase\data\gtfs\PE\PE_stop_times.txt'
 With
 (
 			FIRSTROW = 2,
@@ -215,7 +215,7 @@ update [dbo].stop_times
 set agency_id = N'PE'
 where agency_id =N''
 Bulk Insert [dbo].[stop_times]
-From '\\Mac\Home\Documents\MTC\_Section\Planning\Projects\TPA_2016\511 API Data\GTFS Processing\RV\RV_stop_times.txt'
+From 'C:\temp\RegionalTransitDatabase\data\gtfs\RV\RV_stop_times.txt'
 With
 (
 			FIRSTROW = 2,
@@ -226,7 +226,7 @@ update [dbo].stop_times
 set agency_id = N'RV'
 where agency_id =N''
 Bulk Insert [dbo].[stop_times]
-From '\\Mac\Home\Documents\MTC\_Section\Planning\Projects\TPA_2016\511 API Data\GTFS Processing\SB\SB_stop_times.txt'
+From 'C:\temp\RegionalTransitDatabase\data\gtfs\SB\SB_stop_times.txt'
 With
 (
 			FIRSTROW = 2,
@@ -237,7 +237,7 @@ update [dbo].stop_times
 set agency_id = N'SB'
 where agency_id =N''
 Bulk Insert [dbo].[stop_times]
-From '\\Mac\Home\Documents\MTC\_Section\Planning\Projects\TPA_2016\511 API Data\GTFS Processing\SC\SC_stop_times.txt'
+From 'C:\temp\RegionalTransitDatabase\data\gtfs\SC\SC_stop_times.txt'
 With
 (
 			FIRSTROW = 2,
@@ -248,7 +248,7 @@ update [dbo].stop_times
 set agency_id = N'SC'
 where agency_id =N''
 Bulk Insert [dbo].[stop_times]
-From '\\Mac\Home\Documents\MTC\_Section\Planning\Projects\TPA_2016\511 API Data\GTFS Processing\SF\SF_stop_times.txt'
+From 'C:\temp\RegionalTransitDatabase\data\gtfs\SF\SF_stop_times.txt'
 With
 (
 			FIRSTROW = 2,
@@ -259,7 +259,7 @@ update [dbo].stop_times
 set agency_id = N'SF'
 where agency_id =N''
 Bulk Insert [dbo].[stop_times]
-From '\\Mac\Home\Documents\MTC\_Section\Planning\Projects\TPA_2016\511 API Data\GTFS Processing\SM\SM_stop_times.txt'
+From 'C:\temp\RegionalTransitDatabase\data\gtfs\SM\SM_stop_times.txt'
 With
 (
 			FIRSTROW = 2,
@@ -270,7 +270,7 @@ update [dbo].stop_times
 set agency_id = N'SM'
 where agency_id =N''
 Bulk Insert [dbo].[stop_times]
-From '\\Mac\Home\Documents\MTC\_Section\Planning\Projects\TPA_2016\511 API Data\GTFS Processing\SO\SO_stop_times.txt'
+From 'C:\temp\RegionalTransitDatabase\data\gtfs\SO\SO_stop_times.txt'
 With
 (
 			FIRSTROW = 2,
@@ -281,7 +281,7 @@ update [dbo].stop_times
 set agency_id = N'SO'
 where agency_id =N''
 Bulk Insert [dbo].[stop_times]
-From '\\Mac\Home\Documents\MTC\_Section\Planning\Projects\TPA_2016\511 API Data\GTFS Processing\SR\SR_stop_times.txt'
+From 'C:\temp\RegionalTransitDatabase\data\gtfs\SR\SR_stop_times.txt'
 With
 (
 			FIRSTROW = 2,
@@ -292,7 +292,7 @@ update [dbo].stop_times
 set agency_id = N'SR'
 where agency_id =N''
 Bulk Insert [dbo].[stop_times]
-From '\\Mac\Home\Documents\MTC\_Section\Planning\Projects\TPA_2016\511 API Data\GTFS Processing\ST\ST_stop_times.txt'
+From 'C:\temp\RegionalTransitDatabase\data\gtfs\ST\ST_stop_times.txt'
 With
 (
 			FIRSTROW = 2,
@@ -303,7 +303,7 @@ update [dbo].stop_times
 set agency_id = N'ST'
 where agency_id =N''
 Bulk Insert [dbo].[stop_times]
-From '\\Mac\Home\Documents\MTC\_Section\Planning\Projects\TPA_2016\511 API Data\GTFS Processing\UC\UC_stop_times.txt'
+From 'C:\temp\RegionalTransitDatabase\data\gtfs\UC\UC_stop_times.txt'
 With
 (
 			FIRSTROW = 2,
@@ -314,7 +314,7 @@ update [dbo].stop_times
 set agency_id = N'UC'
 where agency_id =N''
 Bulk Insert [dbo].[stop_times]
-From '\\Mac\Home\Documents\MTC\_Section\Planning\Projects\TPA_2016\511 API Data\GTFS Processing\VC\VC_stop_times.txt'
+From 'C:\temp\RegionalTransitDatabase\data\gtfs\VC\VC_stop_times.txt'
 With
 (
 			FIRSTROW = 2,
@@ -325,7 +325,7 @@ update [dbo].stop_times
 set agency_id = N'VC'
 where agency_id =N''
 Bulk Insert [dbo].[stop_times]
-From '\\Mac\Home\Documents\MTC\_Section\Planning\Projects\TPA_2016\511 API Data\GTFS Processing\VN\VN_stop_times.txt'
+From 'C:\temp\RegionalTransitDatabase\data\gtfs\VN\VN_stop_times.txt'
 With
 (
 			FIRSTROW = 2,
@@ -336,7 +336,7 @@ update [dbo].stop_times
 set agency_id = N'VN'
 where agency_id =N''
 Bulk Insert [dbo].[stop_times]
-From '\\Mac\Home\Documents\MTC\_Section\Planning\Projects\TPA_2016\511 API Data\GTFS Processing\WC\WC_stop_times.txt'
+From 'C:\temp\RegionalTransitDatabase\data\gtfs\WC\WC_stop_times.txt'
 With
 (
 			FIRSTROW = 2,
@@ -347,7 +347,7 @@ update [dbo].stop_times
 set agency_id = N'WC'
 where agency_id =N''
 Bulk Insert [dbo].[stop_times]
-From '\\Mac\Home\Documents\MTC\_Section\Planning\Projects\TPA_2016\511 API Data\GTFS Processing\WH\WH_stop_times.txt'
+From 'C:\temp\RegionalTransitDatabase\data\gtfs\WH\WH_stop_times.txt'
 With
 (
 			FIRSTROW = 2,

@@ -20,6 +20,10 @@ org_acronyms = []
 for org_acronym in orgs_list:
 	org_acronyms.append(org_acronym['PrivateCode'])
 
+#for use in sql server etl:
+orgs_textfile = open("orgs.txt","w")
+orgs_textfile.write(str(org_acronyms))
+
 #write org acronyms out for use in arcpy/pro
 import pickle
 with open('org_acroynms.pickle', 'wb') as f:

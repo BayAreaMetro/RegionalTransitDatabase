@@ -4,7 +4,7 @@
 --select * From dbo.stops
 truncate Table gtfs_2016.[stops]
 Bulk Insert [gtfs_2016].[stops]
-From '\\Mac\Home\Documents\MTC\_Section\Planning\Projects\TPA_2016\511 API Data\GTFS Processing\3D\3D_stops.txt'
+From 'C:\temp\RegionalTransitDatabase\data\gtfs\3D\3D_stops.txt'
 With
 (
 			FIRSTROW = 2,
@@ -18,7 +18,7 @@ set stop_id = replace(replace(stop_id, CHAR(13),''),CHAR(10),'')
 ,agency_id = N'3D'
 where agency_stop_id =N''
 Bulk Insert [gtfs_2016].[stops]
-From '\\Mac\Home\Documents\MTC\_Section\Planning\Projects\TPA_2016\511 API Data\GTFS Processing\AC\AC_stops.txt'
+From 'C:\temp\RegionalTransitDatabase\data\gtfs\AC\AC_stops.txt'
 With
 (
 			FIRSTROW = 2,
@@ -31,7 +31,7 @@ set stop_id = replace(replace(stop_id, CHAR(13),''),CHAR(10),'')
 ,agency_id = N'AC'
 where agency_stop_id =N''
 Bulk Insert [gtfs_2016].[stops]
-From '\\Mac\Home\Documents\MTC\_Section\Planning\Projects\TPA_2016\511 API Data\GTFS Processing\AM\AM_stops.txt'
+From 'C:\temp\RegionalTransitDatabase\data\gtfs\AM\AM_stops.txt'
 With
 (
 			FIRSTROW = 2,
@@ -44,7 +44,7 @@ set stop_id = replace(replace(stop_id, CHAR(13),''),CHAR(10),'')
 ,agency_id = N'AM'
 where agency_stop_id =N''
 Bulk Insert [gtfs_2016].[stops]
-From '\\Mac\Home\Documents\MTC\_Section\Planning\Projects\TPA_2016\511 API Data\GTFS Processing\AT\AT_stops.txt'
+From 'C:\temp\RegionalTransitDatabase\data\gtfs\AT\AT_stops.txt'
 With
 (
 			FIRSTROW = 2,
@@ -57,7 +57,7 @@ set stop_id = replace(replace(stop_id, CHAR(13),''),CHAR(10),'')
 ,agency_id = N'AT'
 where agency_stop_id =N''
 Bulk Insert [gtfs_2016].[stops]
-From '\\Mac\Home\Documents\MTC\_Section\Planning\Projects\TPA_2016\511 API Data\GTFS Processing\AY\AY_stops.txt'
+From 'C:\temp\RegionalTransitDatabase\data\gtfs\AY\AY_stops.txt'
 With
 (
 			FIRSTROW = 2,
@@ -70,7 +70,7 @@ set stop_id = replace(replace(stop_id, CHAR(13),''),CHAR(10),'')
 ,agency_id = N'AY'
 where agency_stop_id =N''
 Bulk Insert [gtfs_2016].[stops]
-From '\\Mac\Home\Documents\MTC\_Section\Planning\Projects\TPA_2016\511 API Data\GTFS Processing\BA\BA_stops.txt'
+From 'C:\temp\RegionalTransitDatabase\data\gtfs\BA\BA_stops.txt'
 With
 (
 			FIRSTROW = 2,
@@ -83,7 +83,7 @@ set stop_id = replace(replace(stop_id, CHAR(13),''),CHAR(10),'')
 ,agency_id = N'BA'
 where agency_stop_id =N''
 Bulk Insert [gtfs_2016].[stops]
-From '\\Mac\Home\Documents\MTC\_Section\Planning\Projects\TPA_2016\511 API Data\GTFS Processing\BG\BG_stops.txt'
+From 'C:\temp\RegionalTransitDatabase\data\gtfs\BG\BG_stops.txt'
 With
 (
 			FIRSTROW = 2,
@@ -96,7 +96,7 @@ set stop_id = replace(replace(stop_id, CHAR(13),''),CHAR(10),'')
 ,agency_id = N'BG'
 where agency_stop_id =N''
 Bulk Insert [gtfs_2016].[stops]
-From '\\Mac\Home\Documents\MTC\_Section\Planning\Projects\TPA_2016\511 API Data\GTFS Processing\CC\CC_stops.txt'
+From 'C:\temp\RegionalTransitDatabase\data\gtfs\CC\CC_stops.txt'
 With
 (
 			FIRSTROW = 2,
@@ -109,7 +109,7 @@ set stop_id = replace(replace(stop_id, CHAR(13),''),CHAR(10),'')
 ,agency_id = N'CC'
 where agency_stop_id =N''
 Bulk Insert [gtfs_2016].[stops]
-From '\\Mac\Home\Documents\MTC\_Section\Planning\Projects\TPA_2016\511 API Data\GTFS Processing\CE\CE_stops.txt'
+From 'C:\temp\RegionalTransitDatabase\data\gtfs\CE\CE_stops.txt'
 With
 (
 			FIRSTROW = 2,
@@ -122,7 +122,7 @@ set stop_id = replace(replace(stop_id, CHAR(13),''),CHAR(10),'')
 ,agency_id = N'CE'
 where agency_stop_id =N''
 Bulk Insert [gtfs_2016].[stops]
-From '\\Mac\Home\Documents\MTC\_Section\Planning\Projects\TPA_2016\511 API Data\GTFS Processing\CT\CT_stops.txt'
+From 'C:\temp\RegionalTransitDatabase\data\gtfs\CT\CT_stops.txt'
 With
 (
 			FIRSTROW = 2,
@@ -135,7 +135,7 @@ set stop_id = replace(replace(stop_id, CHAR(13),''),CHAR(10),'')
 ,agency_id = N'CT'
 where agency_stop_id =N''
 Bulk Insert [gtfs_2016].[stops]
-From '\\Mac\Home\Documents\MTC\_Section\Planning\Projects\TPA_2016\511 API Data\GTFS Processing\DE\DE_stops.txt'
+From 'C:\temp\RegionalTransitDatabase\data\gtfs\DE\DE_stops.txt'
 With
 (
 			FIRSTROW = 2,
@@ -148,7 +148,7 @@ set stop_id = replace(replace(stop_id, CHAR(13),''),CHAR(10),'')
 ,agency_id = N'DE'
 where agency_stop_id =N''
 Bulk Insert [gtfs_2016].[stops]
-From '\\Mac\Home\Documents\MTC\_Section\Planning\Projects\TPA_2016\511 API Data\GTFS Processing\EM\EM_stops.txt'
+From 'C:\temp\RegionalTransitDatabase\data\gtfs\EM\EM_stops.txt'
 With
 (
 			FIRSTROW = 2,
@@ -161,7 +161,7 @@ set stop_id = replace(replace(stop_id, CHAR(13),''),CHAR(10),'')
 ,agency_id = N'EM'
 where agency_stop_id =N''
 Bulk Insert [gtfs_2016].[stops]
-From '\\Mac\Home\Documents\MTC\_Section\Planning\Projects\TPA_2016\511 API Data\GTFS Processing\FS\FS_stops.txt'
+From 'C:\temp\RegionalTransitDatabase\data\gtfs\FS\FS_stops.txt'
 With
 (
 			FIRSTROW = 2,
@@ -174,7 +174,7 @@ set stop_id = replace(replace(stop_id, CHAR(13),''),CHAR(10),'')
 ,agency_id = N'FS'
 where agency_stop_id =N''
 Bulk Insert [gtfs_2016].[stops]
-From '\\Mac\Home\Documents\MTC\_Section\Planning\Projects\TPA_2016\511 API Data\GTFS Processing\GF\stops.txt'
+From 'C:\temp\RegionalTransitDatabase\data\gtfs\GF\stops.txt'
 With
 (
 			FIRSTROW = 2,
@@ -187,7 +187,7 @@ set stop_id = replace(replace(stop_id, CHAR(13),''),CHAR(10),'')
 ,agency_id = N'GF'
 where agency_stop_id =N''
 Bulk Insert [gtfs_2016].[stops]
-From '\\Mac\Home\Documents\MTC\_Section\Planning\Projects\TPA_2016\511 API Data\GTFS Processing\GG\GG_stops.txt'
+From 'C:\temp\RegionalTransitDatabase\data\gtfs\GG\GG_stops.txt'
 With
 (
 			FIRSTROW = 2,
@@ -200,7 +200,7 @@ set stop_id = replace(replace(stop_id, CHAR(13),''),CHAR(10),'')
 ,agency_id = N'GG'
 where agency_stop_id =N''
 Bulk Insert [gtfs_2016].[stops]
-From '\\Mac\Home\Documents\MTC\_Section\Planning\Projects\TPA_2016\511 API Data\GTFS Processing\HF\HF_stops.txt'
+From 'C:\temp\RegionalTransitDatabase\data\gtfs\HF\HF_stops.txt'
 With
 (
 			FIRSTROW = 2,
@@ -213,7 +213,7 @@ set stop_id = replace(replace(stop_id, CHAR(13),''),CHAR(10),'')
 ,agency_id = N'HF'
 where agency_stop_id =N''
 Bulk Insert [gtfs_2016].[stops]
-From '\\Mac\Home\Documents\MTC\_Section\Planning\Projects\TPA_2016\511 API Data\GTFS Processing\MA\MA_stops.txt'
+From 'C:\temp\RegionalTransitDatabase\data\gtfs\MA\MA_stops.txt'
 With
 (
 			FIRSTROW = 2,
@@ -226,7 +226,7 @@ set stop_id = replace(replace(stop_id, CHAR(13),''),CHAR(10),'')
 ,agency_id = N'MA'
 where agency_stop_id =N''
 Bulk Insert [gtfs_2016].[stops]
-From '\\Mac\Home\Documents\MTC\_Section\Planning\Projects\TPA_2016\511 API Data\GTFS Processing\MS\MS_stops.txt'
+From 'C:\temp\RegionalTransitDatabase\data\gtfs\MS\MS_stops.txt'
 With
 (
 			FIRSTROW = 2,
@@ -239,7 +239,7 @@ set stop_id = replace(replace(stop_id, CHAR(13),''),CHAR(10),'')
 ,agency_id = N'MS'
 where agency_stop_id =N''
 Bulk Insert [gtfs_2016].[stops]
-From '\\Mac\Home\Documents\MTC\_Section\Planning\Projects\TPA_2016\511 API Data\GTFS Processing\PE\PE_stops.txt'
+From 'C:\temp\RegionalTransitDatabase\data\gtfs\PE\PE_stops.txt'
 With
 (
 			FIRSTROW = 2,
@@ -252,7 +252,7 @@ set stop_id = replace(replace(stop_id, CHAR(13),''),CHAR(10),'')
 ,agency_id = N'PE'
 where agency_stop_id =N''
 Bulk Insert [gtfs_2016].[stops]
-From '\\Mac\Home\Documents\MTC\_Section\Planning\Projects\TPA_2016\511 API Data\GTFS Processing\RV\RV_stops.txt'
+From 'C:\temp\RegionalTransitDatabase\data\gtfs\RV\RV_stops.txt'
 With
 (
 			FIRSTROW = 2,
@@ -265,7 +265,7 @@ set stop_id = replace(replace(stop_id, CHAR(13),''),CHAR(10),'')
 ,agency_id = N'RV'
 where agency_stop_id =N''
 Bulk Insert [gtfs_2016].[stops]
-From '\\Mac\Home\Documents\MTC\_Section\Planning\Projects\TPA_2016\511 API Data\GTFS Processing\SB\SB_stops.txt'
+From 'C:\temp\RegionalTransitDatabase\data\gtfs\SB\SB_stops.txt'
 With
 (
 			FIRSTROW = 2,
@@ -278,7 +278,7 @@ set stop_id = replace(replace(stop_id, CHAR(13),''),CHAR(10),'')
 ,agency_id = N'SB'
 where agency_stop_id =N''
 Bulk Insert [gtfs_2016].[stops]
-From '\\Mac\Home\Documents\MTC\_Section\Planning\Projects\TPA_2016\511 API Data\GTFS Processing\SC\SC_stops.txt'
+From 'C:\temp\RegionalTransitDatabase\data\gtfs\SC\SC_stops.txt'
 With
 (
 			FIRSTROW = 2,
@@ -291,7 +291,7 @@ set stop_id = replace(replace(stop_id, CHAR(13),''),CHAR(10),'')
 ,agency_id = N'SC'
 where agency_stop_id =N''
 Bulk Insert [gtfs_2016].[stops]
-From '\\Mac\Home\Documents\MTC\_Section\Planning\Projects\TPA_2016\511 API Data\GTFS Processing\SF\SF_stops.txt'
+From 'C:\temp\RegionalTransitDatabase\data\gtfs\SF\SF_stops.txt'
 With
 (
 			FIRSTROW = 2,
@@ -304,7 +304,7 @@ set stop_id = replace(replace(stop_id, CHAR(13),''),CHAR(10),'')
 ,agency_id = N'SF'
 where agency_stop_id =N''
 Bulk Insert [gtfs_2016].[stops]
-From '\\Mac\Home\Documents\MTC\_Section\Planning\Projects\TPA_2016\511 API Data\GTFS Processing\SM\SM_stops.txt'
+From 'C:\temp\RegionalTransitDatabase\data\gtfs\SM\SM_stops.txt'
 With
 (
 			FIRSTROW = 2,
@@ -317,7 +317,7 @@ set stop_id = replace(replace(stop_id, CHAR(13),''),CHAR(10),'')
 ,agency_id = N'SM'
 where agency_stop_id =N''
 Bulk Insert [gtfs_2016].[stops]
-From '\\Mac\Home\Documents\MTC\_Section\Planning\Projects\TPA_2016\511 API Data\GTFS Processing\SO\SO_stops.txt'
+From 'C:\temp\RegionalTransitDatabase\data\gtfs\SO\SO_stops.txt'
 With
 (
 			FIRSTROW = 2,
@@ -330,7 +330,7 @@ set stop_id = replace(replace(stop_id, CHAR(13),''),CHAR(10),'')
 ,agency_id = N'SO'
 where agency_stop_id =N''
 Bulk Insert [gtfs_2016].[stops]
-From '\\Mac\Home\Documents\MTC\_Section\Planning\Projects\TPA_2016\511 API Data\GTFS Processing\SR\SR_stops.txt'
+From 'C:\temp\RegionalTransitDatabase\data\gtfs\SR\SR_stops.txt'
 With
 (
 			FIRSTROW = 2,
@@ -343,7 +343,7 @@ set stop_id = replace(replace(stop_id, CHAR(13),''),CHAR(10),'')
 ,agency_id = N'SR'
 where agency_stop_id =N''
 Bulk Insert [gtfs_2016].[stops]
-From '\\Mac\Home\Documents\MTC\_Section\Planning\Projects\TPA_2016\511 API Data\GTFS Processing\ST\ST_stops.txt'
+From 'C:\temp\RegionalTransitDatabase\data\gtfs\ST\ST_stops.txt'
 With
 (
 			FIRSTROW = 2,
@@ -356,7 +356,7 @@ set stop_id = replace(replace(stop_id, CHAR(13),''),CHAR(10),'')
 ,agency_id = N'ST'
 where agency_stop_id =N''
 Bulk Insert [gtfs_2016].[stops]
-From '\\Mac\Home\Documents\MTC\_Section\Planning\Projects\TPA_2016\511 API Data\GTFS Processing\UC\UC_stops.txt'
+From 'C:\temp\RegionalTransitDatabase\data\gtfs\UC\UC_stops.txt'
 With
 (
 			FIRSTROW = 2,
@@ -369,7 +369,7 @@ set stop_id = replace(replace(stop_id, CHAR(13),''),CHAR(10),'')
 ,agency_id = N'UC'
 where agency_stop_id =N''
 Bulk Insert [gtfs_2016].[stops]
-From '\\Mac\Home\Documents\MTC\_Section\Planning\Projects\TPA_2016\511 API Data\GTFS Processing\VC\VC_stops.txt'
+From 'C:\temp\RegionalTransitDatabase\data\gtfs\VC\VC_stops.txt'
 With
 (
 			FIRSTROW = 2,
@@ -382,7 +382,7 @@ set stop_id = replace(replace(stop_id, CHAR(13),''),CHAR(10),'')
 ,agency_id = N'VC'
 where agency_stop_id =N''
 Bulk Insert [gtfs_2016].[stops]
-From '\\Mac\Home\Documents\MTC\_Section\Planning\Projects\TPA_2016\511 API Data\GTFS Processing\VN\VN_stops.txt'
+From 'C:\temp\RegionalTransitDatabase\data\gtfs\VN\VN_stops.txt'
 With
 (
 			FIRSTROW = 2,
@@ -395,7 +395,7 @@ set stop_id = replace(replace(stop_id, CHAR(13),''),CHAR(10),'')
 ,agency_id = N'VN'
 where agency_stop_id =N''
 Bulk Insert [gtfs_2016].[stops]
-From '\\Mac\Home\Documents\MTC\_Section\Planning\Projects\TPA_2016\511 API Data\GTFS Processing\WC\WC_stops.txt'
+From 'C:\temp\RegionalTransitDatabase\data\gtfs\WC\WC_stops.txt'
 With
 (
 			FIRSTROW = 2,
@@ -408,7 +408,7 @@ set stop_id = replace(replace(stop_id, CHAR(13),''),CHAR(10),'')
 ,agency_id = N'WC'
 where agency_stop_id =N''
 Bulk Insert [gtfs_2016].[stops]
-From '\\Mac\Home\Documents\MTC\_Section\Planning\Projects\TPA_2016\511 API Data\GTFS Processing\WH\WH_stops.txt'
+From 'C:\temp\RegionalTransitDatabase\data\gtfs\WH\WH_stops.txt'
 With
 (
 			FIRSTROW = 2,
