@@ -1,7 +1,6 @@
 --Be sure to create RTD_2017 Database before running this script
 --Also be sure to create DB Schema called [gtfs_2017]
---I added the create scripts below.  This should work.  You may need to revise the path for where the DB is created.  
---Check the location and revise as needed.  The path that I am using is specific to my computer.
+--I added the create scripts below.  This should work.  You may need to revise the path for where the DB is created.  Check the location and revise as needed.  The path that I am using is specific to my computer.
 
 CREATE DATABASE [RTD_2017]
  CONTAINMENT = NONE
@@ -472,12 +471,12 @@ SET QUOTED_IDENTIFIER ON
 GO
 		create view [gtfs_2017].[rtd_route_trips] as
 		SELECT        agency.agency_id, agency.agency_name, routes.route_short_name, trips.trip_headsign, routes.route_id, trips.trip_id, trips.direction_id, routes.agency_route_id, trips.agency_trip_id, trips.agency_service_id, 
-                         routes.status, gtfs_2016.system_type.system
-FROM            gtfs_2016.agency AS agency INNER JOIN
-                         gtfs_2016.routes AS routes ON agency.agency_id = routes.agency_id INNER JOIN
-                         gtfs_2016.trips AS trips ON routes.agency_route_id = trips.agency_route_id INNER JOIN
-                         gtfs_2016.system_type ON routes.route_type = gtfs_2016.system_type.route_type
---WHERE        (gtfs_2016.system_type.system = 'Bus')
+                         routes.status, gtfs_2017.system_type.system
+FROM            gtfs_2017.agency AS agency INNER JOIN
+                         gtfs_2017.routes AS routes ON agency.agency_id = routes.agency_id INNER JOIN
+                         gtfs_2017.trips AS trips ON routes.agency_route_id = trips.agency_route_id INNER JOIN
+                         gtfs_2017.system_type ON routes.route_type = gtfs_2017.system_type.route_type
+--WHERE        (gtfs_2017.system_type.system = 'Bus')
 
 GO
 /****** Object:  View [gtfs_2017].[rtd_route_stop_schedule]    Script Date: 4/26/17 4:48:39 PM ******/
@@ -486,15 +485,15 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO
 		create view [gtfs_2017].[rtd_route_stop_schedule] as
-SELECT        gtfs_2016.rtd_route_trips.agency_id, gtfs_2016.rtd_route_trips.agency_name, gtfs_2016.rtd_route_trips.route_id, gtfs_2016.rtd_route_trips.direction_id, gtfs_2016.stops.stop_name, 
-                         CAST(gtfs_2016.stop_times.arrival_time AS time) AS arrival_time, gtfs_2016.stop_times.stop_sequence, gtfs_2016.stop_times.agency_stop_id, gtfs_2016.rtd_route_trips.status, gtfs_2016.rtd_route_trips.system, 
-                         gtfs_2016.stops.stop_lat, gtfs_2016.stops.stop_lon, gtfs_2016.calendar.monday, gtfs_2016.calendar.tuesday, gtfs_2016.calendar.wednesday, gtfs_2016.calendar.thursday, gtfs_2016.calendar.friday, 
-                         gtfs_2016.calendar.agency_service_id
-FROM            gtfs_2016.stops INNER JOIN
-                         gtfs_2016.stop_times ON gtfs_2016.stops.agency_stop_id = gtfs_2016.stop_times.agency_stop_id INNER JOIN
-                         gtfs_2016.rtd_route_trips ON gtfs_2016.stop_times.agency_trip_id = gtfs_2016.rtd_route_trips.agency_trip_id INNER JOIN
-                         gtfs_2016.calendar ON gtfs_2016.rtd_route_trips.agency_service_id = gtfs_2016.calendar.agency_service_id
-WHERE        (gtfs_2016.rtd_route_trips.system = 'Bus')
+SELECT        gtfs_2017.rtd_route_trips.agency_id, gtfs_2017.rtd_route_trips.agency_name, gtfs_2017.rtd_route_trips.route_id, gtfs_2017.rtd_route_trips.direction_id, gtfs_2017.stops.stop_name, 
+                         CAST(gtfs_2017.stop_times.arrival_time AS time) AS arrival_time, gtfs_2017.stop_times.stop_sequence, gtfs_2017.stop_times.agency_stop_id, gtfs_2017.rtd_route_trips.status, gtfs_2017.rtd_route_trips.system, 
+                         gtfs_2017.stops.stop_lat, gtfs_2017.stops.stop_lon, gtfs_2017.calendar.monday, gtfs_2017.calendar.tuesday, gtfs_2017.calendar.wednesday, gtfs_2017.calendar.thursday, gtfs_2017.calendar.friday, 
+                         gtfs_2017.calendar.agency_service_id
+FROM            gtfs_2017.stops INNER JOIN
+                         gtfs_2017.stop_times ON gtfs_2017.stops.agency_stop_id = gtfs_2017.stop_times.agency_stop_id INNER JOIN
+                         gtfs_2017.rtd_route_trips ON gtfs_2017.stop_times.agency_trip_id = gtfs_2017.rtd_route_trips.agency_trip_id INNER JOIN
+                         gtfs_2017.calendar ON gtfs_2017.rtd_route_trips.agency_service_id = gtfs_2017.calendar.agency_service_id
+WHERE        (gtfs_2017.rtd_route_trips.system = 'Bus')
 
 GO
 /****** Object:  View [gtfs_2017].[rtd_route_stop_all_other_modes]    Script Date: 4/26/17 4:48:39 PM ******/
@@ -503,14 +502,14 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO
 		create view [gtfs_2017].[rtd_route_stop_all_other_modes] as
-SELECT        gtfs_2016.rtd_route_trips.agency_id, gtfs_2016.rtd_route_trips.agency_name, gtfs_2016.rtd_route_trips.route_id, gtfs_2016.stops.stop_name, gtfs_2016.stop_times.agency_stop_id, 
-                         gtfs_2016.rtd_route_trips.status, gtfs_2016.rtd_route_trips.system, gtfs_2016.stops.stop_lat, gtfs_2016.stops.stop_lon
-FROM            gtfs_2016.stops INNER JOIN
-                         gtfs_2016.stop_times ON gtfs_2016.stops.agency_stop_id = gtfs_2016.stop_times.agency_stop_id INNER JOIN
-                         gtfs_2016.rtd_route_trips ON gtfs_2016.stop_times.agency_trip_id = gtfs_2016.rtd_route_trips.agency_trip_id
-GROUP BY gtfs_2016.rtd_route_trips.agency_id, gtfs_2016.rtd_route_trips.agency_name, gtfs_2016.rtd_route_trips.route_id, gtfs_2016.stops.stop_name, gtfs_2016.stop_times.agency_stop_id, 
-                         gtfs_2016.rtd_route_trips.status, gtfs_2016.rtd_route_trips.system, gtfs_2016.stops.stop_lat, gtfs_2016.stops.stop_lon
-HAVING        (gtfs_2016.rtd_route_trips.system <> 'Bus')
+SELECT        gtfs_2017.rtd_route_trips.agency_id, gtfs_2017.rtd_route_trips.agency_name, gtfs_2017.rtd_route_trips.route_id, gtfs_2017.stops.stop_name, gtfs_2017.stop_times.agency_stop_id, 
+                         gtfs_2017.rtd_route_trips.status, gtfs_2017.rtd_route_trips.system, gtfs_2017.stops.stop_lat, gtfs_2017.stops.stop_lon
+FROM            gtfs_2017.stops INNER JOIN
+                         gtfs_2017.stop_times ON gtfs_2017.stops.agency_stop_id = gtfs_2017.stop_times.agency_stop_id INNER JOIN
+                         gtfs_2017.rtd_route_trips ON gtfs_2017.stop_times.agency_trip_id = gtfs_2017.rtd_route_trips.agency_trip_id
+GROUP BY gtfs_2017.rtd_route_trips.agency_id, gtfs_2017.rtd_route_trips.agency_name, gtfs_2017.rtd_route_trips.route_id, gtfs_2017.stops.stop_name, gtfs_2017.stop_times.agency_stop_id, 
+                         gtfs_2017.rtd_route_trips.status, gtfs_2017.rtd_route_trips.system, gtfs_2017.stops.stop_lat, gtfs_2017.stops.stop_lon
+HAVING        (gtfs_2017.rtd_route_trips.system <> 'Bus')
 
 GO
 /****** Object:  View [gtfs_2017].[TPA_Transit_Stops_2016_Draft]    Script Date: 4/26/17 4:48:39 PM ******/
@@ -522,7 +521,7 @@ GO
 create view [gtfs_2017].[TPA_Transit_Stops_2016_Draft] as
 SELECT TOP (50000)        agency_id, agency_name, route_id, agency_stop_id, stop_name, status, system, Avg_Weekday_AM_Trips, Avg_Weekday_AM_Headway, Avg_Weekday_PM_Trips, Avg_Weekday_PM_Headway, Delete_Stop, 
                          Meets_Headway_Criteria, Distance_Eligible, TPA_Eligible, Stop_Description, Project_Description, stop_lon, stop_lat, SHAPE
-FROM            gtfs_2016.TPA_Transit_Stops_2016_Build 
+FROM            gtfs_2017.TPA_Transit_Stops_2016_Build 
 --Where Meets_Headway_Criteria = 1 
 --order by agency_id, route_id, status, system
 
@@ -534,7 +533,7 @@ SET QUOTED_IDENTIFIER ON
 GO
 create view [gtfs_2017].[TransitStops2016] as
 SELECT agency_id, agency_name, route_id, agency_stop_id, stop_name, system, status,stop_lon, stop_lat, Avg_Weekday_AM_Trips, Avg_Weekday_AM_Headway, Avg_Weekday_PM_Trips, Avg_Weekday_PM_Headway
-FROM     gtfs_2016.TPA_Transit_Stops_2016_Draft
+FROM     gtfs_2017.TPA_Transit_Stops_2016_Draft
 GROUP BY agency_id, agency_name, route_id, agency_stop_id, stop_name, system, status,stop_lon, stop_lat, Avg_Weekday_AM_Trips, Avg_Weekday_AM_Headway, Avg_Weekday_PM_Trips, Avg_Weekday_PM_Headway
 GO
 /****** Object:  View [dbo].[stop_times_revised]    Script Date: 4/26/17 4:48:39 PM ******/
@@ -545,7 +544,7 @@ GO
 CREATE VIEW [dbo].[stop_times_revised]
 AS
 SELECT        TOP (100) PERCENT agency_id, agency_trip_id, agency_stop_id, stop_sequence, arrival_time, trip_id, stop_id, COUNT(arrival_time) AS Duplicate_Arrival_Times
-FROM            gtfs_2016.stop_times
+FROM            gtfs_2017.stop_times
 GROUP BY trip_id, arrival_time, stop_id, stop_sequence, agency_stop_id, agency_trip_id, agency_id
 ORDER BY agency_id, agency_trip_id, agency_stop_id, stop_sequence, arrival_time
 
@@ -621,7 +620,7 @@ Begin DesignProperties =
          Left = 0
       End
       Begin Tables = 
-         Begin Table = "stop_times (gtfs_2016)"
+         Begin Table = "stop_times (gtfs_2017)"
             Begin Extent = 
                Top = 6
                Left = 38
