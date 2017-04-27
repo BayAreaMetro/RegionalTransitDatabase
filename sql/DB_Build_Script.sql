@@ -1,10 +1,8 @@
 
-CREATE SCHEMA [gtfs_2017]
-GO
 CREATE TABLE [dbo].[agency](
 	[agency_id] [varchar](50) NULL,
-	[agency_name] [varchar](50) NULL,
-	[agency_url] [varchar](200) NULL,
+	[agency_name] [varchar](200) NULL,
+	[agency_url] [varchar](1000) NULL,
 	[agency_timezone] [varchar](50) NULL,
 	[agency_lang] [varchar](50) NULL,
 	[agency_phone] [varchar](50) NULL
@@ -28,7 +26,7 @@ CREATE TABLE [dbo].[routes](
 	[route_id] [varchar](200) NULL,
 	[agency_id] [varchar](200) NULL,
 	[route_short_name] [varchar](50) NULL,
-	[route_long_name] [varchar](200) NULL,
+	[route_long_name] [TEXT] NULL,
 	[route_type] [varchar](50) NULL,
 	[route_color] [varchar](50) NULL,
 	[route_text_color] [varchar](50) NULL,
@@ -60,7 +58,7 @@ CREATE TABLE [dbo].[stop_times_processed](
 
 CREATE TABLE [dbo].[stops](
 	[stop_id] [varchar](100) NULL,
-	[stop_name] [varchar](200) NULL,
+	[stop_name] [varchar](max) NULL,
 	[stop_lat] [varchar](max) NULL,
 	[stop_lon] [varchar](max) NULL,
 	[zone_id] [varchar](50) NULL,
@@ -71,18 +69,18 @@ CREATE TABLE [dbo].[stops](
 CREATE TABLE [dbo].[system_type](
 	[route_type] [varchar](50) NULL,
 	[system] [varchar](50) NULL,
-	[system_description] [varchar](200) NULL
+	[system_description] [varchar](max) NULL
 ) ON [PRIMARY]
 
 CREATE TABLE [dbo].[trips](
 	[route_id] [varchar](200) NULL,
 	[service_id] [varchar](200) NULL,
 	[trip_id] [varchar](200) NULL,
-	[trip_headsign] [varchar](200) NULL,
+	[trip_headsign] [varchar](max) NULL,
 	[direction_id] [varchar](50) NULL,
 	[block_id] [varchar](50) NULL,
 	[shape_id] [varchar](50) NULL,
-	[trip_short_name] [varchar](200) NULL,
+	[trip_short_name] [varchar](max) NULL,
 	[agency_id] [varchar](50) NULL,
 	[agency_route_id] [varchar](200) NULL,
 	[agency_service_id] [varchar](200) NULL,
