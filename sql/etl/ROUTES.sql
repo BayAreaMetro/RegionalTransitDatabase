@@ -1,361 +1,106 @@
---Insert table values
---routes
---truncate Table dbo.routes 
---select * From dbo.routes
-truncate Table dbo.[routes]
-Bulk Insert [dbo].[routes]
-From 'C:\temp\RegionalTransitDatabase\data\gtfs\3D\routes.txt'
-With
+DROP TABLE [dbo].[routes];
+
+CREATE TABLE [dbo].[routes](
+      [route_id] [varchar](200) NULL,
+      [agency_id] [varchar](200) NULL,
+      [route_short_name] [varchar](50) NULL,
+      [route_long_name] [varchar](600) NULL,
+      [route_type] [varchar](50) NULL,
+      [route_color] [varchar](50) NULL,
+      [route_text_color] [varchar](50) NULL,
+      [agency_route_id] [varchar](200) NULL,
+      [status] [varchar](50) NULL
+);
+
+CREATE TABLE #TRANSIT_AGENGY_ACRONYMS
 (
-			FIRSTROW = 2,
-            FIELDTERMINATOR = ',',
-            ROWTERMINATOR = '\n'
+SHORTNAME VARCHAR(128) 
 )
---update unique identifier fields with Agency IDs
-update [dbo].[routes]
-set agency_route_id = N'3D:' + cast(route_id as nvarchar(200))
-where agency_route_id is null
-/*Bulk Insert [dbo].[routes]
-From 'C:\temp\RegionalTransitDatabase\data\gtfs\AC\routes.txt'
-With
-(
-			FIRSTROW = 2,
-            FIELDTERMINATOR = ',',
-            ROWTERMINATOR = '\n'
-)
-update [dbo].routes
-set agency_route_id = N'AC:' + cast(route_id as nvarchar(200))
-where agency_route_id is null*/
-Bulk Insert [dbo].[routes]
-From 'C:\temp\RegionalTransitDatabase\data\gtfs\AM\routes.txt'
-With
-(
-			FIRSTROW = 2,
-            FIELDTERMINATOR = ',',
-            ROWTERMINATOR = '\n'
-)
-update [dbo].routes
-set agency_route_id = N'AM:' + cast(route_id as nvarchar(200))
-where agency_route_id is null
-Bulk Insert [dbo].[routes]
-From 'C:\temp\RegionalTransitDatabase\data\gtfs\AT\routes.txt'
-With
-(
-			FIRSTROW = 2,
-            FIELDTERMINATOR = ',',
-            ROWTERMINATOR = '\n'
-)
-update [dbo].routes
-set agency_route_id = N'AT:' + cast(route_id as nvarchar(200))
-where agency_route_id is null
-Bulk Insert [dbo].[routes]
-From 'C:\temp\RegionalTransitDatabase\data\gtfs\AY\routes.txt'
-With
-(
-			FIRSTROW = 2,
-            FIELDTERMINATOR = ',',
-            ROWTERMINATOR = '\n'
-)
-update [dbo].routes
-set agency_route_id = N'AY:' + cast(route_id as nvarchar(200))
-where agency_route_id is null
-Bulk Insert [dbo].[routes]
-From 'C:\temp\RegionalTransitDatabase\data\gtfs\BA\routes.txt'
-With
-(
-			FIRSTROW = 2,
-            FIELDTERMINATOR = ',',
-            ROWTERMINATOR = '\n'
-)
-update [dbo].routes
-set agency_route_id = N'BA:' + cast(route_id as nvarchar(200))
-where agency_route_id is null
-Bulk Insert [dbo].[routes]
-From 'C:\temp\RegionalTransitDatabase\data\gtfs\BG\routes.txt'
-With
-(
-			FIRSTROW = 2,
-            FIELDTERMINATOR = ',',
-            ROWTERMINATOR = '\n'
-)
-update [dbo].routes
-set agency_route_id = N'BG:' + cast(route_id as nvarchar(200))
-where agency_route_id is null
-Bulk Insert [dbo].[routes]
-From 'C:\temp\RegionalTransitDatabase\data\gtfs\CC\routes.txt'
-With
-(
-			FIRSTROW = 2,
-            FIELDTERMINATOR = ',',
-            ROWTERMINATOR = '\n'
-)
-update [dbo].routes
-set agency_route_id = N'CC:' + cast(route_id as nvarchar(200))
-where agency_route_id is null
-Bulk Insert [dbo].[routes]
-From 'C:\temp\RegionalTransitDatabase\data\gtfs\CE\routes.txt'
-With
-(
-			FIRSTROW = 2,
-            FIELDTERMINATOR = ',',
-            ROWTERMINATOR = '\n'
-)
-update [dbo].routes
-set agency_route_id = N'CE:' + cast(route_id as nvarchar(200))
-where agency_route_id is null
-Bulk Insert [dbo].[routes]
-From 'C:\temp\RegionalTransitDatabase\data\gtfs\CT\routes.txt'
-With
-(
-			FIRSTROW = 2,
-            FIELDTERMINATOR = ',',
-            ROWTERMINATOR = '\n'
-)
-update [dbo].routes
-set agency_route_id = N'CT:' + cast(route_id as nvarchar(200))
-where agency_route_id is null
-Bulk Insert [dbo].[routes]
-From 'C:\temp\RegionalTransitDatabase\data\gtfs\DE\routes.txt'
-With
-(
-			FIRSTROW = 2,
-            FIELDTERMINATOR = ',',
-            ROWTERMINATOR = '\n'
-)
-update [dbo].routes
-set agency_route_id = N'DE:' + cast(route_id as nvarchar(200))
-where agency_route_id is null
-Bulk Insert [dbo].[routes]
-From 'C:\temp\RegionalTransitDatabase\data\gtfs\EM\routes.txt'
-With
-(
-			FIRSTROW = 2,
-            FIELDTERMINATOR = ',',
-            ROWTERMINATOR = '\n'
-)
-update [dbo].routes
-set agency_route_id = N'EM:' + cast(route_id as nvarchar(200))
-where agency_route_id is null
-Bulk Insert [dbo].[routes]
-From 'C:\temp\RegionalTransitDatabase\data\gtfs\FS\routes.txt'
-With
-(
-			FIRSTROW = 2,
-            FIELDTERMINATOR = ',',
-            ROWTERMINATOR = '\n'
-)
-update [dbo].routes
-set agency_route_id = N'FS:' + cast(route_id as nvarchar(200))
-where agency_route_id is null
-Bulk Insert [dbo].[routes]
-From 'C:\temp\RegionalTransitDatabase\data\gtfs\GF\routes.txt'
-With
-(
-			FIRSTROW = 2,
-            FIELDTERMINATOR = ',',
-            ROWTERMINATOR = '\n'
-)
-update [dbo].routes
-set agency_route_id = N'GF:' + cast(route_id as nvarchar(200))
-where agency_route_id is null
-Bulk Insert [dbo].[routes]
-From 'C:\temp\RegionalTransitDatabase\data\gtfs\GG\routes.txt'
-With
-(
-			FIRSTROW = 2,
-            FIELDTERMINATOR = ',',
-            ROWTERMINATOR = '\n'
-)
-update [dbo].routes
-set agency_route_id = N'GG:' + cast(route_id as nvarchar(200))
-where agency_route_id is null
-Bulk Insert [dbo].[routes]
-From 'C:\temp\RegionalTransitDatabase\data\gtfs\HF\routes.txt'
-With
-(
-			FIRSTROW = 2,
-            FIELDTERMINATOR = ',',
-            ROWTERMINATOR = '\n'
-)
-update [dbo].routes
-set agency_route_id = N'HF:' + cast(route_id as nvarchar(200))
-where agency_route_id is null
-Bulk Insert [dbo].[routes]
-From 'C:\temp\RegionalTransitDatabase\data\gtfs\MA\routes.txt'
-With
-(
-			FIRSTROW = 2,
-            FIELDTERMINATOR = ',',
-            ROWTERMINATOR = '\n'
-)
-update [dbo].routes
-set agency_route_id = N'MA:' + cast(route_id as nvarchar(200))
-where agency_route_id is null
-Bulk Insert [dbo].[routes]
-From 'C:\temp\RegionalTransitDatabase\data\gtfs\MS\routes.txt'
-With
-(
-			FIRSTROW = 2,
-            FIELDTERMINATOR = ',',
-            ROWTERMINATOR = '\n'
-)
-update [dbo].routes
-set agency_route_id = N'MS:' + cast(route_id as nvarchar(200))
-where agency_route_id is null
-Bulk Insert [dbo].[routes]
-From 'C:\temp\RegionalTransitDatabase\data\gtfs\PE\routes.txt'
-With
-(
-			FIRSTROW = 2,
-            FIELDTERMINATOR = ',',
-            ROWTERMINATOR = '\n'
-)
-update [dbo].routes
-set agency_route_id = N'PE:' + cast(route_id as nvarchar(200))
-where agency_route_id is null
-Bulk Insert [dbo].[routes]
-From 'C:\temp\RegionalTransitDatabase\data\gtfs\RV\routes.txt'
-With
-(
-			FIRSTROW = 2,
-            FIELDTERMINATOR = ',',
-            ROWTERMINATOR = '\n'
-)
-update [dbo].routes
-set agency_route_id = N'RV:' + cast(route_id as nvarchar(200))
-where agency_route_id is null
-Bulk Insert [dbo].[routes]
-From 'C:\temp\RegionalTransitDatabase\data\gtfs\SB\routes.txt'
-With
-(
-			FIRSTROW = 2,
-            FIELDTERMINATOR = ',',
-            ROWTERMINATOR = '\n'
-)
-update [dbo].routes
-set agency_route_id = N'SB:' + cast(route_id as nvarchar(200))
-where agency_route_id is null
-Bulk Insert [dbo].[routes]
-From 'C:\temp\RegionalTransitDatabase\data\gtfs\SC\routes.txt'
-With
-(
-			FIRSTROW = 2,
-            FIELDTERMINATOR = ',',
-            ROWTERMINATOR = '\n'
-)
-update [dbo].routes
-set agency_route_id = N'SC:' + cast(route_id as nvarchar(200))
-where agency_route_id is null
-Bulk Insert [dbo].[routes]
-From 'C:\temp\RegionalTransitDatabase\data\gtfs\SF\routes.txt'
-With
-(
-			FIRSTROW = 2,
-            FIELDTERMINATOR = ',',
-            ROWTERMINATOR = '\n'
-)
-update [dbo].routes
-set agency_route_id = N'SF:' + cast(route_id as nvarchar(200))
-where agency_route_id is null
-Bulk Insert [dbo].[routes]
-From 'C:\temp\RegionalTransitDatabase\data\gtfs\SM\routes.txt'
-With
-(
-			FIRSTROW = 2,
-            FIELDTERMINATOR = ',',
-            ROWTERMINATOR = '\n'
-)
-update [dbo].routes
-set agency_route_id = N'SM:' + cast(route_id as nvarchar(200))
-where agency_route_id is null
-Bulk Insert [dbo].[routes]
-From 'C:\temp\RegionalTransitDatabase\data\gtfs\SO\routes.txt'
-With
-(
-			FIRSTROW = 2,
-            FIELDTERMINATOR = ',',
-            ROWTERMINATOR = '\n'
-)
-update [dbo].routes
-set agency_route_id = N'SO:' + cast(route_id as nvarchar(200))
-where agency_route_id is null
-Bulk Insert [dbo].[routes]
-From 'C:\temp\RegionalTransitDatabase\data\gtfs\SR\routes.txt'
-With
-(
-			FIRSTROW = 2,
-            FIELDTERMINATOR = ',',
-            ROWTERMINATOR = '\n'
-)
-update [dbo].routes
-set agency_route_id = N'SR:' + cast(route_id as nvarchar(200))
-where agency_route_id is null
-Bulk Insert [dbo].[routes]
-From 'C:\temp\RegionalTransitDatabase\data\gtfs\ST\routes.txt'
-With
-(
-			FIRSTROW = 2,
-            FIELDTERMINATOR = ',',
-            ROWTERMINATOR = '\n'
-)
-update [dbo].routes
-set agency_route_id = N'ST:' + cast(route_id as nvarchar(200))
-where agency_route_id is null
-Bulk Insert [dbo].[routes]
-From 'C:\temp\RegionalTransitDatabase\data\gtfs\UC\routes.txt'
-With
-(
-			FIRSTROW = 2,
-            FIELDTERMINATOR = ',',
-            ROWTERMINATOR = '\n'
-)
-update [dbo].routes
-set agency_route_id = N'UC:' + cast(route_id as nvarchar(200))
-where agency_route_id is null
-Bulk Insert [dbo].[routes]
-From 'C:\temp\RegionalTransitDatabase\data\gtfs\VC\routes.txt'
-With
-(
-			FIRSTROW = 2,
-            FIELDTERMINATOR = ',',
-            ROWTERMINATOR = '\n'
-)
-update [dbo].routes
-set agency_route_id = N'VC:' + cast(route_id as nvarchar(200))
-where agency_route_id is null
-Bulk Insert [dbo].[routes]
-From 'C:\temp\RegionalTransitDatabase\data\gtfs\VN\routes.txt'
-With
-(
-			FIRSTROW = 2,
-            FIELDTERMINATOR = ',',
-            ROWTERMINATOR = '\n'
-)
-update [dbo].routes
-set agency_route_id = N'VN:' + cast(route_id as nvarchar(200))
-where agency_route_id is null
-Bulk Insert [dbo].[routes]
-From 'C:\temp\RegionalTransitDatabase\data\gtfs\WC\routes.txt'
-With
-(
-			FIRSTROW = 2,
-            FIELDTERMINATOR = ',',
-            ROWTERMINATOR = '\n'
-)
-update [dbo].routes
-set agency_route_id = N'WC:' + cast(route_id as nvarchar(200))
-where agency_route_id is null
-Bulk Insert [dbo].[routes]
-From 'C:\temp\RegionalTransitDatabase\data\gtfs\WH\routes.txt'
-With
-(
-			FIRSTROW = 2,
-            FIELDTERMINATOR = ',',
-            ROWTERMINATOR = '\n'
-)
-update [dbo].routes
-set agency_route_id = N'WH:' + cast(route_id as nvarchar(200))
-where agency_route_id is null
+
+INSERT INTO #TRANSIT_AGENGY_ACRONYMS
+VALUES
+('AC'),
+('HF'),
+('CE'),
+('AY'),
+('AT'),
+('BA'),
+('BG'),
+('CT'),
+('AM'),
+('CM'),
+('CC'),
+('DE'),
+('EM'),
+('FS'),
+('GF'),
+('GG'),
+('MA'),
+('PE'),
+('RV'),
+('SM'),
+('SB'),
+('SR'),
+('SF'),
+('SA'),
+('ST'),
+('SO'),
+('MS'),
+('3D'),
+('UC'),
+('VC'),
+('VN'),
+('SC'),
+('WC'),
+('WH')
+
+DECLARE @ORG as VARCHAR(128); 
+DECLARE @SQL VARCHAR(MAX);
+DECLARE @SHORTNAMEC AS CURSOR; 
+
+DECLARE @LoadTime VARCHAR(100) = (select REPLACE(convert(varchar(10), GETDATE(), 108),':','') )
+
+SET @SHORTNAMEC = CURSOR FOR 
+SELECT SHORTNAME
+FROM #TRANSIT_AGENGY_ACRONYMS; 
+
+OPEN @SHORTNAMEC 
+FETCH NEXT FROM @SHORTNAMEC INTO @ORG; 
+
+WHILE @@FETCH_STATUS = 0 
+BEGIN 
+      SET @SQL = 
+
+            '
+            Bulk Insert [dbo].[routes]
+            From "C:\\temp\\RegionalTransitDatabase\\data\\gtfs\\' + @ORG + '\\routes.txt"
+            With
+            (
+                              FIRSTROW = 2,
+                        FIELDTERMINATOR = '','',
+                        ROWTERMINATOR = ''0x0A'',
+                        ERRORFILE = ''C:\\temp\\RegionalTransitDatabase\\data\\gtfs\\' + @ORG + '\\routes_load_error' + @LoadTime + '.txt''
+            )
+            '
+            BEGIN
+                  BEGIN TRY
+                        EXEC(@SQL)
+                        FETCH NEXT FROM @SHORTNAMEC INTO @ORG; 
+                  END TRY
+                  BEGIN CATCH
+                        PRINT(@ORG)
+                        FETCH NEXT FROM @SHORTNAMEC INTO @ORG; 
+                  END CATCH
+            END
+
+END 
+
+CLOSE @SHORTNAMEC; 
+DEALLOCATE @SHORTNAMEC; 
+
+DROP TABLE #TRANSIT_AGENGY_ACRONYMS;
+
+SELECT COUNT(*) from [dbo].[routes];
 
 update dbo.routes
 set agency_route_id = replace(replace(agency_route_id, CHAR(13),''),CHAR(10),'')

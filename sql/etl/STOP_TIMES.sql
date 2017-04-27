@@ -2,361 +2,109 @@
 --stop_times
 --truncate Table dbo.stop_times
 --select * From dbo.stop_times --qry run time 1 min. 47 secs. for 2827141
-truncate Table dbo.[stop_times]
-Bulk Insert [dbo].[stop_times]
-From 'C:\temp\RegionalTransitDatabase\data\gtfs\3D\3D_stop_times.txt'
-With
+DROP TABLE [dbo].stop_times;
+
+CREATE TABLE [dbo].[stop_times](
+      [trip_id] [varchar](50) NULL,
+      [arrival_time] [varchar](50) NULL,
+      [departure_time] [varchar](50) NULL,
+      [stop_id] [varchar](100) NULL,
+      [stop_sequence] [varchar](100) NULL,
+      [agency_stop_id] [varchar](200) NULL,
+      [agency_trip_id] [varchar](200) NULL,
+      [agency_id] [varchar](50) NULL
+) ON [PRIMARY]
+
+CREATE TABLE #TRANSIT_AGENGY_ACRONYMS
 (
-			FIRSTROW = 2,
-            FIELDTERMINATOR = ',',
-            ROWTERMINATOR = 'newRow'
+SHORTNAME VARCHAR(128) 
 )
 
---update unique identifier fields with Agency IDs
-update [dbo].stop_times
-set agency_id = N'3D'
-where agency_id =N''
-Bulk Insert [dbo].[stop_times]
-From 'C:\temp\RegionalTransitDatabase\data\gtfs\AC\AC_stop_times.txt'
-With
-(
-			FIRSTROW = 2,
-            FIELDTERMINATOR = ',',
-            ROWTERMINATOR = 'newRow'
-)
-update [dbo].stop_times
-set agency_id = N'AC'
-where agency_id =N''
-Bulk Insert [dbo].[stop_times]
-From 'C:\temp\RegionalTransitDatabase\data\gtfs\AM\AM_stop_times.txt'
-With
-(
-			FIRSTROW = 2,
-            FIELDTERMINATOR = ',',
-            ROWTERMINATOR = 'newRow'
-)
-update [dbo].stop_times
-set agency_id = N'AM'
-where agency_id =N''
-Bulk Insert [dbo].[stop_times]
-From 'C:\temp\RegionalTransitDatabase\data\gtfs\AT\AT_stop_times.txt'
-With
-(
-			FIRSTROW = 2,
-            FIELDTERMINATOR = ',',
-            ROWTERMINATOR = 'newRow'
-)
-update [dbo].stop_times
-set agency_id = N'AT'
-where agency_id =N''
-Bulk Insert [dbo].[stop_times]
-From 'C:\temp\RegionalTransitDatabase\data\gtfs\AY\AY_stop_times.txt'
-With
-(
-			FIRSTROW = 2,
-            FIELDTERMINATOR = ',',
-            ROWTERMINATOR = 'newRow'
-)
-update [dbo].stop_times
-set agency_id = N'AY'
-where agency_id =N''
-Bulk Insert [dbo].[stop_times]
-From 'C:\temp\RegionalTransitDatabase\data\gtfs\BA\BA_stop_times.txt'
-With
-(
-			FIRSTROW = 2,
-            FIELDTERMINATOR = ',',
-            ROWTERMINATOR = 'newRow'
-)
-update [dbo].stop_times
-set agency_id = N'BA'
-where agency_id =N''
-Bulk Insert [dbo].[stop_times]
-From 'C:\temp\RegionalTransitDatabase\data\gtfs\BG\BG_stop_times.txt'
-With
-(
-			FIRSTROW = 2,
-            FIELDTERMINATOR = ',',
-            ROWTERMINATOR = 'newRow'
-)
-update [dbo].stop_times
-set agency_id = N'BG'
-where agency_id =N''
-Bulk Insert [dbo].[stop_times]
-From 'C:\temp\RegionalTransitDatabase\data\gtfs\CC\CC_stop_times.txt'
-With
-(
-			FIRSTROW = 2,
-            FIELDTERMINATOR = ',',
-            ROWTERMINATOR = 'newRow'
-)
-update [dbo].stop_times
-set agency_id = N'CC'
-where agency_id =N''
-Bulk Insert [dbo].[stop_times]
-From 'C:\temp\RegionalTransitDatabase\data\gtfs\CE\CE_stop_times.txt'
-With
-(
-			FIRSTROW = 2,
-            FIELDTERMINATOR = ',',
-            ROWTERMINATOR = 'newRow'
-)
-update [dbo].stop_times
-set agency_id = N'CE'
-where agency_id =N''
-Bulk Insert [dbo].[stop_times]
-From 'C:\temp\RegionalTransitDatabase\data\gtfs\CT\CT_stop_times.txt'
-With
-(
-			FIRSTROW = 2,
-            FIELDTERMINATOR = ',',
-            ROWTERMINATOR = 'newRow'
-)
-update [dbo].stop_times
-set agency_id = N'CT'
-where agency_id =N''
-Bulk Insert [dbo].[stop_times]
-From 'C:\temp\RegionalTransitDatabase\data\gtfs\DE\DE_stop_times.txt'
-With
-(
-			FIRSTROW = 2,
-            FIELDTERMINATOR = ',',
-            ROWTERMINATOR = 'newRow'
-)
-update [dbo].stop_times
-set agency_id = N'DE'
-where agency_id =N''
-Bulk Insert [dbo].[stop_times]
-From 'C:\temp\RegionalTransitDatabase\data\gtfs\EM\EM_stop_times.txt'
-With
-(
-			FIRSTROW = 2,
-            FIELDTERMINATOR = ',',
-            ROWTERMINATOR = 'newRow'
-)
-update [dbo].stop_times
-set agency_id = N'EM'
-where agency_id =N''
-Bulk Insert [dbo].[stop_times]
-From 'C:\temp\RegionalTransitDatabase\data\gtfs\FS\FS_stop_times.txt'
-With
-(
-			FIRSTROW = 2,
-            FIELDTERMINATOR = ',',
-            ROWTERMINATOR = 'newRow'
-)
-update [dbo].stop_times
-set agency_id = N'FS'
-where agency_id =N''
-Bulk Insert [dbo].[stop_times]
-From 'C:\temp\RegionalTransitDatabase\data\gtfs\GF\stop_times.txt'
-With
-(
-			FIRSTROW = 2,
-            FIELDTERMINATOR = ',',
-            ROWTERMINATOR = 'newRow'
-)
-update [dbo].stop_times
-set agency_id = N'GF'
-where agency_id =N''
-Bulk Insert [dbo].[stop_times]
-From 'C:\temp\RegionalTransitDatabase\data\gtfs\GG\GG_stop_times.txt'
-With
-(
-			FIRSTROW = 2,
-            FIELDTERMINATOR = ',',
-            ROWTERMINATOR = 'newRow'
-)
-update [dbo].stop_times
-set agency_id = N'GG'
-where agency_id =N''
-Bulk Insert [dbo].[stop_times]
-From 'C:\temp\RegionalTransitDatabase\data\gtfs\HF\HF_stop_times.txt'
-With
-(
-			FIRSTROW = 2,
-            FIELDTERMINATOR = ',',
-            ROWTERMINATOR = 'newRow'
-)
-update [dbo].stop_times
-set agency_id = N'HF'
-where agency_id =N''
-Bulk Insert [dbo].[stop_times]
-From 'C:\temp\RegionalTransitDatabase\data\gtfs\MA\MA_stop_times.txt'
-With
-(
-			FIRSTROW = 2,
-            FIELDTERMINATOR = ',',
-            ROWTERMINATOR = 'newRow'
-)
-update [dbo].stop_times
-set agency_id = N'MA'
-where agency_id =N''
-Bulk Insert [dbo].[stop_times]
-From 'C:\temp\RegionalTransitDatabase\data\gtfs\MS\MS_stop_times.txt'
-With
-(
-			FIRSTROW = 2,
-            FIELDTERMINATOR = ',',
-            ROWTERMINATOR = 'newRow'
-)
-update [dbo].stop_times
-set agency_id = N'MS'
-where agency_id =N''
-Bulk Insert [dbo].[stop_times]
-From 'C:\temp\RegionalTransitDatabase\data\gtfs\PE\PE_stop_times.txt'
-With
-(
-			FIRSTROW = 2,
-            FIELDTERMINATOR = ',',
-            ROWTERMINATOR = 'newRow'
-)
-update [dbo].stop_times
-set agency_id = N'PE'
-where agency_id =N''
-Bulk Insert [dbo].[stop_times]
-From 'C:\temp\RegionalTransitDatabase\data\gtfs\RV\RV_stop_times.txt'
-With
-(
-			FIRSTROW = 2,
-            FIELDTERMINATOR = ',',
-            ROWTERMINATOR = 'newRow'
-)
-update [dbo].stop_times
-set agency_id = N'RV'
-where agency_id =N''
-Bulk Insert [dbo].[stop_times]
-From 'C:\temp\RegionalTransitDatabase\data\gtfs\SB\SB_stop_times.txt'
-With
-(
-			FIRSTROW = 2,
-            FIELDTERMINATOR = ',',
-            ROWTERMINATOR = 'newRow'
-)
-update [dbo].stop_times
-set agency_id = N'SB'
-where agency_id =N''
-Bulk Insert [dbo].[stop_times]
-From 'C:\temp\RegionalTransitDatabase\data\gtfs\SC\SC_stop_times.txt'
-With
-(
-			FIRSTROW = 2,
-            FIELDTERMINATOR = ',',
-            ROWTERMINATOR = 'newRow'
-)
-update [dbo].stop_times
-set agency_id = N'SC'
-where agency_id =N''
-Bulk Insert [dbo].[stop_times]
-From 'C:\temp\RegionalTransitDatabase\data\gtfs\SF\SF_stop_times.txt'
-With
-(
-			FIRSTROW = 2,
-            FIELDTERMINATOR = ',',
-            ROWTERMINATOR = 'newRow'
-)
-update [dbo].stop_times
-set agency_id = N'SF'
-where agency_id =N''
-Bulk Insert [dbo].[stop_times]
-From 'C:\temp\RegionalTransitDatabase\data\gtfs\SM\SM_stop_times.txt'
-With
-(
-			FIRSTROW = 2,
-            FIELDTERMINATOR = ',',
-            ROWTERMINATOR = 'newRow'
-)
-update [dbo].stop_times
-set agency_id = N'SM'
-where agency_id =N''
-Bulk Insert [dbo].[stop_times]
-From 'C:\temp\RegionalTransitDatabase\data\gtfs\SO\SO_stop_times.txt'
-With
-(
-			FIRSTROW = 2,
-            FIELDTERMINATOR = ',',
-            ROWTERMINATOR = 'newRow'
-)
-update [dbo].stop_times
-set agency_id = N'SO'
-where agency_id =N''
-Bulk Insert [dbo].[stop_times]
-From 'C:\temp\RegionalTransitDatabase\data\gtfs\SR\SR_stop_times.txt'
-With
-(
-			FIRSTROW = 2,
-            FIELDTERMINATOR = ',',
-            ROWTERMINATOR = 'newRow'
-)
-update [dbo].stop_times
-set agency_id = N'SR'
-where agency_id =N''
-Bulk Insert [dbo].[stop_times]
-From 'C:\temp\RegionalTransitDatabase\data\gtfs\ST\ST_stop_times.txt'
-With
-(
-			FIRSTROW = 2,
-            FIELDTERMINATOR = ',',
-            ROWTERMINATOR = 'newRow'
-)
-update [dbo].stop_times
-set agency_id = N'ST'
-where agency_id =N''
-Bulk Insert [dbo].[stop_times]
-From 'C:\temp\RegionalTransitDatabase\data\gtfs\UC\UC_stop_times.txt'
-With
-(
-			FIRSTROW = 2,
-            FIELDTERMINATOR = ',',
-            ROWTERMINATOR = 'newRow'
-)
-update [dbo].stop_times
-set agency_id = N'UC'
-where agency_id =N''
-Bulk Insert [dbo].[stop_times]
-From 'C:\temp\RegionalTransitDatabase\data\gtfs\VC\VC_stop_times.txt'
-With
-(
-			FIRSTROW = 2,
-            FIELDTERMINATOR = ',',
-            ROWTERMINATOR = 'newRow'
-)
-update [dbo].stop_times
-set agency_id = N'VC'
-where agency_id =N''
-Bulk Insert [dbo].[stop_times]
-From 'C:\temp\RegionalTransitDatabase\data\gtfs\VN\VN_stop_times.txt'
-With
-(
-			FIRSTROW = 2,
-            FIELDTERMINATOR = ',',
-            ROWTERMINATOR = 'newRow'
-)
-update [dbo].stop_times
-set agency_id = N'VN'
-where agency_id =N''
-Bulk Insert [dbo].[stop_times]
-From 'C:\temp\RegionalTransitDatabase\data\gtfs\WC\WC_stop_times.txt'
-With
-(
-			FIRSTROW = 2,
-            FIELDTERMINATOR = ',',
-            ROWTERMINATOR = 'newRow'
-)
-update [dbo].stop_times
-set agency_id = N'WC'
-where agency_id =N''
-Bulk Insert [dbo].[stop_times]
-From 'C:\temp\RegionalTransitDatabase\data\gtfs\WH\WH_stop_times.txt'
-With
-(
-			FIRSTROW = 2,
-            FIELDTERMINATOR = ',',
-            ROWTERMINATOR = 'newRow'
-)
-update [dbo].stop_times
-set agency_id = N'WH'
-where agency_id =N''
+INSERT INTO #TRANSIT_AGENGY_ACRONYMS
+VALUES
+('AC'),
+('HF'),
+('CE'),
+('AY'),
+('AT'),
+('BA'),
+('BG'),
+('CT'),
+('AM'),
+('CM'),
+('CC'),
+('DE'),
+('EM'),
+('FS'),
+('GF'),
+('GG'),
+('MA'),
+('PE'),
+('RV'),
+('SM'),
+('SB'),
+('SR'),
+('SF'),
+('SA'),
+('ST'),
+('SO'),
+('MS'),
+('3D'),
+('UC'),
+('VC'),
+('VN'),
+('SC'),
+('WC'),
+('WH')
+
+
+DECLARE @ORG as VARCHAR(128); 
+DECLARE @SQL VARCHAR(MAX);
+DECLARE @SHORTNAMEC AS CURSOR; 
+
+DECLARE @LoadTime VARCHAR(100) = (select REPLACE(convert(varchar(10), GETDATE(), 108),':','') )
+
+SET @SHORTNAMEC = CURSOR FOR 
+SELECT SHORTNAME
+FROM #TRANSIT_AGENGY_ACRONYMS; 
+
+OPEN @SHORTNAMEC 
+FETCH NEXT FROM @SHORTNAMEC INTO @ORG; 
+
+WHILE @@FETCH_STATUS = 0 
+BEGIN 
+      SET @SQL = 
+            '
+            Bulk Insert [dbo].[stop_times]
+            From "C:\\temp\\RegionalTransitDatabase\\data\\gtfs\\' + @ORG + '\\stop_times.txt"
+            With
+            (
+                        FIRSTROW = 2,
+                        FIELDTERMINATOR = '','',
+                        ROWTERMINATOR = ''0x0A'',
+                        ERRORFILE = ''C:\\temp\\RegionalTransitDatabase\\data\\gtfs\\' + @ORG + '\\stop_times_load_error.txt' + @LoadTime + '.txt''
+            )
+            '
+            BEGIN
+                  BEGIN TRY
+                        EXEC(@SQL)
+                        FETCH NEXT FROM @SHORTNAMEC INTO @ORG; 
+                  END TRY
+                  BEGIN CATCH
+                        PRINT(@ORG)
+                        FETCH NEXT FROM @SHORTNAMEC INTO @ORG; 
+                  END CATCH
+            END
+
+END 
+
+CLOSE @SHORTNAMEC; 
+DEALLOCATE @SHORTNAMEC; 
+
+DROP TABLE #TRANSIT_AGENGY_ACRONYMS;
+
+SELECT COUNT(*) from [dbo].stop_times;
+
 
 update dbo.stop_times
 set agency_id = replace(replace(agency_id, CHAR(13),''),CHAR(10),'')

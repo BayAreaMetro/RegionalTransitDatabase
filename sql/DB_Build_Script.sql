@@ -1,3 +1,21 @@
+--might be useful:
+/*DROP TABLE [dbo].[agency]
+DROP TABLE [dbo].[calendar]
+DROP TABLE [dbo].[routes]
+DROP TABLE [dbo].[stop_times]
+DROP TABLE [dbo].[stop_times_processed]
+DROP TABLE [dbo].[stops]
+DROP TABLE [dbo].[system_type]
+DROP TABLE [dbo].[trips]
+
+DROP TABLE [gtfs_2017].[agency]
+DROP TABLE [gtfs_2017].[calendar]
+DROP TABLE [gtfs_2017].[routes]
+DROP TABLE [gtfs_2017].[stop_times]
+DROP TABLE [gtfs_2017].[stop_times_processed]
+DROP TABLE [gtfs_2017].[stops]
+DROP TABLE [gtfs_2017].[system_type]
+DROP TABLE [gtfs_2017].[trips]*/
 
 CREATE TABLE [dbo].[agency](
 	[agency_id] [varchar](50) NULL,
