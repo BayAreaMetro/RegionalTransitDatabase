@@ -1,17 +1,3 @@
---Be sure to create RTD_2017 Database before running this script
---Also be sure to create DB Schema called [gtfs_2017]
---I added the create scripts below.  This should work.  You may need to revise the path for where the DB is created.  Check the location and revise as needed.  The path that I am using is specific to my computer.
-
-/*CREATE DATABASE [RTD_2017]
- CONTAINMENT = NONE
- ON  PRIMARY 
-( NAME = N'RTD_2017', FILENAME = N'c:\Program Files\Microsoft SQL Server\MSSQL11.MTCGIS\MSSQL\DATA\RTD_2017.mdf' , SIZE = 4904000KB , MAXSIZE = UNLIMITED, FILEGROWTH = 1024KB )
- LOG ON 
-( NAME = N'RTD_2017', FILENAME = N'c:\Program Files\Microsoft SQL Server\MSSQL11.MTCGIS\MSSQL\DATA\RTD_2017.ldf' , SIZE = 1623488KB , MAXSIZE = 2048GB , FILEGROWTH = 10%)
-GO
-USE [RTD_2017]
-GO*/
-/****** Object:  Table [dbo].[agency]    Script Date: 4/26/17 4:48:39 PM ******/
 
 CREATE SCHEMA [gtfs_2017]
 GO
@@ -23,9 +9,6 @@ CREATE TABLE [dbo].[agency](
 	[agency_lang] [varchar](50) NULL,
 	[agency_phone] [varchar](50) NULL
 ) ON [PRIMARY]
-
-
-/****** Object:  Table [dbo].[calendar]    Script Date: 4/26/17 4:48:39 PM ******/
 
 CREATE TABLE [dbo].[calendar](
 	[service_id] [varchar](200) NULL,
@@ -202,9 +185,6 @@ CREATE TABLE [gtfs_2017].[RTD_2016_Route_Pattern_Bus_Stop_Schedule](
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
 ) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
 
-
-/****** Object:  Table [gtfs_2017].[RTD_2016_Route_Pattern_Bus_Stops]    Script Date: 4/26/17 4:48:39 PM ******/
-
 CREATE TABLE [gtfs_2017].[RTD_2016_Route_Pattern_Bus_Stops](
 	[agency_id] [varchar](50) NULL,
 	[agency_name] [varchar](50) NULL,
@@ -230,9 +210,6 @@ CREATE TABLE [gtfs_2017].[RTD_2016_Route_Pattern_Bus_Stops](
 	[SHAPE] [geometry] NULL
 ) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
 
-
-/****** Object:  Table [gtfs_2017].[stop_times]    Script Date: 4/26/17 4:48:39 PM ******/
-
 CREATE TABLE [gtfs_2017].[stop_times](
 	[trip_id] [varchar](50) NULL,
 	[arrival_time] [varchar](50) NULL,
@@ -245,8 +222,6 @@ CREATE TABLE [gtfs_2017].[stop_times](
 ) ON [PRIMARY]
 
 
-/****** Object:  Table [gtfs_2017].[stop_times_DeDuped]    Script Date: 4/26/17 4:48:39 PM ******/
-
 CREATE TABLE [gtfs_2017].[stop_times_DeDuped](
 	[agency_id] [varchar](50) NULL,
 	[agency_trip_id] [varchar](200) NULL,
@@ -257,9 +232,6 @@ CREATE TABLE [gtfs_2017].[stop_times_DeDuped](
 	[stop_id] [varchar](100) NULL,
 	[Duplicate_Arrival_Times] [int] NULL
 ) ON [PRIMARY]
-
-
-/****** Object:  Table [gtfs_2017].[stops]    Script Date: 4/26/17 4:48:39 PM ******/
 
 CREATE TABLE [gtfs_2017].[stops](
 	[stop_id] [varchar](100) NULL,
@@ -272,16 +244,12 @@ CREATE TABLE [gtfs_2017].[stops](
 ) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
 
 
-/****** Object:  Table [gtfs_2017].[system_type]    Script Date: 4/26/17 4:48:39 PM ******/
-
 CREATE TABLE [gtfs_2017].[system_type](
 	[route_type] [varchar](50) NULL,
 	[system] [varchar](50) NULL,
 	[system_description] [varchar](200) NULL
 ) ON [PRIMARY]
 
-
-/****** Object:  Table [gtfs_2017].[trips]    Script Date: 4/26/17 4:48:39 PM ******/
 
 CREATE TABLE [gtfs_2017].[trips](
 	[route_id] [varchar](200) NULL,
