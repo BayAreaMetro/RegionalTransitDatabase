@@ -26,7 +26,7 @@ CREATE TABLE [dbo].[routes](
 	[route_id] [varchar](200) NULL,
 	[agency_id] [varchar](200) NULL,
 	[route_short_name] [varchar](50) NULL,
-	[route_long_name] [TEXT] NULL,
+	[route_long_name] [varchar](600) NULL,
 	[route_type] [varchar](50) NULL,
 	[route_color] [varchar](50) NULL,
 	[route_text_color] [varchar](50) NULL,

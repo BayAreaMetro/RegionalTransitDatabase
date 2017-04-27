@@ -9,30 +9,30 @@ With
 (
 			FIRSTROW = 2,
             FIELDTERMINATOR = ',',
-            ROWTERMINATOR = 'newRow'
+            ROWTERMINATOR = '\n'
 )
 --update unique identifier fields with Agency IDs
 update [dbo].[routes]
 set agency_route_id = N'3D:' + cast(route_id as nvarchar(200))
 where agency_route_id is null
-Bulk Insert [dbo].[routes]
+/*Bulk Insert [dbo].[routes]
 From 'C:\temp\RegionalTransitDatabase\data\gtfs\AC\routes.txt'
 With
 (
 			FIRSTROW = 2,
             FIELDTERMINATOR = ',',
-            ROWTERMINATOR = 'newRow'
+            ROWTERMINATOR = '\n'
 )
 update [dbo].routes
 set agency_route_id = N'AC:' + cast(route_id as nvarchar(200))
-where agency_route_id is null
+where agency_route_id is null*/
 Bulk Insert [dbo].[routes]
 From 'C:\temp\RegionalTransitDatabase\data\gtfs\AM\routes.txt'
 With
 (
 			FIRSTROW = 2,
             FIELDTERMINATOR = ',',
-            ROWTERMINATOR = 'newRow'
+            ROWTERMINATOR = '\n'
 )
 update [dbo].routes
 set agency_route_id = N'AM:' + cast(route_id as nvarchar(200))
@@ -43,7 +43,7 @@ With
 (
 			FIRSTROW = 2,
             FIELDTERMINATOR = ',',
-            ROWTERMINATOR = 'newRow'
+            ROWTERMINATOR = '\n'
 )
 update [dbo].routes
 set agency_route_id = N'AT:' + cast(route_id as nvarchar(200))
@@ -54,7 +54,7 @@ With
 (
 			FIRSTROW = 2,
             FIELDTERMINATOR = ',',
-            ROWTERMINATOR = 'newRow'
+            ROWTERMINATOR = '\n'
 )
 update [dbo].routes
 set agency_route_id = N'AY:' + cast(route_id as nvarchar(200))
@@ -65,7 +65,7 @@ With
 (
 			FIRSTROW = 2,
             FIELDTERMINATOR = ',',
-            ROWTERMINATOR = 'newRow'
+            ROWTERMINATOR = '\n'
 )
 update [dbo].routes
 set agency_route_id = N'BA:' + cast(route_id as nvarchar(200))
@@ -76,7 +76,7 @@ With
 (
 			FIRSTROW = 2,
             FIELDTERMINATOR = ',',
-            ROWTERMINATOR = 'newRow'
+            ROWTERMINATOR = '\n'
 )
 update [dbo].routes
 set agency_route_id = N'BG:' + cast(route_id as nvarchar(200))
@@ -87,7 +87,7 @@ With
 (
 			FIRSTROW = 2,
             FIELDTERMINATOR = ',',
-            ROWTERMINATOR = 'newRow'
+            ROWTERMINATOR = '\n'
 )
 update [dbo].routes
 set agency_route_id = N'CC:' + cast(route_id as nvarchar(200))
@@ -98,7 +98,7 @@ With
 (
 			FIRSTROW = 2,
             FIELDTERMINATOR = ',',
-            ROWTERMINATOR = 'newRow'
+            ROWTERMINATOR = '\n'
 )
 update [dbo].routes
 set agency_route_id = N'CE:' + cast(route_id as nvarchar(200))
@@ -109,7 +109,7 @@ With
 (
 			FIRSTROW = 2,
             FIELDTERMINATOR = ',',
-            ROWTERMINATOR = 'newRow'
+            ROWTERMINATOR = '\n'
 )
 update [dbo].routes
 set agency_route_id = N'CT:' + cast(route_id as nvarchar(200))
@@ -120,7 +120,7 @@ With
 (
 			FIRSTROW = 2,
             FIELDTERMINATOR = ',',
-            ROWTERMINATOR = 'newRow'
+            ROWTERMINATOR = '\n'
 )
 update [dbo].routes
 set agency_route_id = N'DE:' + cast(route_id as nvarchar(200))
@@ -131,7 +131,7 @@ With
 (
 			FIRSTROW = 2,
             FIELDTERMINATOR = ',',
-            ROWTERMINATOR = 'newRow'
+            ROWTERMINATOR = '\n'
 )
 update [dbo].routes
 set agency_route_id = N'EM:' + cast(route_id as nvarchar(200))
@@ -142,7 +142,7 @@ With
 (
 			FIRSTROW = 2,
             FIELDTERMINATOR = ',',
-            ROWTERMINATOR = 'newRow'
+            ROWTERMINATOR = '\n'
 )
 update [dbo].routes
 set agency_route_id = N'FS:' + cast(route_id as nvarchar(200))
@@ -153,7 +153,7 @@ With
 (
 			FIRSTROW = 2,
             FIELDTERMINATOR = ',',
-            ROWTERMINATOR = 'newRow'
+            ROWTERMINATOR = '\n'
 )
 update [dbo].routes
 set agency_route_id = N'GF:' + cast(route_id as nvarchar(200))
@@ -164,7 +164,7 @@ With
 (
 			FIRSTROW = 2,
             FIELDTERMINATOR = ',',
-            ROWTERMINATOR = 'newRow'
+            ROWTERMINATOR = '\n'
 )
 update [dbo].routes
 set agency_route_id = N'GG:' + cast(route_id as nvarchar(200))
@@ -175,7 +175,7 @@ With
 (
 			FIRSTROW = 2,
             FIELDTERMINATOR = ',',
-            ROWTERMINATOR = 'newRow'
+            ROWTERMINATOR = '\n'
 )
 update [dbo].routes
 set agency_route_id = N'HF:' + cast(route_id as nvarchar(200))
@@ -186,7 +186,7 @@ With
 (
 			FIRSTROW = 2,
             FIELDTERMINATOR = ',',
-            ROWTERMINATOR = 'newRow'
+            ROWTERMINATOR = '\n'
 )
 update [dbo].routes
 set agency_route_id = N'MA:' + cast(route_id as nvarchar(200))
@@ -197,7 +197,7 @@ With
 (
 			FIRSTROW = 2,
             FIELDTERMINATOR = ',',
-            ROWTERMINATOR = 'newRow'
+            ROWTERMINATOR = '\n'
 )
 update [dbo].routes
 set agency_route_id = N'MS:' + cast(route_id as nvarchar(200))
@@ -208,7 +208,7 @@ With
 (
 			FIRSTROW = 2,
             FIELDTERMINATOR = ',',
-            ROWTERMINATOR = 'newRow'
+            ROWTERMINATOR = '\n'
 )
 update [dbo].routes
 set agency_route_id = N'PE:' + cast(route_id as nvarchar(200))
@@ -219,7 +219,7 @@ With
 (
 			FIRSTROW = 2,
             FIELDTERMINATOR = ',',
-            ROWTERMINATOR = 'newRow'
+            ROWTERMINATOR = '\n'
 )
 update [dbo].routes
 set agency_route_id = N'RV:' + cast(route_id as nvarchar(200))
@@ -230,7 +230,7 @@ With
 (
 			FIRSTROW = 2,
             FIELDTERMINATOR = ',',
-            ROWTERMINATOR = 'newRow'
+            ROWTERMINATOR = '\n'
 )
 update [dbo].routes
 set agency_route_id = N'SB:' + cast(route_id as nvarchar(200))
@@ -241,7 +241,7 @@ With
 (
 			FIRSTROW = 2,
             FIELDTERMINATOR = ',',
-            ROWTERMINATOR = 'newRow'
+            ROWTERMINATOR = '\n'
 )
 update [dbo].routes
 set agency_route_id = N'SC:' + cast(route_id as nvarchar(200))
@@ -252,7 +252,7 @@ With
 (
 			FIRSTROW = 2,
             FIELDTERMINATOR = ',',
-            ROWTERMINATOR = 'newRow'
+            ROWTERMINATOR = '\n'
 )
 update [dbo].routes
 set agency_route_id = N'SF:' + cast(route_id as nvarchar(200))
@@ -263,7 +263,7 @@ With
 (
 			FIRSTROW = 2,
             FIELDTERMINATOR = ',',
-            ROWTERMINATOR = 'newRow'
+            ROWTERMINATOR = '\n'
 )
 update [dbo].routes
 set agency_route_id = N'SM:' + cast(route_id as nvarchar(200))
@@ -274,7 +274,7 @@ With
 (
 			FIRSTROW = 2,
             FIELDTERMINATOR = ',',
-            ROWTERMINATOR = 'newRow'
+            ROWTERMINATOR = '\n'
 )
 update [dbo].routes
 set agency_route_id = N'SO:' + cast(route_id as nvarchar(200))
@@ -285,7 +285,7 @@ With
 (
 			FIRSTROW = 2,
             FIELDTERMINATOR = ',',
-            ROWTERMINATOR = 'newRow'
+            ROWTERMINATOR = '\n'
 )
 update [dbo].routes
 set agency_route_id = N'SR:' + cast(route_id as nvarchar(200))
@@ -296,7 +296,7 @@ With
 (
 			FIRSTROW = 2,
             FIELDTERMINATOR = ',',
-            ROWTERMINATOR = 'newRow'
+            ROWTERMINATOR = '\n'
 )
 update [dbo].routes
 set agency_route_id = N'ST:' + cast(route_id as nvarchar(200))
@@ -307,7 +307,7 @@ With
 (
 			FIRSTROW = 2,
             FIELDTERMINATOR = ',',
-            ROWTERMINATOR = 'newRow'
+            ROWTERMINATOR = '\n'
 )
 update [dbo].routes
 set agency_route_id = N'UC:' + cast(route_id as nvarchar(200))
@@ -318,7 +318,7 @@ With
 (
 			FIRSTROW = 2,
             FIELDTERMINATOR = ',',
-            ROWTERMINATOR = 'newRow'
+            ROWTERMINATOR = '\n'
 )
 update [dbo].routes
 set agency_route_id = N'VC:' + cast(route_id as nvarchar(200))
@@ -329,7 +329,7 @@ With
 (
 			FIRSTROW = 2,
             FIELDTERMINATOR = ',',
-            ROWTERMINATOR = 'newRow'
+            ROWTERMINATOR = '\n'
 )
 update [dbo].routes
 set agency_route_id = N'VN:' + cast(route_id as nvarchar(200))
@@ -340,7 +340,7 @@ With
 (
 			FIRSTROW = 2,
             FIELDTERMINATOR = ',',
-            ROWTERMINATOR = 'newRow'
+            ROWTERMINATOR = '\n'
 )
 update [dbo].routes
 set agency_route_id = N'WC:' + cast(route_id as nvarchar(200))
@@ -351,7 +351,7 @@ With
 (
 			FIRSTROW = 2,
             FIELDTERMINATOR = ',',
-            ROWTERMINATOR = 'newRow'
+            ROWTERMINATOR = '\n'
 )
 update [dbo].routes
 set agency_route_id = N'WH:' + cast(route_id as nvarchar(200))
