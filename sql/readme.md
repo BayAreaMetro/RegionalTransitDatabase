@@ -1,6 +1,6 @@
 ### data loading scripts   
 ### DB Builder
-
+DB_Build_Script [https://github.com/MetropolitanTransportationCommission/RegionalTransitDatabase/blob/master/sql/DB_Build_Script.sql]
 
 etl/      
 CALENDAR_TABLE.sql    
