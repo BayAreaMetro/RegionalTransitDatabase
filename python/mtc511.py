@@ -1,18 +1,20 @@
 #todo: move this script/process to a container or service such as lambda
-from credentials import APIKEY
-import zipfile
-import shutil
 import os
+import pickle
 
 #using XML instead of JSON because its not clear the JSON endpoint works
-operator_url = "http://api.511.org/transit/operators?api_key={}&Format=XML".format(APIKEY)
 
-import requests
+def get_511_orgs_dict():
+    with open('org_acroynms.pickle', 'wb') as f:
+    pickle.dump(org_acronyms, f) 
+    from credentials import APIKEY
+    import requests
+    import xmltodict
+    operator_url = "http://api.511.org/transit/operators?api_key={}&Format=XML".format(APIKEY)
+    j = requests.get(url_511)
+    d = xmltodict.parse(j.content)
+    return d
 
-j = requests.get(operator_url)
-
-import xmltodict
-d = xmltodict.parse(j.content)
 orgs_list = d['siri:Siri']['siri:ServiceDelivery']['DataObjectDelivery']['dataObjects']['ResourceFrame']['organisations']['Operator']
 
 org_acronyms = []
@@ -25,7 +27,6 @@ orgs_textfile = open("orgs.txt","w")
 orgs_textfile.write(str(org_acronyms))
 
 #write org acronyms out for use in arcpy/pro
-import pickle
 with open('org_acroynms.pickle', 'wb') as f:
     pickle.dump(org_acronyms, f) 
 
@@ -34,14 +35,23 @@ def get_511_gtfs_zip(private_code, apikey=APIKEY):
 	return requests.get(request_url, stream=True) #todo: add error handling
 
 def write_511_gtfs_to_disk(r, path):
-	if r.status_code == 200:
-		with open(path, 'wb') as f:
-			#r.raw.decode_content = True
-			#todo: unzip to dir
-			shutil.copyfileobj(r.raw, f)
+    import shutil
+    if r.status_code == 200:
+    	with open(path, 'wb') as f:
+    		#r.raw.decode_content = True
+    		#todo: unzip to dir
+    		shutil.copyfileobj(r.raw, f)
+
+def validate_511_feed(orgname):
+    org_zip = 'data/gtfs/{}.zip'.format(orgname)
+    with open("python/feedvalidator.py") as f:
+        code = compile(f.read(), "python/feedvalidator.py {}".format(org_zip), 'exec')
+        exec(code, global_vars, local_vars)
+
 
 #from http://stackoverflow.com/questions/12886768/how-to-unzip-file-in-python-on-all-oses
 def unzip(source_filename, dest_dir):
+    import zipfile
     with zipfile.ZipFile(source_filename) as zf:
         for member in zf.infolist():
             # Path traversal defense copied from
@@ -56,8 +66,11 @@ def unzip(source_filename, dest_dir):
                         break
                 if word in (os.curdir, os.pardir, ''):
                     continue
-                path = os.path.join(path, word)anac
+                path = os.path.join(path, word)
             zf.extract(member, path)
+
+
+d = get_511_orgs_dict()
 
 for org in org_acronyms:
 	org_zip = 'data/gtfs/{}.zip'.format(org)
