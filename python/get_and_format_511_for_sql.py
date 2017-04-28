@@ -1,4 +1,4 @@
-from mtc511 import get_511_orgs_dict get_511_gtfs_zip write_511_gtfs_to_disk validate_511_feed unzip
+from mtc511 import get_511_orgs_dict, get_511_gtfs_zip, write_511_gtfs_to_disk, unzip
 
 d = get_511_orgs_dict()
 
