@@ -1,465 +1,105 @@
---Data Preprocessing Steps.
---Be sure to add approppriate line terminators and field terminators for all text lines in RTD tables.  Use Sublime Text or another text wrangler to manipulate the data contents prior to importing into the database.
---add necessary unique fields, line terminators "," and newRow terminators
---Insert table values
---trips
---truncate Table dbo.trips
---select * From dbo.trips
-truncate Table dbo.[trips]
-Bulk Insert [dbo].[trips]
-From 'C:\temp\RegionalTransitDatabase\data\gtfs\3D\3D_trips.txt'
-With
-(
-			FIRSTROW = 2,
-            FIELDTERMINATOR = ',',
-            ROWTERMINATOR = 'newRow'
+DROP TABLE [dbo].[stops];
+CREATE TABLE [dbo].[trips](
+      [route_id] [varchar](200) NULL,
+      [service_id] [varchar](200) NULL,
+      [trip_id] [varchar](200) NULL,
+      [trip_headsign] [varchar](max) NULL,
+      [direction_id] [varchar](50) NULL,
+      [block_id] [varchar](50) NULL,
+      [shape_id] [varchar](50) NULL,
+      [trip_short_name] [varchar](max) NULL,
+      [agency_id] [varchar](50) NULL,
+      [agency_route_id] [varchar](200) NULL,
+      [agency_service_id] [varchar](200) NULL,
+      [agency_trip_id] [varchar](200) NULL
 )
---update unique identifier fields with Agency IDs
-update [dbo].trips
-set agency_trip_id = N'3D:' + cast(trip_id as nvarchar(200))
-,agency_service_id = N'3D:' + cast(service_id as nvarchar(200))
-,agency_route_id = N'3D:' + cast(route_id as nvarchar(200))
-,agency_id = N'3D'
-where agency_trip_id =N''
-Bulk Insert [dbo].[trips]
-From 'C:\temp\RegionalTransitDatabase\data\gtfs\AC\AC_trips.txt'
-With
-(
-			FIRSTROW = 2,
-            FIELDTERMINATOR = ',',
-            ROWTERMINATOR = 'newRow'
-)
-update [dbo].trips
-set agency_trip_id = N'AC:' + cast(trip_id as nvarchar(200))
-,agency_service_id = N'AC:' + cast(service_id as nvarchar(200))
-,agency_route_id = N'AC:' + cast(route_id as nvarchar(200))
-,agency_id = N'AC'
-where agency_trip_id =N''
-Bulk Insert [dbo].[trips]
-From 'C:\temp\RegionalTransitDatabase\data\gtfs\AM\AM_trips.txt'
-With
-(
-			FIRSTROW = 2,
-            FIELDTERMINATOR = ',',
-            ROWTERMINATOR = 'newRow'
-)
-update [dbo].trips
-set agency_trip_id = N'AM:' + cast(trip_id as nvarchar(200))
-,agency_service_id = N'AM:' + cast(service_id as nvarchar(200))
-,agency_route_id = N'AM:' + cast(route_id as nvarchar(200))
-,agency_id = N'AM'
-where agency_trip_id =N''
-Bulk Insert [dbo].[trips]
-From 'C:\temp\RegionalTransitDatabase\data\gtfs\AT\AT_trips.txt'
-With
-(
-			FIRSTROW = 2,
-            FIELDTERMINATOR = ',',
-            ROWTERMINATOR = 'newRow'
-)
-update [dbo].trips
-set agency_trip_id = N'AT:' + cast(trip_id as nvarchar(200))
-,agency_service_id = N'AT:' + cast(service_id as nvarchar(200))
-,agency_route_id = N'AT:' + cast(route_id as nvarchar(200))
-,agency_id = N'AT'
-where agency_trip_id =N''
-Bulk Insert [dbo].[trips]
-From 'C:\temp\RegionalTransitDatabase\data\gtfs\AY\AY_trips.txt'
-With
-(
-			FIRSTROW = 2,
-            FIELDTERMINATOR = ',',
-            ROWTERMINATOR = 'newRow'
-)
-update [dbo].trips
-set agency_trip_id = N'AY:' + cast(trip_id as nvarchar(200))
-,agency_service_id = N'AY:' + cast(service_id as nvarchar(200))
-,agency_route_id = N'AY:' + cast(route_id as nvarchar(200))
-,agency_id = N'AY'
-where agency_trip_id =N''
-Bulk Insert [dbo].[trips]
-From 'C:\temp\RegionalTransitDatabase\data\gtfs\BA\BA_trips.txt'
-With
-(
-			FIRSTROW = 2,
-            FIELDTERMINATOR = ',',
-            ROWTERMINATOR = 'newRow'
-)
-update [dbo].trips
-set agency_trip_id = N'BA:' + cast(trip_id as nvarchar(200))
-,agency_service_id = N'BA:' + cast(service_id as nvarchar(200))
-,agency_route_id = N'BA:' + cast(route_id as nvarchar(200))
-,agency_id = N'BA'
-where agency_trip_id =N''
-Bulk Insert [dbo].[trips]
-From 'C:\temp\RegionalTransitDatabase\data\gtfs\BG\BG_trips.txt'
-With
-(
-			FIRSTROW = 2,
-            FIELDTERMINATOR = ',',
-            ROWTERMINATOR = 'newRow'
-)
-update [dbo].trips
-set agency_trip_id = N'BG:' + cast(trip_id as nvarchar(200))
-,agency_service_id = N'BG:' + cast(service_id as nvarchar(200))
-,agency_route_id = N'BG:' + cast(route_id as nvarchar(200))
-,agency_id = N'BG'
-where agency_trip_id =N''
-Bulk Insert [dbo].[trips]
-From 'C:\temp\RegionalTransitDatabase\data\gtfs\CC\CC_trips.txt'
-With
-(
-			FIRSTROW = 2,
-            FIELDTERMINATOR = ',',
-            ROWTERMINATOR = 'newRow'
-)
-update [dbo].trips
-set agency_trip_id = N'CC:' + cast(trip_id as nvarchar(200))
-,agency_service_id = N'CC:' + cast(service_id as nvarchar(200))
-,agency_route_id = N'CC:' + cast(route_id as nvarchar(200))
-,agency_id = N'CC'
-where agency_trip_id =N''
-Bulk Insert [dbo].[trips]
-From 'C:\temp\RegionalTransitDatabase\data\gtfs\CE\CE_trips.txt'
-With
-(
-			FIRSTROW = 2,
-            FIELDTERMINATOR = ',',
-            ROWTERMINATOR = 'newRow'
-)
-update [dbo].trips
-set agency_trip_id = N'CE:' + cast(trip_id as nvarchar(200))
-,agency_service_id = N'CE:' + cast(service_id as nvarchar(200))
-,agency_route_id = N'CE:' + cast(route_id as nvarchar(200))
-,agency_id = N'CE'
-where agency_trip_id =N''
-Bulk Insert [dbo].[trips]
-From 'C:\temp\RegionalTransitDatabase\data\gtfs\CT\CT_trips.txt'
-With
-(
-			FIRSTROW = 2,
-            FIELDTERMINATOR = ',',
-            ROWTERMINATOR = 'newRow'
-)
-update [dbo].trips
-set agency_trip_id = N'CT:' + cast(trip_id as nvarchar(200))
-,agency_service_id = N'CT:' + cast(service_id as nvarchar(200))
-,agency_route_id = N'CT:' + cast(route_id as nvarchar(200))
-,agency_id = N'CT'
-where agency_trip_id =N''
-Bulk Insert [dbo].[trips]
-From 'C:\temp\RegionalTransitDatabase\data\gtfs\DE\DE_trips.txt'
-With
-(
-			FIRSTROW = 2,
-            FIELDTERMINATOR = ',',
-            ROWTERMINATOR = 'newRow'
-)
-update [dbo].trips
-set agency_trip_id = N'DE:' + cast(trip_id as nvarchar(200))
-,agency_service_id = N'DE:' + cast(service_id as nvarchar(200))
-,agency_route_id = N'DE:' + cast(route_id as nvarchar(200))
-,agency_id = N'DE'
-where agency_trip_id =N''
-Bulk Insert [dbo].[trips]
-From 'C:\temp\RegionalTransitDatabase\data\gtfs\EM\EM_trips.txt'
-With
-(
-			FIRSTROW = 2,
-            FIELDTERMINATOR = ',',
-            ROWTERMINATOR = 'newRow'
-)
-update [dbo].trips
-set agency_trip_id = N'EM:' + cast(trip_id as nvarchar(200))
-,agency_service_id = N'EM:' + cast(service_id as nvarchar(200))
-,agency_route_id = N'EM:' + cast(route_id as nvarchar(200))
-,agency_id = N'EM'
-where agency_trip_id =N''
-Bulk Insert [dbo].[trips]
-From 'C:\temp\RegionalTransitDatabase\data\gtfs\FS\FS_trips.txt'
-With
-(
-			FIRSTROW = 2,
-            FIELDTERMINATOR = ',',
-            ROWTERMINATOR = 'newRow'
-)
-update [dbo].trips
-set agency_trip_id = N'FS:' + cast(trip_id as nvarchar(200))
-,agency_service_id = N'FS:' + cast(service_id as nvarchar(200))
-,agency_route_id = N'FS:' + cast(route_id as nvarchar(200))
-,agency_id = N'FS'
-where agency_trip_id =N''
-Bulk Insert [dbo].[trips]
-From 'C:\temp\RegionalTransitDatabase\data\gtfs\GF\trips.txt'
-With
-(
-			FIRSTROW = 2,
 
-            FIELDTERMINATOR = ',',
-            ROWTERMINATOR = 'newRow'
-)
-update [dbo].trips
-set agency_trip_id = N'GF:' + cast(trip_id as nvarchar(200))
-,agency_service_id = N'GF:' + cast(service_id as nvarchar(200))
-,agency_route_id = N'GF:' + cast(route_id as nvarchar(200))
-,agency_id = N'GF'
-where agency_trip_id =N''
-Bulk Insert [dbo].[trips]
-From 'C:\temp\RegionalTransitDatabase\data\gtfs\GG\GG_trips.txt'
-With
+CREATE TABLE #TRANSIT_AGENGY_ACRONYMS
 (
-			FIRSTROW = 2,
-            FIELDTERMINATOR = ',',
-            ROWTERMINATOR = 'newRow'
+SHORTNAME VARCHAR(128) 
 )
-update [dbo].trips
-set agency_trip_id = N'GG:' + cast(trip_id as nvarchar(200))
-,agency_service_id = N'GG:' + cast(service_id as nvarchar(200))
-,agency_route_id = N'GG:' + cast(route_id as nvarchar(200))
-,agency_id = N'GG'
-where agency_trip_id =N''
-Bulk Insert [dbo].[trips]
-From 'C:\temp\RegionalTransitDatabase\data\gtfs\HF\HF_trips.txt'
-With
-(
-			FIRSTROW = 2,
-            FIELDTERMINATOR = ',',
-            ROWTERMINATOR = 'newRow'
-)
-update [dbo].trips
-set agency_trip_id = N'HF:' + cast(trip_id as nvarchar(200))
-,agency_service_id = N'HF:' + cast(service_id as nvarchar(200))
-,agency_route_id = N'HF:' + cast(route_id as nvarchar(200))
-,agency_id = N'HF'
-where agency_trip_id =N''
-Bulk Insert [dbo].[trips]
-From 'C:\temp\RegionalTransitDatabase\data\gtfs\MA\MA_trips.txt'
-With
-(
-			FIRSTROW = 2,
-            FIELDTERMINATOR = ',',
-            ROWTERMINATOR = 'newRow'
-)
-update [dbo].trips
-set agency_trip_id = N'MA:' + cast(trip_id as nvarchar(200))
-,agency_service_id = N'MA:' + cast(service_id as nvarchar(200))
-,agency_route_id = N'MA:' + cast(route_id as nvarchar(200))
-,agency_id = N'MA'
-where agency_trip_id =N''
-Bulk Insert [dbo].[trips]
-From 'C:\temp\RegionalTransitDatabase\data\gtfs\MS\MS_trips.txt'
-With
-(
-			FIRSTROW = 2,
-            FIELDTERMINATOR = ',',
-            ROWTERMINATOR = 'newRow'
-)
-update [dbo].trips
-set agency_trip_id = N'MS:' + cast(trip_id as nvarchar(200))
-,agency_service_id = N'MS:' + cast(service_id as nvarchar(200))
-,agency_route_id = N'MS:' + cast(route_id as nvarchar(200))
-,agency_id = N'MS'
-where agency_trip_id =N''
-Bulk Insert [dbo].[trips]
-From 'C:\temp\RegionalTransitDatabase\data\gtfs\PE\PE_trips.txt'
-With
-(
-			FIRSTROW = 2,
-            FIELDTERMINATOR = ',',
-            ROWTERMINATOR = 'newRow'
-)
-update [dbo].trips
-set agency_trip_id = N'PE:' + cast(trip_id as nvarchar(200))
-,agency_service_id = N'PE:' + cast(service_id as nvarchar(200))
-,agency_route_id = N'PE:' + cast(route_id as nvarchar(200))
-,agency_id = N'PE'
-where agency_trip_id =N''
-Bulk Insert [dbo].[trips]
-From 'C:\temp\RegionalTransitDatabase\data\gtfs\RV\RV_trips.txt'
-With
-(
-			FIRSTROW = 2,
-            FIELDTERMINATOR = ',',
-            ROWTERMINATOR = 'newRow'
-)
-update [dbo].trips
-set agency_trip_id = N'RV:' + cast(trip_id as nvarchar(200))
-,agency_service_id = N'RV:' + cast(service_id as nvarchar(200))
-,agency_route_id = N'RV:' + cast(route_id as nvarchar(200))
-,agency_id = N'RV'
-where agency_trip_id =N''
-Bulk Insert [dbo].[trips]
-From 'C:\temp\RegionalTransitDatabase\data\gtfs\SB\SB_trips.txt'
-With
-(
-			FIRSTROW = 2,
-            FIELDTERMINATOR = ',',
-            ROWTERMINATOR = 'newRow'
-)
-update [dbo].trips
-set agency_trip_id = N'SB:' + cast(trip_id as nvarchar(200))
-,agency_service_id = N'SB:' + cast(service_id as nvarchar(200))
-,agency_route_id = N'SB:' + cast(route_id as nvarchar(200))
-,agency_id = N'SB'
-where agency_trip_id =N''
-Bulk Insert [dbo].[trips]
-From 'C:\temp\RegionalTransitDatabase\data\gtfs\SC\SC_trips.txt'
-With
-(
-			FIRSTROW = 2,
-            FIELDTERMINATOR = ',',
-            ROWTERMINATOR = 'newRow'
-)
-update [dbo].trips
-set agency_trip_id = N'SC:' + cast(trip_id as nvarchar(200))
-,agency_service_id = N'SC:' + cast(service_id as nvarchar(200))
-,agency_route_id = N'SC:' + cast(route_id as nvarchar(200))
-,agency_id = N'SC'
-where agency_trip_id =N''
-Bulk Insert [dbo].[trips]
-From 'C:\temp\RegionalTransitDatabase\data\gtfs\SF\SF_trips.txt'
-With
-(
-			FIRSTROW = 2,
-            FIELDTERMINATOR = ',',
-            ROWTERMINATOR = 'newRow'
-)
-update [dbo].trips
-set agency_trip_id = N'SF:' + cast(trip_id as nvarchar(200))
-,agency_service_id = N'SF:' + cast(service_id as nvarchar(200))
-,agency_route_id = N'SF:' + cast(route_id as nvarchar(200))
-,agency_id = N'SF'
-where agency_trip_id =N''
-Bulk Insert [dbo].[trips]
-From 'C:\temp\RegionalTransitDatabase\data\gtfs\SM\SM_trips.txt'
-With
-(
-			FIRSTROW = 2,
-            FIELDTERMINATOR = ',',
-            ROWTERMINATOR = 'newRow'
-)
-update [dbo].trips
-set agency_trip_id = N'SM:' + cast(trip_id as nvarchar(200))
-,agency_service_id = N'SM:' + cast(service_id as nvarchar(200))
-,agency_route_id = N'SM:' + cast(route_id as nvarchar(200))
-,agency_id = N'SM'
-where agency_trip_id =N''
-Bulk Insert [dbo].[trips]
-From 'C:\temp\RegionalTransitDatabase\data\gtfs\SO\SO_trips.txt'
-With
-(
-			FIRSTROW = 2,
-            FIELDTERMINATOR = ',',
-            ROWTERMINATOR = 'newRow'
-)
-update [dbo].trips
-set agency_trip_id = N'SO:' + cast(trip_id as nvarchar(200))
-,agency_service_id = N'SO:' + cast(service_id as nvarchar(200))
-,agency_route_id = N'SO:' + cast(route_id as nvarchar(200))
-,agency_id = N'SO'
-where agency_trip_id =N''
-Bulk Insert [dbo].[trips]
-From 'C:\temp\RegionalTransitDatabase\data\gtfs\SR\SR_trips.txt'
-With
-(
-			FIRSTROW = 2,
-            FIELDTERMINATOR = ',',
-            ROWTERMINATOR = 'newRow'
-)
-update [dbo].trips
-set agency_trip_id = N'SR:' + cast(trip_id as nvarchar(200))
-,agency_service_id = N'SR:' + cast(service_id as nvarchar(200))
-,agency_route_id = N'SR:' + cast(route_id as nvarchar(200))
-,agency_id = N'SR'
-where agency_trip_id =N''
-Bulk Insert [dbo].[trips]
-From 'C:\temp\RegionalTransitDatabase\data\gtfs\ST\ST_trips.txt'
-With
-(
-			FIRSTROW = 2,
-            FIELDTERMINATOR = ',',
-            ROWTERMINATOR = 'newRow'
-)
-update [dbo].trips
-set agency_trip_id = N'ST:' + cast(trip_id as nvarchar(200))
-,agency_service_id = N'ST:' + cast(service_id as nvarchar(200))
-,agency_route_id = N'ST:' + cast(route_id as nvarchar(200))
-,agency_id = N'ST'
-where agency_trip_id =N''
-Bulk Insert [dbo].[trips]
-From 'C:\temp\RegionalTransitDatabase\data\gtfs\UC\UC_trips.txt'
-With
-(
-			FIRSTROW = 2,
-            FIELDTERMINATOR = ',',
-            ROWTERMINATOR = 'newRow'
-)
-update [dbo].trips
-set agency_trip_id = N'UC:' + cast(trip_id as nvarchar(200))
-,agency_service_id = N'UC:' + cast(service_id as nvarchar(200))
-,agency_route_id = N'UC:' + cast(route_id as nvarchar(200))
-,agency_id = N'UC'
-where agency_trip_id =N''
-Bulk Insert [dbo].[trips]
-From 'C:\temp\RegionalTransitDatabase\data\gtfs\VC\VC_trips.txt'
-With
-(
-			FIRSTROW = 2,
-            FIELDTERMINATOR = ',',
-            ROWTERMINATOR = 'newRow'
-)
-update [dbo].trips
-set agency_trip_id = N'VC:' + cast(trip_id as nvarchar(200))
-,agency_service_id = N'VC:' + cast(service_id as nvarchar(200))
-,agency_route_id = N'VC:' + cast(route_id as nvarchar(200))
-,agency_id = N'VC'
-where agency_trip_id =N''
-Bulk Insert [dbo].[trips]
-From 'C:\temp\RegionalTransitDatabase\data\gtfs\VN\VN_trips.txt'
-With
-(
-			FIRSTROW = 2,
-            FIELDTERMINATOR = ',',
-            ROWTERMINATOR = 'newRow'
-)
-update [dbo].trips
-set agency_trip_id = N'VN:' + cast(trip_id as nvarchar(200))
-,agency_service_id = N'VN:' + cast(service_id as nvarchar(200))
-,agency_route_id = N'VN:' + cast(route_id as nvarchar(200))
-,agency_id = N'VN'
-where agency_trip_id =N''
-Bulk Insert [dbo].[trips]
-From 'C:\temp\RegionalTransitDatabase\data\gtfs\WC\WC_trips.txt'
-With
-(
-			FIRSTROW = 2,
-            FIELDTERMINATOR = ',',
-            ROWTERMINATOR = 'newRow'
-)
-update [dbo].trips
-set agency_trip_id = N'WC:' + cast(trip_id as nvarchar(200))
-,agency_service_id = N'WC:' + cast(service_id as nvarchar(200))
-,agency_route_id = N'WC:' + cast(route_id as nvarchar(200))
-,agency_id = N'WC'
-where agency_trip_id =N''
-Bulk Insert [dbo].[trips]
-From 'C:\temp\RegionalTransitDatabase\data\gtfs\WH\WH_trips.txt'
-With
-(
-			FIRSTROW = 2,
-            FIELDTERMINATOR = ',',
-            ROWTERMINATOR = 'newRow'
-)
-update [dbo].trips
-set agency_trip_id = N'WH:' + cast(trip_id as nvarchar(200))
-,agency_service_id = N'WH:' + cast(service_id as nvarchar(200))
-,agency_route_id = N'WH:' + cast(route_id as nvarchar(200))
-,agency_id = N'WH'
-where agency_trip_id =N''
 
-update [dbo].trips
-set agency_route_id = replace(replace(agency_route_id, CHAR(13),''),CHAR(10),'')
-,agency_service_id = replace(replace(agency_service_id, CHAR(13),''),CHAR(10),'')
-,agency_trip_id = replace(replace(agency_trip_id, CHAR(13),''),CHAR(10),'')
-select * From dbo.trips
+INSERT INTO #TRANSIT_AGENGY_ACRONYMS
+VALUES
+('AC'),
+('HF'),
+('CE'),
+('AY'),
+('AT'),
+('BA'),
+('BG'),
+('CT'),
+('AM'),
+('CM'),
+('CC'),
+('DE'),
+('EM'),
+('FS'),
+('GF'),
+('GG'),
+('MA'),
+('PE'),
+('RV'),
+('SM'),
+('SB'),
+('SR'),
+('SF'),
+('SA'),
+('ST'),
+('SO'),
+('MS'),
+('3D'),
+('UC'),
+('VC'),
+('VN'),
+('SC'),
+('WC'),
+('WH')
 
+DECLARE @ORG as VARCHAR(128); 
+DECLARE @SQL VARCHAR(MAX);
+DECLARE @SHORTNAMEC AS CURSOR; 
+
+DECLARE @LoadTime VARCHAR(100) = (select REPLACE(convert(varchar(10), GETDATE(), 108),':','') )
+
+SET @SHORTNAMEC = CURSOR FOR 
+SELECT SHORTNAME
+FROM #TRANSIT_AGENGY_ACRONYMS; 
+
+OPEN @SHORTNAMEC 
+FETCH NEXT FROM @SHORTNAMEC INTO @ORG; 
+
+WHILE @@FETCH_STATUS = 0 
+BEGIN 
+      SET @SQL = 
+
+            '
+            Bulk Insert [dbo].trips
+            From "C:\\temp\\RegionalTransitDatabase\\data\\gtfs\\' + @ORG + '\\trips.txt"
+            With
+            (
+                              FIRSTROW = 2,
+                        FIELDTERMINATOR = '','',
+                        ROWTERMINATOR = ''0x0A'',
+                        ERRORFILE = ''C:\\temp\\RegionalTransitDatabase\\data\\gtfs\\' + @ORG + '\\trips_load_error.txt' + @LoadTime + '.txt''
+            )
+            '
+            BEGIN
+                  BEGIN TRY
+                        EXEC(@SQL)
+                        FETCH NEXT FROM @SHORTNAMEC INTO @ORG; 
+                  END TRY
+                  BEGIN CATCH
+                        PRINT(@ORG)
+                        FETCH NEXT FROM @SHORTNAMEC INTO @ORG; 
+                  END CATCH
+            END
+
+END 
+
+CLOSE @SHORTNAMEC; 
+DEALLOCATE @SHORTNAMEC; 
+
+DROP TABLE #TRANSIT_AGENGY_ACRONYMS;
+
+SELECT COUNT(*) from [dbo].trips;

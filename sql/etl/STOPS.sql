@@ -105,12 +105,4 @@ DROP TABLE #TRANSIT_AGENGY_ACRONYMS;
 
 SELECT COUNT(*) from [dbo].[stops];
 
---fix carriage return records due to what appears to be a cast issue
-update [gtfs_2016].stops
-set agency_stop_id = agency_id + ':' + stop_id
-
-
-
-select * From gtfs_2016.stops order by agency_id
-
 
