@@ -63,35 +63,4 @@ for (txt in dir(pattern = "shapes.txt$",full.names=TRUE,recursive=TRUE)){
                                     shape_dist_traveled = col_double())))
 }
 write.csv(shapes, file="all_shapes.csv")
-# Warning: 10508 parsing failures.
-# row      col   expected  actual              file
-# 99182 shape_id an integer ECR0207 './SM/shapes.txt'
-# 99183 shape_id an integer ECR0207 './SM/shapes.txt'
-# 99184 shape_id an integer ECR0207 './SM/shapes.txt'
-# 99185 shape_id an integer ECR0207 './SM/shapes.txt'
-# 99186 shape_id an integer ECR0207 './SM/shapes.txt'
-
-# Warning: 69685 parsing failures.
-# row      col               expected actual              file
-# 3357 shape_id no trailing characters -MV-10 './MA/shapes.txt'
-# 3358 shape_id no trailing characters -MV-10 './MA/shapes.txt'
-# 3359 shape_id no trailing characters -MV-10 './MA/shapes.txt'
-# 3360 shape_id no trailing characters -MV-10 './MA/shapes.txt'
-# 3361 shape_id no trailing characters -MV-10 './MA/shapes.txt'
-
-# Warning: 13635 parsing failures.
-# row      col               expected actual              file
-# 7539 shape_id no trailing characters  X0042 './GG/shapes.txt'
-# 7540 shape_id no trailing characters  X0042 './GG/shapes.txt'
-# 7541 shape_id no trailing characters  X0042 './GG/shapes.txt'
-# 7542 shape_id no trailing characters  X0042 './GG/shapes.txt'
-# 7543 shape_id no trailing characters  X0042 './GG/shapes.txt'
-
-# Warning: 64798 parsing failures.
-# row      col               expected actual              file
-# 58885 shape_id no trailing characters  L0006 './AC/shapes.txt'
-# 58886 shape_id no trailing characters  L0006 './AC/shapes.txt'
-# 58887 shape_id no trailing characters  L0006 './AC/shapes.txt'
-# 58888 shape_id no trailing characters  L0006 './AC/shapes.txt'
-# 58889 shape_id no trailing characters  L0006 './AC/shapes.txt'
 
