@@ -67,6 +67,8 @@ select * From calendar order by agency_service_id
 
 ALTER TABLE stop_times ADD agency_trip_id NVARCHAR(200) NULL
 ALTER TABLE stop_times ADD agency_stop_id NVARCHAR(200) NULL
+ALTER TABLE stop_times ADD arrival_hour INTEGER NULL
+
 
 update stop_times
 set agency_stop_id = agency_id + ':' + replace(replace(stop_id, CHAR(13),''),CHAR(10),'')
@@ -77,9 +79,10 @@ where agency_stop_id IS NULL
 --into stop_times_processed
 --From stop_times
 
---select left(arrival_time,2) - 24 as arr_time from stop_times where left(arrival_time,2)>23 order by arr_time desc
-
 update stop_times
+set arrival_hour = PARSENAME(REPLACE(arrival_time, ':', '.'), 3)
+
+/*update stop_times
 set arrival_time = replace(arrival_time, left(arrival_time,2), cast(left(arrival_time,2) as int) - 24)
 where cast(left(arrival_time,2) as int)>23
 
@@ -87,7 +90,7 @@ where cast(left(arrival_time,2) as int)>23
 SELECT        CAST(arrival_time AS time) AS arr_time
 FROM            stop_times
 GROUP BY CAST(arrival_time AS time)
-ORDER BY arr_time --desc
+ORDER BY arr_time --desc*/
 
 --Due to formatting contained in the GF stop_times.txt gtfs file, correctoins are needed to repair the arrival time field so that time values are in the proper 24hr. clock format. (for the 7,8,9 hours)
 --update stop_times
