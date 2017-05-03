@@ -33,7 +33,7 @@ csvsql --db "mssql+pyodbc://%RTDLOGIN%:%RTDPASSWORD%@localhost:1433/RTD_2017?dri
 csvsql --db "mssql+pyodbc://%RTDLOGIN%:%RTDPASSWORD%@localhost:1433/RTD_2017?driver=ODBC+Driver+11+for+SQL+Server;BoolsAsChar=0" --insert "%GTFS_SOURCE_DIR%trips.csv" -e WINDOWS-1252 --no-create
 csvsql --db "mssql+pyodbc://%RTDLOGIN%:%RTDPASSWORD%@localhost:1433/RTD_2017?driver=ODBC+Driver+11+for+SQL+Server;BoolsAsChar=0" --insert "%GTFS_SOURCE_DIR%stops.csv" -e WINDOWS-1252 --no-create
 csvsql --db "mssql+pyodbc://%RTDLOGIN%:%RTDPASSWORD%@localhost:1433/RTD_2017?driver=ODBC+Driver+11+for+SQL+Server;BoolsAsChar=0" --insert "%GTFS_SOURCE_DIR%agency.csv" -e WINDOWS-1252 --no-create
-csvsql --db "mssql+pyodbc://%RTDLOGIN%:%RTDPASSWORD%@localhost:1433/RTD_2017?driver=ODBC+Driver+11+for+SQL+Server;BoolsAsChar=0" --insert "%GTFS_SOURCE_DIR%calendar.csv" -e WINDOWS-1252 --no-create
-rem csvsql --db "mssql+pyodbc://%RTDLOGIN%:%RTDPASSWORD%@localhost:1433/RTD_2017?driver=ODBC+Driver+11+for+SQL+Server;BoolsAsChar=0" --insert "%GTFS_SOURCE_DIR%shapes.csv" -e WINDOWS-1252 --no-create
-csvsql --db "mssql+pyodbc://%RTDLOGIN%:%RTDPASSWORD%@localhost:1433/RTD_2017?driver=ODBC+Driver+11+for+SQL+Server;BoolsAsChar=0" --insert "%GTFS_SOURCE_DIR%stop_times.csv" -e WINDOWS-1252 --no-create
+csvsql --db "mssql+pyodbc://%RTDLOGIN%:%RTDPASSWORD%@localhost:1433/RTD_2017?driver=ODBC+Driver+11+for+SQL+Server;BoolsAsChar=0" --insert "%GTFS_SOURCE_DIR%calendar.csv" -e WINDOWS-1252 --no-create 
+rem csvsql --db "mssql+pyodbc://%RTDLOGIN%:%RTDPASSWORD%@localhost:1433/RTD_2017?driver=ODBC+Driver+11+for+SQL+Server;BoolsAsChar=0" --insert "%GTFS_SOURCE_DIR%shapes.csv" -e WINDOWS-1252 --no-create 
+csvsql --db "mssql+pyodbc://%RTDLOGIN%:%RTDPASSWORD%@localhost:1433/RTD_2017?driver=ODBC+Driver+11+for+SQL+Server;BoolsAsChar=0" --insert "%GTFS_SOURCE_DIR%stop_times.csv" -e WINDOWS-1252 --no-create --no-inference
 
