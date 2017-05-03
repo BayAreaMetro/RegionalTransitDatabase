@@ -6,8 +6,10 @@ rem csvcut -C "route_text_color","route_color" %GTFS_SOURCE_DIR%routes_back.csv 
 rem del %GTFS_SOURCE_DIR%routes_back.csv
 
 rem Load into DB
-rem first, setup pyodbc and connect to db directly
-rem it may be necessary to use the *.whl here:
+rem first, setup pyodbc and csvkit and connect to db directly
+rem i used python 3.4. for example, in anaconda prompt: 
+rem conda create -n csv python=3.4 csvkit pyodbc
+rem on windows, it may be necessary to use the *.whl herefor pyodbc
 rem http://www.lfd.uci.edu/~gohlke/pythonlibs/#pyodbc
 rem connection string info is here:
 rem https://github.com/mkleehammer/pyodbc/wiki/Connecting-to-SQL-Server-from-Windows

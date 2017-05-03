@@ -7,8 +7,7 @@ CREATE TABLE trips (
 	block_id VARCHAR(100) NULL, 
 	shape_id VARCHAR(100) NULL, 
 	trip_short_name VARCHAR(100) NULL, 
-	CHECK (direction_id IN (0, 1)), 
-	CHECK (trip_short_name IN (0, 1))
+	CHECK (direction_id IN (0, 1)) 
 );
 
 CREATE TABLE agency (
@@ -42,7 +41,7 @@ CREATE TABLE routes (
 	agency_id VARCHAR(2) NOT NULL, 
 	route_short_name VARCHAR(30) NULL, 
 	route_long_name VARCHAR(59) NULL, 
-	route_type DECIMAL NOT NULL
+	route_type INTEGER NOT NULL
 );
 
 CREATE TABLE calendar (
