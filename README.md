@@ -31,6 +31,16 @@ Calculate frequency of service for stops and routes.
 
 #### Steps:   
 
+A pseudo-shell/bat script with links reflecting the process thus far:   
+
+[get_and_format_511_for_sql](https://github.com/MetropolitanTransportationCommission/RegionalTransitDatabase/blob/master/python/get_and_format_511_for_sql.py)   
+[interpolate blank stop times](https://github.com/MetropolitanTransportationCommission/RegionalTransitDatabase/blob/master/python/preprocess_gtfs_folders.py)   
+[combine_provider_tables](https://github.com/MetropolitanTransportationCommission/RegionalTransitDatabase/blob/master/etl/combine_provider_tables.R)   
+[create_all_tables](https://github.com/MetropolitanTransportationCommission/RegionalTransitDatabase/blob/master/etl/create_all_tables.sql)   
+[load_combined_csv_to_db](https://github.com/MetropolitanTransportationCommission/RegionalTransitDatabase/blob/master/etl/load_combined_csv_to_db.bat)   
+[fixups](https://github.com/MetropolitanTransportationCommission/RegionalTransitDatabase/blob/master/etl/fixups.sql)   
+
+
 ##### Interpolate Blank Stop Times   
 
 Run Preprocess [stop_times](https://github.com/Esri/public-transit-tools/tree/6451cf1de24d4e5b7337df402135f351a7eaf181/interpolate-blank-stop-times/scripts) for all bus operators. No need to run for Ferry and Rail operators as these do not have any blank stop times in the stop_times.txt datasets.   
