@@ -1,3 +1,20 @@
+/*
+OPTIONAL UTILITIES:
+
+TRUNCATE TABLE routes;
+TRUNCATE TABLE trips;
+TRUNCATE TABLE stops;
+TRUNCATE TABLE agency;
+TRUNCATE TABLE calendar;
+TRUNCATE TABLE stop_times;
+
+DROP TABLE routes;
+DROP TABLE trips;
+DROP TABLE stops;
+DROP TABLE agency;
+DROP TABLE calendar;
+DROP TABLE stop_times;*/
+
 CREATE TABLE trips (
 	route_id VARCHAR(100) NULL, 
 	service_id VARCHAR(100) NOT NULL, 
@@ -6,7 +23,8 @@ CREATE TABLE trips (
 	direction_id BIT NULL, 
 	block_id VARCHAR(100) NULL, 
 	shape_id VARCHAR(100) NULL, 
-	trip_short_name VARCHAR(100) NULL, 
+	trip_short_name VARCHAR(100) NULL,
+	agency_id VARCHAR(2) NOT NULL, 
 	CHECK (direction_id IN (0, 1)) 
 );
 
@@ -24,7 +42,8 @@ CREATE TABLE stops (
 	stop_name VARCHAR(100) NOT NULL, 
 	stop_lat VARCHAR(max) NOT NULL, 
 	stop_lon VARCHAR(max) NOT NULL, 
-	zone_id VARCHAR(200) NULL
+	zone_id VARCHAR(200) NULL,
+	agency_id VARCHAR(2) NOT NULL, 
 );
 
 CREATE TABLE stop_times (
@@ -33,7 +52,8 @@ CREATE TABLE stop_times (
 	arrival_time VARCHAR(50) NOT NULL, 
 	departure_time VARCHAR(50) NOT NULL, 
 	stop_id VARCHAR(100) NOT NULL, 
-	stop_sequence INTEGER NOT NULL
+	stop_sequence INTEGER NOT NULL,
+	agency_id VARCHAR(2) NOT NULL, 
 );
 
 CREATE TABLE routes (
@@ -41,7 +61,8 @@ CREATE TABLE routes (
 	agency_id VARCHAR(2) NOT NULL, 
 	route_short_name VARCHAR(30) NULL, 
 	route_long_name VARCHAR(59) NULL, 
-	route_type INTEGER NOT NULL
+	route_type INTEGER NOT NULL,
+	agency_id VARCHAR(2) NOT NULL, 
 );
 
 CREATE TABLE calendar (
@@ -55,6 +76,7 @@ CREATE TABLE calendar (
 	sunday BIT NOT NULL, 
 	start_date VARCHAR(50) NOT NULL, 
 	end_date VARCHAR(50) NOT NULL, 
+	agency_id VARCHAR(2) NOT NULL, 
 	CHECK (monday IN (0, 1)), 
 	CHECK (tuesday IN (0, 1)), 
 	CHECK (wednesday IN (0, 1)), 

@@ -1,18 +1,26 @@
 library(readr)
 
+build_table <- function(some_path, col_names=TRUE, col_types=NULL) {
+  operator_df = read_csv(some_path, col_names, col_types)
+  operator_prefix <- strsplit(some_path, "/")[[1]][2]
+  x <- vector(mode="character", length=nrow(operator_df))
+  x[1:length(x)] = operator_prefix
+  operator_df["agency_id"] <- operator_prefix
+  return(operator_df)
+}
+
 ## bind all tables together
 
 setwd("C:/temp/RegionalTransitDatabase/data/gtfs_csvkit")
 routes = NULL
 for (txt in dir(pattern = "routes.txt$",full.names=TRUE,recursive=TRUE)){
-  print(txt)
-  routes = rbind(routes, read_csv(txt))
+  routes = rbind(routes, build_table(txt))
 }
 write.csv(routes, file="routes.csv", row.names=FALSE)
 
 stops = NULL
 for (txt in dir(pattern = "stops.txt$",full.names=TRUE,recursive=TRUE)){
-  stops = rbind(stops, read_csv(txt))
+  stops = rbind(stops, build_table(txt))
 }
 write.csv(stops, file="stops.csv", row.names=FALSE)
 rm(stops) # drop large dataframe
@@ -24,7 +32,7 @@ for (txt in dir(pattern = "stop_times.txt$",full.names=TRUE,recursive=TRUE)){
   ##or just cast as text and fix in sql.
   
   
-  stop_times = rbind(stop_times, read_csv(txt, col_types= 
+  stop_times = rbind(stop_times, build_table(txt, col_types= 
                                                 cols(
                                                   trip_id = col_character(),
                                                   arrival_time = col_character(),
@@ -36,25 +44,25 @@ write.csv(stop_times, file="stop_times.csv", row.names=FALSE)
 rm(stop_times) # drop large dataframe
 trips = NULL
 for (txt in dir(pattern = "trips.txt$",full.names=TRUE,recursive=TRUE)){
-  trips = rbind(trips, read_csv(txt))
+  trips = rbind(trips, build_table(txt))
 }
 write.csv(trips, file="trips.csv", row.names=FALSE)
 calendar = NULL
 for (txt in dir(pattern = "calendar.txt$",full.names=TRUE,recursive=TRUE)){
-  calendar = rbind(calendar, read_csv(txt))
+  calendar = rbind(calendar, build_table(txt))
 }
 write.csv(calendar, file="calendar.csv", row.names=FALSE)
 
 agency = NULL
 for (txt in dir(pattern = "agency.txt$",full.names=TRUE,recursive=TRUE)){
-  agency = rbind(agency, read_csv(txt))
+  agency = rbind(agency, build_table(txt))
 }
 write.csv(agency, file="agency.csv", row.names=FALSE)
 
 ## Several errors found during table bind due to malformed values.  See errors below.
 shapes = NULL
 for (txt in dir(pattern = "shapes.txt$",full.names=TRUE,recursive=TRUE)){
-  shapes = rbind(shapes, read_csv(txt, col_types =
+  shapes = rbind(shapes, build_table(txt, col_types =
                                   cols(
                                     shape_id = col_character(),
                                     shape_pt_lon = col_double(),
