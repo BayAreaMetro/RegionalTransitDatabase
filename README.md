@@ -40,18 +40,7 @@ A pseudo-shell/bat script with links reflecting the process thus far:
 [load_combined_csv_to_db](https://github.com/MetropolitanTransportationCommission/RegionalTransitDatabase/blob/master/etl/load_combined_csv_to_db.bat)   
 [fixups](https://github.com/MetropolitanTransportationCommission/RegionalTransitDatabase/blob/master/etl/fixups.sql)   
 
-
-##### Interpolate Blank Stop Times   
-
-Run Preprocess [stop_times](https://github.com/Esri/public-transit-tools/tree/6451cf1de24d4e5b7337df402135f351a7eaf181/interpolate-blank-stop-times/scripts) for all bus operators. No need to run for Ferry and Rail operators as these do not have any blank stop times in the stop_times.txt datasets.   
-
-After running this tool for each operator, run the [Simple Interpolation Tool](https://github.com/Esri/public-transit-tools/blob/6451cf1de24d4e5b7337df402135f351a7eaf181/interpolate-blank-stop-times/scripts/simple_interpolate.py) to create the new stop_times.txt datasets. Be sure to rename the old stop_times.txt to stop_times_OLD.txt   
-
-##### To Calculate Route headways:   
-
-###### Import the text files into the DB:   
-
-https://github.com/MetropolitanTransportationCommission/RegionalTransitDatabase/tree/master/sql/etl   
+##### To Calculate Route headways:     
 
 ###### Processing for Route Data  
 

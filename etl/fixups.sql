@@ -1,7 +1,6 @@
 ---------------
 --TRIPS
 ---------------
---performed after an insert:
 
 ALTER TABLE trips ADD agency_trip_id NVARCHAR(200) NULL
 ALTER TABLE trips ADD agency_service_id NVARCHAR(200) NULL
@@ -23,7 +22,6 @@ select * From trips
 ---------------
 --STOPS
 ---------------
---performed after an insert:
 
 ALTER TABLE stops ADD agency_stop_id NVARCHAR(200) NULL
 
