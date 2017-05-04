@@ -9,20 +9,20 @@ USE [RTD_2016_Master]
 GO
 	IF EXISTS(select * FROM sys.views where name = 'rtd_route_trips')
 			begin
-				drop view dbo.rtd_route_trips 
+				drop view rtd_route_trips 
 				PRINT 'Dropping View:'
 			end
 	ELSE
 		PRINT 'View Does Not Exist';
 GO
-		create view dbo.rtd_route_trips as
+		create view rtd_route_trips as
 		SELECT        agency.agency_id, agency.agency_name, routes.route_short_name, trips.trip_headsign, routes.route_id, trips.trip_id, trips.direction_id, routes.agency_route_id, trips.agency_trip_id, trips.agency_service_id, 
-                         routes.status, dbo.system_type.system
-FROM            dbo.agency AS agency INNER JOIN
-                         dbo.routes AS routes ON agency.agency_id = routes.agency_id INNER JOIN
-                         dbo.trips AS trips ON routes.agency_route_id = trips.agency_route_id INNER JOIN
-                         dbo.system_type ON routes.route_type = dbo.system_type.route_type
---WHERE        (dbo.system_type.system = 'Bus')
+                         routes.status, system_type.system
+FROM            agency AS agency INNER JOIN
+                         routes AS routes ON agency.agency_id = routes.agency_id INNER JOIN
+                         trips AS trips ON routes.agency_route_id = trips.agency_route_id INNER JOIN
+                         system_type ON routes.route_type = system_type.route_type
+--WHERE        (system_type.system = 'Bus')
 GO
 -----------------------------------------------------------------------------------------------
 Print 'Step 2. Building Route Stop Schedule Table (route_stop_schedule).'
@@ -30,22 +30,22 @@ Print 'Step 2. Building Route Stop Schedule Table (route_stop_schedule).'
 GO
 	IF EXISTS(select * FROM sys.views where name = 'rtd_route_stop_schedule')
 			begin
-				drop view dbo.rtd_route_stop_schedule 
+				drop view rtd_route_stop_schedule 
 				PRINT 'Dropping View: rtd_route_stop_schedule'
 			end
 	ELSE
 		PRINT 'View Does Not Exist';
 GO
-		create view dbo.rtd_route_stop_schedule as
-SELECT        dbo.rtd_route_trips.agency_id, dbo.rtd_route_trips.agency_name, dbo.rtd_route_trips.route_id, dbo.rtd_route_trips.direction_id, dbo.stops.stop_name, 
-                         CAST(dbo.stop_times.arrival_time AS time) AS arrival_time, dbo.stop_times.stop_sequence, dbo.stop_times.agency_stop_id, dbo.rtd_route_trips.status, dbo.rtd_route_trips.system, 
-                         dbo.stops.stop_lat, dbo.stops.stop_lon, dbo.calendar.monday, dbo.calendar.tuesday, dbo.calendar.wednesday, dbo.calendar.thursday, dbo.calendar.friday, 
-                         dbo.calendar.agency_service_id
-FROM            dbo.stops INNER JOIN
-                         dbo.stop_times ON dbo.stops.agency_stop_id = dbo.stop_times.agency_stop_id INNER JOIN
-                         dbo.rtd_route_trips ON dbo.stop_times.agency_trip_id = dbo.rtd_route_trips.agency_trip_id INNER JOIN
-                         dbo.calendar ON dbo.rtd_route_trips.agency_service_id = dbo.calendar.agency_service_id
-WHERE        (dbo.rtd_route_trips.system = 'Bus')
+		create view rtd_route_stop_schedule as
+SELECT        rtd_route_trips.agency_id, rtd_route_trips.agency_name, rtd_route_trips.route_id, rtd_route_trips.direction_id, stops.stop_name, 
+                         CAST(stop_times.arrival_time AS time) AS arrival_time, stop_times.stop_sequence, stop_times.agency_stop_id, rtd_route_trips.status, rtd_route_trips.system, 
+                         stops.stop_lat, stops.stop_lon, calendar.monday, calendar.tuesday, calendar.wednesday, calendar.thursday, calendar.friday, 
+                         calendar.agency_service_id
+FROM            stops INNER JOIN
+                         stop_times ON stops.agency_stop_id = stop_times.agency_stop_id INNER JOIN
+                         rtd_route_trips ON stop_times.agency_trip_id = rtd_route_trips.agency_trip_id INNER JOIN
+                         calendar ON rtd_route_trips.agency_service_id = calendar.agency_service_id
+WHERE        (rtd_route_trips.system = 'Bus')
 Go
 ------------------------------------------------------------------------------------------
 Print 'Create route_stop_schedule to remove duplicate arrival times for select operators'
@@ -53,7 +53,7 @@ Print 'Create route_stop_schedule to remove duplicate arrival times for select o
 GO
 	IF EXISTS(select * FROM sys.tables where name = 'route_stop_schedule')
 			begin
-				drop table dbo.route_stop_schedule 
+				drop table route_stop_schedule 
 				PRINT 'Dropping Table: route_stop_schedule'
 			end
 	ELSE
@@ -62,8 +62,8 @@ GO
 		
 SELECT        agency_id, agency_name, route_id, direction_id, stop_name, arrival_time, cast(stop_sequence as int) as stop_sequence, agency_stop_id, status, system, stop_lat, stop_lon, monday, tuesday, wednesday, thursday, friday, agency_service_id, 
                          COUNT(arrival_time) AS Duplicate_Arrival_Times
-into dbo.route_stop_schedule
-FROM            dbo.rtd_route_stop_schedule
+into route_stop_schedule
+FROM            rtd_route_stop_schedule
 GROUP BY agency_id, agency_name, route_id, direction_id, stop_name, arrival_time, stop_sequence, agency_stop_id, status, system, stop_lat, stop_lon, monday, tuesday, wednesday, thursday, friday, 
                          agency_service_id
 --HAVING        (system = 'Bus')
@@ -86,7 +86,7 @@ GO
 	SELECT        agency_id, agency_name, route_id, direction_id, agency_stop_id, status, system, stop_name, cast(stop_sequence as int) as stop_sequence, stop_lon, stop_lat, COUNT(stop_sequence) AS AM_Peak_Monday_Total_Trips, 
 							 240 / COUNT(stop_sequence) AS Monday_AM_Peak_Headway, CASE WHEN (240 / COUNT(stop_sequence) <= 15) THEN 'Meets Criteria' ELSE 'Does Not Meet Criteria' END AS TPA
 	into #Monday_AM_Peak_Transit_Stop_Headways
-	FROM            dbo.route_stop_schedule
+	FROM            route_stop_schedule
 	WHERE        (CAST(arrival_time AS time) BETWEEN '06:00:00.0000' AND '09:59:59.0000') AND (Monday = 1) AND hour < 23
 	GROUP BY agency_id, agency_name, route_id, direction_id, agency_service_id, agency_stop_id, status, system, stop_name, stop_sequence, stop_lon, stop_lat 
 GO
@@ -106,7 +106,7 @@ GO
 	SELECT        agency_id, agency_name, route_id, direction_id, agency_stop_id, status, system, stop_name, cast(stop_sequence as int) as stop_sequence, stop_lon, stop_lat, COUNT(stop_sequence) AS PM_Peak_Monday_Total_Trips, 
 							 240 / COUNT(stop_sequence) AS Monday_PM_Peak_Headway, CASE WHEN (240 / COUNT(stop_sequence) <= 15) THEN 'Meets Criteria' ELSE 'Does Not Meet Criteria' END AS TPA
 	into #Monday_PM_Peak_Transit_Stop_Headways
-	FROM            dbo.route_stop_schedule
+	FROM            route_stop_schedule
 	WHERE        (CAST(arrival_time AS time) BETWEEN '15:00:00.0000' AND '18:59:59.0000') AND (Monday = 1) AND hour < 23
 	GROUP BY agency_id, agency_name, route_id, direction_id, agency_service_id, agency_stop_id, status, system, stop_name, stop_sequence, stop_lon, stop_lat 
 GO
@@ -125,7 +125,7 @@ GO
 	SELECT        agency_id, agency_name, route_id, direction_id, agency_stop_id, status, system, stop_name, cast(stop_sequence as int) as stop_sequence, stop_lon, stop_lat, COUNT(stop_sequence) AS AM_Peak_Tuesday_Total_Trips, 
 							 240 / COUNT(stop_sequence) AS Tuesday_AM_Peak_Headway, CASE WHEN (240 / COUNT(stop_sequence) <= 15) THEN 'Meets Criteria' ELSE 'Does Not Meet Criteria' END AS TPA
 	into #Tuesday_AM_Peak_Transit_Stop_Headways
-	FROM            dbo.route_stop_schedule
+	FROM            route_stop_schedule
 	WHERE        (CAST(arrival_time AS time) BETWEEN '06:00:00.0000' AND '09:59:59.0000') AND (Tuesday = 1) AND hour < 23
 	GROUP BY agency_id, agency_name, route_id, direction_id, agency_service_id, agency_stop_id, status, system, stop_name, stop_sequence, stop_lon, stop_lat 
 GO
@@ -143,7 +143,7 @@ GO
 	SELECT        agency_id, agency_name, route_id, direction_id, agency_stop_id, status, system, stop_name, cast(stop_sequence as int) as stop_sequence, stop_lon, stop_lat, COUNT(stop_sequence) AS PM_Peak_Tuesday_Total_Trips, 
 							 240 / COUNT(stop_sequence) AS Tuesday_PM_Peak_Headway, CASE WHEN (240 / COUNT(stop_sequence) <= 15) THEN 'Meets Criteria' ELSE 'Does Not Meet Criteria' END AS TPA
 	into #Tuesday_PM_Peak_Transit_Stop_Headways
-	FROM            dbo.route_stop_schedule
+	FROM            route_stop_schedule
 	WHERE        (CAST(arrival_time AS time) BETWEEN '15:00:00.0000' AND '18:59:59.0000') AND (Tuesday = 1) AND hour < 23
 	GROUP BY agency_id, agency_name, route_id, direction_id, agency_service_id, agency_stop_id, status, system, stop_name, stop_sequence, stop_lon, stop_lat 
 GO
@@ -161,7 +161,7 @@ GO
 	SELECT        agency_id, agency_name, route_id, direction_id, agency_stop_id, status, system, stop_name, cast(stop_sequence as int) as stop_sequence, stop_lon, stop_lat, COUNT(stop_sequence) AS AM_Peak_Wednesday_Total_Trips, 
 							 240 / COUNT(stop_sequence) AS Wednesday_AM_Peak_Headway, CASE WHEN (240 / COUNT(stop_sequence) <= 15) THEN 'Meets Criteria' ELSE 'Does Not Meet Criteria' END AS TPA
 	into #Wednesday_AM_Peak_Transit_Stop_Headways
-	FROM            dbo.route_stop_schedule
+	FROM            route_stop_schedule
 	WHERE        (CAST(arrival_time AS time) BETWEEN '06:00:00.0000' AND '09:59:59.0000') AND (Wednesday = 1) AND hour < 23
 	GROUP BY agency_id, agency_name, route_id, direction_id, agency_service_id, agency_stop_id, status, system, stop_name, stop_sequence, stop_lon, stop_lat 
 GO
@@ -178,7 +178,7 @@ GO
 	SELECT        agency_id, agency_name, route_id, direction_id, agency_stop_id, status, system, stop_name, cast(stop_sequence as int) as stop_sequence, stop_lon, stop_lat, COUNT(stop_sequence) AS PM_Peak_Wednesday_Total_Trips, 
 							 240 / COUNT(stop_sequence) AS Wednesday_PM_Peak_Headway, CASE WHEN (240 / COUNT(stop_sequence) <= 15) THEN 'Meets Criteria' ELSE 'Does Not Meet Criteria' END AS TPA
 	into #Wednesday_PM_Peak_Transit_Stop_Headways
-	FROM            dbo.route_stop_schedule
+	FROM            route_stop_schedule
 	WHERE        (CAST(arrival_time AS time) BETWEEN '15:00:00.0000' AND '18:59:59.0000') AND (Wednesday = 1) AND hour < 23
 	GROUP BY agency_id, agency_name, route_id, direction_id, agency_service_id, agency_stop_id, status, system, stop_name, stop_sequence, stop_lon, stop_lat 
 GO
@@ -196,7 +196,7 @@ GO
 	SELECT        agency_id, agency_name, route_id, direction_id, agency_stop_id, status, system, stop_name, cast(stop_sequence as int) as stop_sequence, stop_lon, stop_lat, COUNT(stop_sequence) AS AM_Peak_Thursday_Total_Trips, 
 							 240 / COUNT(stop_sequence) AS Thursday_AM_Peak_Headway, CASE WHEN (240 / COUNT(stop_sequence) <= 15) THEN 'Meets Criteria' ELSE 'Does Not Meet Criteria' END AS TPA
 	into #Thursday_AM_Peak_Transit_Stop_Headways
-	FROM            dbo.route_stop_schedule
+	FROM            route_stop_schedule
 	WHERE        (CAST(arrival_time AS time) BETWEEN '06:00:00.0000' AND '09:59:59.0000') AND (Thursday = 1) AND hour < 23 AND hour > 23
 	GROUP BY agency_id, agency_name, route_id, direction_id, agency_service_id, agency_stop_id, status, system, stop_name, stop_sequence, stop_lon, stop_lat 
 GO
@@ -214,7 +214,7 @@ GO
 	SELECT        agency_id, agency_name, route_id, direction_id, agency_stop_id, status, system, stop_name, cast(stop_sequence as int) as stop_sequence, stop_lon, stop_lat, COUNT(stop_sequence) AS PM_Peak_Thursday_Total_Trips, 
 							 240 / COUNT(stop_sequence) AS Thursday_PM_Peak_Headway, CASE WHEN (240 / COUNT(stop_sequence) <= 15) THEN 'Meets Criteria' ELSE 'Does Not Meet Criteria' END AS TPA
 	into #Thursday_PM_Peak_Transit_Stop_Headways
-	FROM            dbo.route_stop_schedule
+	FROM            route_stop_schedule
 	WHERE        (CAST(arrival_time AS time) BETWEEN '15:00:00.0000' AND '18:59:59.0000') AND (Thursday = 1) AND hour < 23
 	GROUP BY agency_id, agency_name, route_id, direction_id, agency_service_id, agency_stop_id, status, system, stop_name, stop_sequence, stop_lon, stop_lat 
 GO
@@ -232,7 +232,7 @@ GO
 	SELECT        agency_id, agency_name, route_id, direction_id, agency_stop_id, status, system, stop_name, cast(stop_sequence as int) as stop_sequence, stop_lon, stop_lat, COUNT(stop_sequence) AS AM_Peak_Friday_Total_Trips, 
 							 240 / COUNT(stop_sequence) AS Friday_AM_Peak_Headway, CASE WHEN (240 / COUNT(stop_sequence) <= 15) THEN 'Meets Criteria' ELSE 'Does Not Meet Criteria' END AS TPA
 	into #Friday_AM_Peak_Transit_Stop_Headways
-	FROM            dbo.route_stop_schedule
+	FROM            route_stop_schedule
 	WHERE        (CAST(arrival_time AS time) BETWEEN '06:00:00.0000' AND '09:59:59.0000') AND (Friday = 1) AND hour < 23
 	GROUP BY agency_id, agency_name, route_id, direction_id, agency_service_id, agency_stop_id, status, system, stop_name, stop_sequence, stop_lon, stop_lat 
 GO
@@ -250,7 +250,7 @@ GO
 	SELECT        agency_id, agency_name, route_id, direction_id, agency_stop_id, status, system, stop_name, cast(stop_sequence as int) as stop_sequence, stop_lon, stop_lat, COUNT(stop_sequence) AS PM_Peak_Friday_Total_Trips, 
 							 240 / COUNT(stop_sequence) AS Friday_PM_Peak_Headway, CASE WHEN (240 / COUNT(stop_sequence) <= 15) THEN 'Meets Criteria' ELSE 'Does Not Meet Criteria' END AS TPA
 	into #Friday_PM_Peak_Transit_Stop_Headways
-	FROM            dbo.route_stop_schedule
+	FROM            route_stop_schedule
 	WHERE        (CAST(arrival_time AS time) BETWEEN '15:00:00.0000' AND '18:59:59.0000') AND (Friday = 1) AND hour < 23
 	GROUP BY agency_id, agency_name, route_id, direction_id, agency_service_id, agency_stop_id, status, system, stop_name, stop_sequence, stop_lon, stop_lat 
 GO
@@ -397,7 +397,7 @@ Print 'Step 5. Insert Weekday (Monday thru Friday) AM/PM Peak Headway values int
 GO
 	IF EXISTS(select * FROM sys.tables where name = 'TPA_TRANSIT_STOPS')
 		begin
-			DROP TABLE dbo.TPA_TRANSIT_STOPS 
+			DROP TABLE TPA_TRANSIT_STOPS 
 			PRINT 'Dropping Table: TPA_TRANSIT_STOPS'
 		end
 ELSE
@@ -405,7 +405,7 @@ ELSE
 GO
 	Print 'Creating Table TPA_TRANSIT_STOPS'
 GO
-	CREATE TABLE dbo.[TPA_TRANSIT_STOPS](
+	CREATE TABLE [TPA_TRANSIT_STOPS](
 	RecID int IDENTITY(1,1) NOT NULL,	
 	[agency_id] [nvarchar](100) NULL,
 	[agency_name] [nvarchar](100) NULL,
@@ -435,13 +435,13 @@ GO
 GO
 	Print 'Inserting Monday Values'
 GO
-	INSERT INTO dbo.[TPA_TRANSIT_STOPS]
+	INSERT INTO [TPA_TRANSIT_STOPS]
 							 (agency_id, agency_name, route_id, agency_stop_id, stop_name, status, system, Max_AM_Trips, Min_AM_Headway, Delete_Stop, TPA, Meets_Headway_Criteria, Stop_Description, Project_Description, stop_lon, stop_lat)
 	SELECT   agency_id, agency_name, route_id, agency_stop_id, stop_name, status, system, [Max AM Trips], [Min AM Headway], 0 as Delete_Stop, TPA, 0 as Meets_Headway_Criteria, 'Existing Transit Stop' as Stop_Description, null as Project_Description, stop_lon, stop_lat
 	FROM         #Monday_AM_Peak_Trips_15min_or_Less
 	Where [Max AM Trips] is not null
 GO
-	INSERT INTO dbo.[TPA_TRANSIT_STOPS]
+	INSERT INTO [TPA_TRANSIT_STOPS]
 							 (agency_id, agency_name, route_id, agency_stop_id, stop_name, status, system, Max_PM_Trips, Min_PM_Headway, Delete_Stop, TPA, Meets_Headway_Criteria, Stop_Description, Project_Description, stop_lon, stop_lat)
 	SELECT   agency_id, agency_name, route_id, agency_stop_id, stop_name, status, system, [Max PM Trips], [Min PM Headway],0 as Delete_Stop, TPA, 0 as Meets_Headway_Criteria, 'Existing Transit Stop' as Stop_Description, null as Project_Description, stop_lon, stop_lat
 	FROM         #Monday_PM_Peak_Trips_15min_or_Less
@@ -450,19 +450,19 @@ GO
 GO
 	Print 'Update the container table for each Weekday Value (Monday)'
 GO
-	Update dbo.[TPA_TRANSIT_STOPS]
+	Update [TPA_TRANSIT_STOPS]
 	Set Weekday = 'Monday'
 	Where Weekday is null
 GO
 	Print 'Inserting Tuesday Values'
 GO
-	INSERT INTO dbo.[TPA_TRANSIT_STOPS]
+	INSERT INTO [TPA_TRANSIT_STOPS]
 							 (agency_id, agency_name, route_id, agency_stop_id, stop_name, status, system, Max_AM_Trips, Min_AM_Headway, Delete_Stop, TPA, Meets_Headway_Criteria, Stop_Description, Project_Description, stop_lon, stop_lat)
 	SELECT   agency_id, agency_name, route_id, agency_stop_id, stop_name, status, system, [Max AM Trips], [Min AM Headway], 0 as Delete_Stop, TPA, 0 as Meets_Headway_Criteria, 'Existing Transit Stop' as Stop_Description, null as Project_Description, stop_lon, stop_lat
 	FROM         #Tuesday_AM_Peak_Trips_15min_or_Less
 	Where [Max AM Trips] is not null
 GO
-	INSERT INTO dbo.[TPA_TRANSIT_STOPS]
+	INSERT INTO [TPA_TRANSIT_STOPS]
 							 (agency_id, agency_name, route_id, agency_stop_id, stop_name, status, system, Max_PM_Trips, Min_PM_Headway, Delete_Stop, TPA, Meets_Headway_Criteria, Stop_Description, Project_Description, stop_lon, stop_lat)
 	SELECT   agency_id, agency_name, route_id, agency_stop_id, stop_name, status, system, [Max PM Trips], [Min PM Headway],0 as Delete_Stop, TPA, 0 as Meets_Headway_Criteria, 'Existing Transit Stop' as Stop_Description, null as Project_Description, stop_lon, stop_lat
 	FROM         #Tuesday_PM_Peak_Trips_15min_or_Less
@@ -471,19 +471,19 @@ GO
 GO
 	Print 'Update the container table for each Weekday Value (Tuesday)'
 GO
-	Update dbo.[TPA_TRANSIT_STOPS]
+	Update [TPA_TRANSIT_STOPS]
 	Set Weekday = 'Tuesday'
 	Where Weekday is null
 GO
 Print 'Inserting Wednesday Values'
 GO
-	INSERT INTO dbo.[TPA_TRANSIT_STOPS]
+	INSERT INTO [TPA_TRANSIT_STOPS]
 							 (agency_id, agency_name, route_id, agency_stop_id, stop_name, status, system, Max_AM_Trips, Min_AM_Headway, Delete_Stop, TPA, Meets_Headway_Criteria, Stop_Description, Project_Description, stop_lon, stop_lat)
 	SELECT   agency_id, agency_name, route_id, agency_stop_id, stop_name, status, system, [Max AM Trips], [Min AM Headway], 0 as Delete_Stop, TPA, 0 as Meets_Headway_Criteria, 'Existing Transit Stop' as Stop_Description, null as Project_Description, stop_lon, stop_lat
 	FROM        #Wednesday_AM_Peak_Trips_15min_or_Less
 	Where [Max AM Trips] is not null
 GO
-	INSERT INTO dbo.[TPA_TRANSIT_STOPS]
+	INSERT INTO [TPA_TRANSIT_STOPS]
 							 (agency_id, agency_name, route_id, agency_stop_id, stop_name, status, system, Max_PM_Trips, Min_PM_Headway, Delete_Stop, TPA, Meets_Headway_Criteria, Stop_Description, Project_Description, stop_lon, stop_lat)
 	SELECT   agency_id, agency_name, route_id, agency_stop_id, stop_name, status, system, [Max PM Trips], [Min PM Headway],0 as Delete_Stop, TPA, 0 as Meets_Headway_Criteria, 'Existing Transit Stop' as Stop_Description, null as Project_Description, stop_lon, stop_lat
 	FROM         #Wednesday_PM_Peak_Trips_15min_or_Less
@@ -492,19 +492,19 @@ GO
 GO
 	Print 'Update the container table for each Weekday Value (Wednesday)'
 GO
-	Update dbo.[TPA_TRANSIT_STOPS]
+	Update [TPA_TRANSIT_STOPS]
 	Set Weekday = 'Wednesday'
 	Where Weekday is null
 GO
 Print 'Inserting Thursday Values'
 GO
-	INSERT INTO dbo.[TPA_TRANSIT_STOPS]
+	INSERT INTO [TPA_TRANSIT_STOPS]
 							 (agency_id, agency_name, route_id, agency_stop_id, stop_name, status, system, Max_AM_Trips, Min_AM_Headway, Delete_Stop, TPA, Meets_Headway_Criteria, Stop_Description, Project_Description, stop_lon, stop_lat)
 	SELECT   agency_id, agency_name, route_id, agency_stop_id, stop_name, status, system, [Max AM Trips], [Min AM Headway], 0 as Delete_Stop, TPA, 0 as Meets_Headway_Criteria, 'Existing Transit Stop' as Stop_Description, null as Project_Description, stop_lon, stop_lat
 	FROM         #Thursday_AM_Peak_Trips_15min_or_Less
 	Where [Max AM Trips] is not null
 GO
-	INSERT INTO dbo.[TPA_TRANSIT_STOPS]
+	INSERT INTO [TPA_TRANSIT_STOPS]
 							 (agency_id, agency_name, route_id, agency_stop_id, stop_name, status, system, Max_PM_Trips, Min_PM_Headway, Delete_Stop, TPA, Meets_Headway_Criteria, Stop_Description, Project_Description, stop_lon, stop_lat)
 	SELECT   agency_id, agency_name, route_id, agency_stop_id, stop_name, status, system, [Max PM Trips], [Min PM Headway],0 as Delete_Stop, TPA, 0 as Meets_Headway_Criteria, 'Existing Transit Stop' as Stop_Description, null as Project_Description, stop_lon, stop_lat
 	FROM        #Thursday_PM_Peak_Trips_15min_or_Less
@@ -513,19 +513,19 @@ GO
 GO
 	Print 'Update the container table for each Weekday Value (Thursday)'
 GO
-	Update dbo.[TPA_TRANSIT_STOPS]
+	Update [TPA_TRANSIT_STOPS]
 	Set Weekday = 'Thursday'
 	Where Weekday is null
 GO
 Print 'Inserting Friday Values'
 GO
-	INSERT INTO dbo.[TPA_TRANSIT_STOPS]
+	INSERT INTO [TPA_TRANSIT_STOPS]
 							 (agency_id, agency_name, route_id, agency_stop_id, stop_name, status, system, Max_AM_Trips, Min_AM_Headway, Delete_Stop, TPA, Meets_Headway_Criteria, Stop_Description, Project_Description, stop_lon, stop_lat)
 	SELECT   agency_id, agency_name, route_id, agency_stop_id, stop_name, status, system, [Max AM Trips], [Min AM Headway], 0 as Delete_Stop, TPA, 0 as Meets_Headway_Criteria, 'Existing Transit Stop' as Stop_Description, null as Project_Description, stop_lon, stop_lat
 	FROM         #Friday_AM_Peak_Trips_15min_or_Less
 	Where [Max AM Trips] is not null
 GO
-	INSERT INTO dbo.[TPA_TRANSIT_STOPS]
+	INSERT INTO [TPA_TRANSIT_STOPS]
 							 (agency_id, agency_name, route_id, agency_stop_id, stop_name, status, system, Max_PM_Trips, Min_PM_Headway, Delete_Stop, TPA, Meets_Headway_Criteria, Stop_Description, Project_Description, stop_lon, stop_lat)
 	SELECT   agency_id, agency_name, route_id, agency_stop_id, stop_name, status, system, [Max PM Trips], [Min PM Headway],0 as Delete_Stop, TPA, 0 as Meets_Headway_Criteria, 'Existing Transit Stop' as Stop_Description, null as Project_Description, stop_lon, stop_lat
 	FROM         #Friday_PM_Peak_Trips_15min_or_Less
@@ -534,7 +534,7 @@ GO
 GO
 	Print 'Update the container table for each Weekday Value (Friday)'
 GO
-	Update dbo.[TPA_TRANSIT_STOPS]
+	Update [TPA_TRANSIT_STOPS]
 	Set Weekday = 'Friday'
 	Where Weekday is null
 GO
@@ -545,7 +545,7 @@ GO
 GO
 	IF EXISTS(select * FROM sys.tables where name = 'TPA_Transit_Stops_2016_Build')
 		begin
-			DROP TABLE dbo.TPA_Transit_Stops_2016_Build 
+			DROP TABLE TPA_Transit_Stops_2016_Build 
 			PRINT 'Dropping Table: TPA_Transit_Stops_2016_Build'
 		end
 ELSE
@@ -556,8 +556,8 @@ GO
 
 SELECT   agency_id, agency_name, route_id, agency_stop_id, stop_name, status, system, AVG(Max_AM_Trips) AS Avg_Weekday_AM_Trips, AVG(Min_AM_Headway) AS Avg_Weekday_AM_Headway, 
                          AVG(Max_PM_Trips) AS Avg_Weekday_PM_Trips, AVG(Min_PM_Headway) AS Avg_Weekday_PM_Headway, Delete_Stop, TPA, Meets_Headway_Criteria, TPA_Eligible, Stop_Description, Project_Description, stop_lon, stop_lat
-into dbo.TPA_Transit_Stops_2016_Build
-FROM         dbo.TPA_TRANSIT_STOPS
+into TPA_Transit_Stops_2016_Build
+FROM         TPA_TRANSIT_STOPS
 --Where Avg_Weekday_AM_Headway is not null and Avg_Weekday_PM_Headway is not null
 GROUP BY agency_id, agency_name, route_id, agency_stop_id, stop_name, status, system, Delete_Stop, TPA_Eligible, TPA, Meets_Headway_Criteria, Stop_Description, Project_Description, stop_lon, stop_lat
 --ORDER BY agency_id, route_id, agency_stop_id
@@ -567,7 +567,7 @@ GO
 Print 'Step 7. Flag Bus Stops that meet the AM/PM Peak Thresholds'
 -----------------------------------------------------------------------------------------
 GO
-update dbo.TPA_Transit_Stops_2016_Build
+update TPA_Transit_Stops_2016_Build
 set Meets_Headway_Criteria = 1
 Where ((Avg_Weekday_AM_Headway <=15) and (Avg_Weekday_PM_Headway <=15))-- and (Meets_Headway_Criteria = 0 or Meets_Headway_Criteria is null)
 GO
@@ -578,15 +578,15 @@ GO
 --Fix the column name in the TPA_Future_Transit_Stops Table
 --SELECT        agency_id, agency_name, route_id, agency_stop_id, stop_name, status, system, Avg_Weekday_AM_Headway, Avg_Weekday_PM_Headway, Delete_Stop, Meets_Headway_Criteria, stop_description, Project_Description, 
 --                         stop_lon, stop_lat
---FROM            dbo.TPA_Future_Transit_Stops
+--FROM            TPA_Future_Transit_Stops
 --Where System = 'Ferry'
 
-INSERT INTO dbo.TPA_Transit_Stops_2016_Build
+INSERT INTO TPA_Transit_Stops_2016_Build
                          (agency_id, agency_name, route_id, agency_stop_id, stop_name, status, system, Avg_Weekday_AM_Headway, Avg_Weekday_PM_Headway, Delete_Stop, Meets_Headway_Criteria, Stop_Description, Project_Description, 
                          stop_lon, stop_lat)
 SELECT        agency_id, agency_name, route_id, agency_stop_id, stop_name, status, system, Avg_Weekday_AM_Headway, Avg_Weekday_PM_Headway, Delete_Stop, Meets_Headway_Criteria, stop_description, Project_Description, 
                          stop_lon, stop_lat
-FROM            dbo.TPA_Future_Transit_Stops
+FROM            TPA_Future_Transit_Stops
 Where stop_description not in ('Stevens Creek LRT','North Bayshore LRT (NASA/Bayshore to Google)','Tasman West LRT Realignment (Fair Oaks to Mountain View)', 'eBART – Phase 2 (Antioch to Brentwood)')
 GO
 -----------------------------------------------------------------------------------------------
@@ -595,38 +595,38 @@ Print 'Step 9. Build view of all existing Rail, Light Rail, Cable Car, and Ferry
 GO
 	IF EXISTS(select * FROM sys.views where name = 'rtd_route_stop_all_other_modes')
 			begin
-				drop view dbo.rtd_route_stop_all_other_modes 
+				drop view rtd_route_stop_all_other_modes 
 				PRINT 'Dropping View: rtd_route_stop_all_other_modes'
 			end
 	ELSE
 		PRINT 'View Does Not Exist';
 GO
-		create view dbo.rtd_route_stop_all_other_modes as
-SELECT        dbo.rtd_route_trips.agency_id, dbo.rtd_route_trips.agency_name, dbo.rtd_route_trips.route_id, dbo.stops.stop_name, dbo.stop_times.agency_stop_id, 
-                         dbo.rtd_route_trips.status, dbo.rtd_route_trips.system, dbo.stops.stop_lat, dbo.stops.stop_lon
-FROM            dbo.stops INNER JOIN
-                         dbo.stop_times ON dbo.stops.agency_stop_id = dbo.stop_times.agency_stop_id INNER JOIN
-                         dbo.rtd_route_trips ON dbo.stop_times.agency_trip_id = dbo.rtd_route_trips.agency_trip_id
-GROUP BY dbo.rtd_route_trips.agency_id, dbo.rtd_route_trips.agency_name, dbo.rtd_route_trips.route_id, dbo.stops.stop_name, dbo.stop_times.agency_stop_id, 
-                         dbo.rtd_route_trips.status, dbo.rtd_route_trips.system, dbo.stops.stop_lat, dbo.stops.stop_lon
-HAVING        (dbo.rtd_route_trips.system <> 'Bus')
+		create view rtd_route_stop_all_other_modes as
+SELECT        rtd_route_trips.agency_id, rtd_route_trips.agency_name, rtd_route_trips.route_id, stops.stop_name, stop_times.agency_stop_id, 
+                         rtd_route_trips.status, rtd_route_trips.system, stops.stop_lat, stops.stop_lon
+FROM            stops INNER JOIN
+                         stop_times ON stops.agency_stop_id = stop_times.agency_stop_id INNER JOIN
+                         rtd_route_trips ON stop_times.agency_trip_id = rtd_route_trips.agency_trip_id
+GROUP BY rtd_route_trips.agency_id, rtd_route_trips.agency_name, rtd_route_trips.route_id, stops.stop_name, stop_times.agency_stop_id, 
+                         rtd_route_trips.status, rtd_route_trips.system, stops.stop_lat, stops.stop_lon
+HAVING        (rtd_route_trips.system <> 'Bus')
 GO
 ------------------------------------------------------------------------------------------------------------
 Print 'Append all existing Rail, Light Rail, Cable Car, and Ferry Stops into TPA_Transit_Stops_2016_Build'
 ------------------------------------------------------------------------------------------------------------
 GO
-INSERT INTO dbo.TPA_Transit_Stops_2016_Build
+INSERT INTO TPA_Transit_Stops_2016_Build
                          (agency_id, agency_name, agency_stop_id, stop_name, status, system, stop_lon, stop_lat)
 SELECT        agency_id, agency_name, agency_stop_id, stop_name, status, system, stop_lon, stop_lat
-FROM            dbo.rtd_route_stop_all_other_modes
+FROM            rtd_route_stop_all_other_modes
 WHERE        (agency_stop_id NOT IN ('AT:12175078', 'BG:1091722', 'HF:12175092', 'AT:12175080', 'BG:1091727', 'SB:12048537'))
 GROUP BY agency_id, agency_name, agency_stop_id, stop_name, status, system, stop_lon, stop_lat
 --ORDER BY system, agency_id
---select * from dbo.rtd_route_stop_all_other_modes where system='Ferry'
+--select * from rtd_route_stop_all_other_modes where system='Ferry'
 GO
 Print 'Fix Null Route ID values in TPA_Transit_Stops_2016_Build table'
 Go
-update dbo.TPA_Transit_Stops_2016_Build
+update TPA_Transit_Stops_2016_Build
 set route_id = agency_name + ' ' + system + ' Service'
 Where route_id is null
 Go
@@ -634,18 +634,18 @@ Go
 --Print 'Ensure that all Rail, BRT, Light Rail and Ferry Stops are flagged TPA Eligible'
 ----------------------------------------------------------------------------------------------------
 --GO
---update dbo.TPA_Transit_Stops_2016_Build
+--update TPA_Transit_Stops_2016_Build
 --set TPA_Eligible = 1
 --Where system <> 'Bus'
 --GO
 ----------------------------------------------------------------------------------------------------
 --Print 'Fix Route Names for unclassified values in the Future Transit Table'
 ----------------------------------------------------------------------------------------------------
---update dbo.TPA_Transit_Stops_2016_Build
+--update TPA_Transit_Stops_2016_Build
 --set route_id = null
 --where route_id = 'Route Name                               ';
 GO
---update dbo.TPA_Transit_Stops_2016_Build
+--update TPA_Transit_Stops_2016_Build
 --set agency_id = N'ACE'
 --where agency_name = 'ACE'
 --GO
@@ -653,27 +653,27 @@ GO
 Print 'Fix route_id values that are null or missing'
 --------------------------------------------------------------------------------------------------
 Go
-update dbo.TPA_Transit_Stops_2016_Build
+update TPA_Transit_Stops_2016_Build
 set route_id = 'ACTC-BRT'
 where agency_id = 'AC' and system = 'Bus Rapid Transit' --and route_id is null
 GO
-update dbo.TPA_Transit_Stops_2016_Build
+update TPA_Transit_Stops_2016_Build
 set route_id = agency_name
 where agency_id = 'AM' and system = 'Rail' and route_id is null
 GO
-update dbo.TPA_Transit_Stops_2016_Build
+update TPA_Transit_Stops_2016_Build
 set route_id = agency_name
 where agency_id = 'BF' and system = 'Ferry' and route_id is null
 GO
-update dbo.TPA_Transit_Stops_2016_Build
+update TPA_Transit_Stops_2016_Build
 set route_id = agency_name
 where agency_id = 'SMART' and route_id is null
 GO
-update dbo.TPA_Transit_Stops_2016_Build
+update TPA_Transit_Stops_2016_Build
 set route_id = 'BART (Future)'
 where agency_id = 'BA' and system = 'Rail' and status <> 'E' and route_id is null
 GO
-update dbo.TPA_Transit_Stops_2016_Build
+update TPA_Transit_Stops_2016_Build
 set route_id = agency_name + '-' + system
 where status <> 'E' and route_id is null
 GO
@@ -681,12 +681,12 @@ GO
 Print 'Reclassify status values of E to Existing'
 --------------------------------------------------------------------------------------------------
 Go
-update dbo.TPA_Transit_Stops_2016_Build
+update TPA_Transit_Stops_2016_Build
 set status = 'Existing'
 where status = 'E'
 GO
 --Also need to add a Distance Flag field to hold the boolean value for stops that have an adjacent stop within the AM/PM Peak Headway threshold.
-ALTER TABLE dbo.TPA_Transit_Stops_2016_Build
+ALTER TABLE TPA_Transit_Stops_2016_Build
 ADD Distance_Eligible int,
 Shape Geography
 GO
@@ -694,14 +694,14 @@ GO
 Print 'Add Geography to Shape Field'
 ------------------------------------------------------------------------------------------------------
 GO
-update dbo.TPA_Transit_Stops_2016_Build
+update TPA_Transit_Stops_2016_Build
 set Shape = geography::STGeomFromText('POINT('+convert(varchar(20),stop_lon)+' '+convert(varchar(20),stop_lat)+')',4326)
 GO
 --for now you will need to generate a near table using ArcGIS.
 --Qry would need to count adjacent stops within 0.2 miles then insert into a Temp table.
 --
 --SELECT        agency_id, system, Avg_Weekday_AM_Headway, Avg_Weekday_PM_Headway, Meets_Headway_Criteria, Distance_Eligible, status, Shape
---FROM            dbo.TPA_Transit_Stops_2016_Build
+--FROM            TPA_Transit_Stops_2016_Build
 --WHERE        (system = 'Bus')
 alter table [dbo].[TPA_Transit_Stops_2016_Build]
 add RecID int IDENTITY(1,1) NOT NULL,
@@ -756,40 +756,40 @@ Order By agency_stop_id
 
 --Write Update statement to update those stops that meet the distance threshold in the main table.  Will need to build a join view to update the records
 --select Distinct DS.agency_stop_id From #StopsThatMeetDistanceThreshold as DS INNER JOIN 
---dbo.TPA_Transit_Stops_2016_Build ON dbo.TPA_Transit_Stops_2016_Build.agency_stop_id = DS.agency_stop_id
-UPDATE       dbo.TPA_Transit_Stops_2016_Build
+--TPA_Transit_Stops_2016_Build ON TPA_Transit_Stops_2016_Build.agency_stop_id = DS.agency_stop_id
+UPDATE       TPA_Transit_Stops_2016_Build
 SET                Distance_Eligible = 1
 FROM            #StopsThatMeetDistanceThreshold INNER JOIN
-                       dbo.TPA_Transit_Stops_2016_Build ON dbo.TPA_Transit_Stops_2016_Build.agency_stop_id = #StopsThatMeetDistanceThreshold.agency_stop_id
+                       TPA_Transit_Stops_2016_Build ON TPA_Transit_Stops_2016_Build.agency_stop_id = #StopsThatMeetDistanceThreshold.agency_stop_id
 --Flag TPA Eligible Stops based upon Distance and Headway Thresholds
 Go
 Print 'Flag bus stops that are TPA Eligible'
 Go
-UPDATE dbo.TPA_Transit_Stops_2016_Build
+UPDATE TPA_Transit_Stops_2016_Build
 set TPA_Eligible = 1
 Where (Distance_Eligible = 1 and Meets_Headway_Criteria = 1)
 Go
 Print 'Flag stops that do not meet the distance criteria'
 Go
-UPDATE dbo.TPA_Transit_Stops_2016_Build
+UPDATE TPA_Transit_Stops_2016_Build
 set Distance_Eligible = 0
 Where Distance_Eligible is null
 Go
 Print 'Flag stops that do not meet the headway criteria'
 Go
-UPDATE dbo.TPA_Transit_Stops_2016_Build
+UPDATE TPA_Transit_Stops_2016_Build
 set Meets_Headway_Criteria = 0
 Where Meets_Headway_Criteria is null
 Go
 Print 'Flag stops that are not TPA Eligible'
 Go
-UPDATE dbo.TPA_Transit_Stops_2016_Build
+UPDATE TPA_Transit_Stops_2016_Build
 set TPA_Eligible = 0
 Where Distance_Eligible = 0 or Meets_Headway_Criteria = 0
 Go
 Print 'Flag Rail, Ferry, Light Rail, Cable Car, Bus Rapid Transit stops that are TPA Eligible'
 Go
-UPDATE dbo.TPA_Transit_Stops_2016_Build
+UPDATE TPA_Transit_Stops_2016_Build
 set TPA_Eligible = 1
 Where
 system in ('Rail','Ferry','Light Rail','Cable Car', 'Bus Rapid Transit') 
@@ -797,10 +797,10 @@ Go
 --------------------------------------------------------------------------------------------------
 Print 'Fix stop_name values that are in UPPER Case format'
 --------------------------------------------------------------------------------------------------
-update dbo.TPA_Transit_Stops_2016_Build
-set stop_name = dbo.ProperCase(stop_name)--,
---route_id = dbo.ProperCase(route_id),
---agency_name = dbo.ProperCase(agency_name)
+update TPA_Transit_Stops_2016_Build
+set stop_name = ProperCase(stop_name)--,
+--route_id = ProperCase(route_id),
+--agency_name = ProperCase(agency_name)
 GO
 ------------------------------------------------------------------------------------------------------
 Print 'Creating Final View for Mapping Purposes.  Contains only Eligible Transit Stops'
@@ -808,17 +808,17 @@ Print 'Creating Final View for Mapping Purposes.  Contains only Eligible Transit
 GO
 IF EXISTS(select * FROM sys.views where name = 'TPA_Transit_Stops_2016_Draft')
 			begin
-				drop view dbo.TPA_Transit_Stops_2016_Draft 
+				drop view TPA_Transit_Stops_2016_Draft 
 				PRINT 'Dropping View: TPA_Transit_Stops_2016_Draft'
 			end
 	ELSE
 		PRINT 'View Does Not Exist';
 GO
 
-create view dbo.TPA_Transit_Stops_2016_Draft as
+create view TPA_Transit_Stops_2016_Draft as
 SELECT TOP (60000)        agency_id, agency_name, route_id, agency_stop_id, stop_name, status, system, Avg_Weekday_AM_Trips, Avg_Weekday_AM_Headway, Avg_Weekday_PM_Trips, Avg_Weekday_PM_Headway, Delete_Stop, 
                          Meets_Headway_Criteria, Distance_Eligible, TPA_Eligible, Stop_Description, Project_Description, stop_lon, stop_lat, SHAPE
-FROM            dbo.TPA_Transit_Stops_2016_Build 
+FROM            TPA_Transit_Stops_2016_Build 
 --Where Meets_Headway_Criteria = 1 
 order by agency_id, route_id, status, system
 GO
@@ -826,19 +826,19 @@ Print 'Build Final Tale for Map View'
 Go
 IF EXISTS(select * FROM sys.tables where name = 'TPA_Stops_2016_Draft')
 			begin
-				drop TABLE dbo.TPA_Stops_2016_Draft 
+				drop TABLE TPA_Stops_2016_Draft 
 				PRINT 'Dropping TABLE: TPA_Stops_2016_Draft'
 			end
 	ELSE
 		PRINT 'Table Does Not Exist';
 Go
 select * 
-into dbo.TPA_Stops_2016_Draft
-from dbo.TPA_Transit_Stops_2016_Draft
+into TPA_Stops_2016_Draft
+from TPA_Transit_Stops_2016_Draft
 Go
 Print 'Add RecID Column with an Index'
 Go
-alter table dbo.TPA_Stops_2016_Draft
+alter table TPA_Stops_2016_Draft
 add RecID int IDENTITY(1,1) NOT NULL,
 CONSTRAINT [PK_TPA_Stops_2016_Draft] PRIMARY KEY CLUSTERED 
 (
@@ -852,7 +852,7 @@ create index IX_StopID on [dbo].TPA_Stops_2016_Draft(agency_stop_id)
 Go
 IF EXISTS(select * FROM sys.tables where name = 'TPA_Stops_2016_Final')
 			begin
-				drop TABLE dbo.TPA_Stops_2016_Final 
+				drop TABLE TPA_Stops_2016_Final 
 				PRINT 'Dropping TABLE: TPA_Stops_2016_Final'
 			end
 	ELSE
@@ -860,7 +860,7 @@ IF EXISTS(select * FROM sys.tables where name = 'TPA_Stops_2016_Final')
 Go
 SELECT     RecID, agency_id, agency_name, route_id, agency_stop_id, stop_name, status, system, Avg_Weekday_AM_Trips, Avg_Weekday_AM_Headway, Avg_Weekday_PM_Trips, Avg_Weekday_PM_Headway, Delete_Stop, Meets_Headway_Criteria, Distance_Eligible, 
                   TPA_Eligible, Stop_Description, Project_Description, stop_lon, stop_lat, geometry::Point([stop_lon], [stop_lat], 4326) as SHAPE
-into dbo.TPA_Stops_2016_Final
+into TPA_Stops_2016_Final
 FROM        TPA_Stops_2016_Draft
 
 --Cleanup unneeded tables
