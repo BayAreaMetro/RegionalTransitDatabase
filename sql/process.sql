@@ -38,7 +38,7 @@ GO
 GO
 		create view rtd_route_stop_schedule as
 SELECT        rtd_route_trips.agency_id, rtd_route_trips.agency_name, rtd_route_trips.route_id, rtd_route_trips.direction_id, stops.stop_name, 
-                         CAST(stop_times.arrival_time AS time) AS arrival_time, stop_times.stop_sequence, stop_times.agency_stop_id, rtd_route_trips.status, rtd_route_trips.route_type, 
+                         CAST(stop_times.arrival_time AS time) AS arrival_time, stop_times.stop_sequence, stop_times.agency_stop_id, rtd_route_trips.route_type, 
                          stops.stop_lat, stops.stop_lon, calendar.monday, calendar.tuesday, calendar.wednesday, calendar.thursday, calendar.friday, 
                          calendar.agency_service_id
 FROM            stops INNER JOIN
@@ -60,11 +60,11 @@ GO
 		PRINT 'Table Does Not Exist';
 GO
 		
-SELECT        agency_id, agency_name, route_id, direction_id, stop_name, arrival_time, cast(stop_sequence as int) as stop_sequence, agency_stop_id, status, route_type, stop_lat, stop_lon, monday, tuesday, wednesday, thursday, friday, agency_service_id, 
+SELECT        agency_id, agency_name, route_id, direction_id, stop_name, arrival_time, cast(stop_sequence as int) as stop_sequence, agency_stop_id, route_type, stop_lat, stop_lon, monday, tuesday, wednesday, thursday, friday, agency_service_id, 
                          COUNT(arrival_time) AS Duplicate_Arrival_Times
 into route_stop_schedule
 FROM            rtd_route_stop_schedule
-GROUP BY agency_id, agency_name, route_id, direction_id, stop_name, arrival_time, stop_sequence, agency_stop_id, status, route_type, stop_lat, stop_lon, monday, tuesday, wednesday, thursday, friday, 
+GROUP BY agency_id, agency_name, route_id, direction_id, stop_name, arrival_time, stop_sequence, agency_stop_id, route_type, stop_lat, stop_lon, monday, tuesday, wednesday, thursday, friday, 
                          agency_service_id
 --HAVING        (route_type = 3)
 --ORDER BY agency_service_id, agency_stop_id, route_id, direction_id, arrival_time, stop_sequence 
@@ -83,12 +83,12 @@ Go
 	Print 'Creating Monday AM Peak Table.';
 GO
 	
-	SELECT        agency_id, agency_name, route_id, direction_id, agency_stop_id, status, route_type, stop_name, cast(stop_sequence as int) as stop_sequence, stop_lon, stop_lat, COUNT(stop_sequence) AS AM_Peak_Monday_Total_Trips, 
+	SELECT        agency_id, agency_name, route_id, direction_id, agency_stop_id, route_type, stop_name, cast(stop_sequence as int) as stop_sequence, stop_lon, stop_lat, COUNT(stop_sequence) AS AM_Peak_Monday_Total_Trips, 
 							 240 / COUNT(stop_sequence) AS Monday_AM_Peak_Headway, CASE WHEN (240 / COUNT(stop_sequence) <= 15) THEN 'Meets Criteria' ELSE 'Does Not Meet Criteria' END AS TPA
 	into #Monday_AM_Peak_Transit_Stop_Headways
 	FROM            route_stop_schedule
 	WHERE        (CAST(arrival_time AS time) BETWEEN '06:00:00.0000' AND '09:59:59.0000') AND (Monday = 1) AND hour < 23
-	GROUP BY agency_id, agency_name, route_id, direction_id, agency_service_id, agency_stop_id, status, route_type, stop_name, stop_sequence, stop_lon, stop_lat 
+	GROUP BY agency_id, agency_name, route_id, direction_id, agency_service_id, agency_stop_id, route_type, stop_name, stop_sequence, stop_lon, stop_lat 
 GO
 
 IF OBJECT_ID('tempdb..#Monday_PM_Peak_Transit_Stop_Headways') IS NOT NULL 
@@ -103,12 +103,12 @@ Go
 	Print 'Creating Monday PM Peak Table.';
 GO
 		
-	SELECT        agency_id, agency_name, route_id, direction_id, agency_stop_id, status, route_type, stop_name, cast(stop_sequence as int) as stop_sequence, stop_lon, stop_lat, COUNT(stop_sequence) AS PM_Peak_Monday_Total_Trips, 
+	SELECT        agency_id, agency_name, route_id, direction_id, agency_stop_id, route_type, stop_name, cast(stop_sequence as int) as stop_sequence, stop_lon, stop_lat, COUNT(stop_sequence) AS PM_Peak_Monday_Total_Trips, 
 							 240 / COUNT(stop_sequence) AS Monday_PM_Peak_Headway, CASE WHEN (240 / COUNT(stop_sequence) <= 15) THEN 'Meets Criteria' ELSE 'Does Not Meet Criteria' END AS TPA
 	into #Monday_PM_Peak_Transit_Stop_Headways
 	FROM            route_stop_schedule
 	WHERE        (CAST(arrival_time AS time) BETWEEN '15:00:00.0000' AND '18:59:59.0000') AND (Monday = 1) AND hour < 23
-	GROUP BY agency_id, agency_name, route_id, direction_id, agency_service_id, agency_stop_id, status, route_type, stop_name, stop_sequence, stop_lon, stop_lat 
+	GROUP BY agency_id, agency_name, route_id, direction_id, agency_service_id, agency_stop_id, route_type, stop_name, stop_sequence, stop_lon, stop_lat 
 GO
 
 IF OBJECT_ID('tempdb..#Tuesday_AM_Peak_Transit_Stop_Headways') IS NOT NULL 
@@ -122,12 +122,12 @@ Go
 	Print 'Creating Tuesday AM Peak Table.';
 GO
 	
-	SELECT        agency_id, agency_name, route_id, direction_id, agency_stop_id, status, route_type, stop_name, cast(stop_sequence as int) as stop_sequence, stop_lon, stop_lat, COUNT(stop_sequence) AS AM_Peak_Tuesday_Total_Trips, 
+	SELECT        agency_id, agency_name, route_id, direction_id, agency_stop_id, route_type, stop_name, cast(stop_sequence as int) as stop_sequence, stop_lon, stop_lat, COUNT(stop_sequence) AS AM_Peak_Tuesday_Total_Trips, 
 							 240 / COUNT(stop_sequence) AS Tuesday_AM_Peak_Headway, CASE WHEN (240 / COUNT(stop_sequence) <= 15) THEN 'Meets Criteria' ELSE 'Does Not Meet Criteria' END AS TPA
 	into #Tuesday_AM_Peak_Transit_Stop_Headways
 	FROM            route_stop_schedule
 	WHERE        (CAST(arrival_time AS time) BETWEEN '06:00:00.0000' AND '09:59:59.0000') AND (Tuesday = 1) AND hour < 23
-	GROUP BY agency_id, agency_name, route_id, direction_id, agency_service_id, agency_stop_id, status, route_type, stop_name, stop_sequence, stop_lon, stop_lat 
+	GROUP BY agency_id, agency_name, route_id, direction_id, agency_service_id, agency_stop_id, route_type, stop_name, stop_sequence, stop_lon, stop_lat 
 GO
 IF OBJECT_ID('tempdb..#Tuesday_PM_Peak_Transit_Stop_Headways') IS NOT NULL 
 begin
@@ -140,12 +140,12 @@ Go
 	Print 'Creating Tuesday PM Peak Table.';
 GO
 		
-	SELECT        agency_id, agency_name, route_id, direction_id, agency_stop_id, status, route_type, stop_name, cast(stop_sequence as int) as stop_sequence, stop_lon, stop_lat, COUNT(stop_sequence) AS PM_Peak_Tuesday_Total_Trips, 
+	SELECT        agency_id, agency_name, route_id, direction_id, agency_stop_id, route_type, stop_name, cast(stop_sequence as int) as stop_sequence, stop_lon, stop_lat, COUNT(stop_sequence) AS PM_Peak_Tuesday_Total_Trips, 
 							 240 / COUNT(stop_sequence) AS Tuesday_PM_Peak_Headway, CASE WHEN (240 / COUNT(stop_sequence) <= 15) THEN 'Meets Criteria' ELSE 'Does Not Meet Criteria' END AS TPA
 	into #Tuesday_PM_Peak_Transit_Stop_Headways
 	FROM            route_stop_schedule
 	WHERE        (CAST(arrival_time AS time) BETWEEN '15:00:00.0000' AND '18:59:59.0000') AND (Tuesday = 1) AND hour < 23
-	GROUP BY agency_id, agency_name, route_id, direction_id, agency_service_id, agency_stop_id, status, route_type, stop_name, stop_sequence, stop_lon, stop_lat 
+	GROUP BY agency_id, agency_name, route_id, direction_id, agency_service_id, agency_stop_id, route_type, stop_name, stop_sequence, stop_lon, stop_lat 
 GO
 IF OBJECT_ID('tempdb..#Wednesday_AM_Peak_Transit_Stop_Headways') IS NOT NULL 
 	begin 
@@ -158,12 +158,12 @@ Go
 	Print 'Creating Wednesday AM Peak Table.';
 GO
 	
-	SELECT        agency_id, agency_name, route_id, direction_id, agency_stop_id, status, route_type, stop_name, cast(stop_sequence as int) as stop_sequence, stop_lon, stop_lat, COUNT(stop_sequence) AS AM_Peak_Wednesday_Total_Trips, 
+	SELECT        agency_id, agency_name, route_id, direction_id, agency_stop_id, route_type, stop_name, cast(stop_sequence as int) as stop_sequence, stop_lon, stop_lat, COUNT(stop_sequence) AS AM_Peak_Wednesday_Total_Trips, 
 							 240 / COUNT(stop_sequence) AS Wednesday_AM_Peak_Headway, CASE WHEN (240 / COUNT(stop_sequence) <= 15) THEN 'Meets Criteria' ELSE 'Does Not Meet Criteria' END AS TPA
 	into #Wednesday_AM_Peak_Transit_Stop_Headways
 	FROM            route_stop_schedule
 	WHERE        (CAST(arrival_time AS time) BETWEEN '06:00:00.0000' AND '09:59:59.0000') AND (Wednesday = 1) AND hour < 23
-	GROUP BY agency_id, agency_name, route_id, direction_id, agency_service_id, agency_stop_id, status, route_type, stop_name, stop_sequence, stop_lon, stop_lat 
+	GROUP BY agency_id, agency_name, route_id, direction_id, agency_service_id, agency_stop_id, route_type, stop_name, stop_sequence, stop_lon, stop_lat 
 GO
 IF OBJECT_ID('tempdb..#Wednesday_PM_Peak_Transit_Stop_Headways') IS NOT NULL 
 begin DROP TABLE #Wednesday_PM_Peak_Transit_Stop_Headways 
@@ -175,12 +175,12 @@ Go
 	Print 'Creating Wednesday PM Peak Table.';
 GO
 		
-	SELECT        agency_id, agency_name, route_id, direction_id, agency_stop_id, status, route_type, stop_name, cast(stop_sequence as int) as stop_sequence, stop_lon, stop_lat, COUNT(stop_sequence) AS PM_Peak_Wednesday_Total_Trips, 
+	SELECT        agency_id, agency_name, route_id, direction_id, agency_stop_id, route_type, stop_name, cast(stop_sequence as int) as stop_sequence, stop_lon, stop_lat, COUNT(stop_sequence) AS PM_Peak_Wednesday_Total_Trips, 
 							 240 / COUNT(stop_sequence) AS Wednesday_PM_Peak_Headway, CASE WHEN (240 / COUNT(stop_sequence) <= 15) THEN 'Meets Criteria' ELSE 'Does Not Meet Criteria' END AS TPA
 	into #Wednesday_PM_Peak_Transit_Stop_Headways
 	FROM            route_stop_schedule
 	WHERE        (CAST(arrival_time AS time) BETWEEN '15:00:00.0000' AND '18:59:59.0000') AND (Wednesday = 1) AND hour < 23
-	GROUP BY agency_id, agency_name, route_id, direction_id, agency_service_id, agency_stop_id, status, route_type, stop_name, stop_sequence, stop_lon, stop_lat 
+	GROUP BY agency_id, agency_name, route_id, direction_id, agency_service_id, agency_stop_id, route_type, stop_name, stop_sequence, stop_lon, stop_lat 
 GO
 	IF OBJECT_ID('tempdb..#Thursday_AM_Peak_Transit_Stop_Headways') IS NOT NULL 
 		begin 
@@ -193,12 +193,12 @@ Go
 	Print 'Creating Thursday AM Peak Table.';
 GO
 	
-	SELECT        agency_id, agency_name, route_id, direction_id, agency_stop_id, status, route_type, stop_name, cast(stop_sequence as int) as stop_sequence, stop_lon, stop_lat, COUNT(stop_sequence) AS AM_Peak_Thursday_Total_Trips, 
+	SELECT        agency_id, agency_name, route_id, direction_id, agency_stop_id, route_type, stop_name, cast(stop_sequence as int) as stop_sequence, stop_lon, stop_lat, COUNT(stop_sequence) AS AM_Peak_Thursday_Total_Trips, 
 							 240 / COUNT(stop_sequence) AS Thursday_AM_Peak_Headway, CASE WHEN (240 / COUNT(stop_sequence) <= 15) THEN 'Meets Criteria' ELSE 'Does Not Meet Criteria' END AS TPA
 	into #Thursday_AM_Peak_Transit_Stop_Headways
 	FROM            route_stop_schedule
 	WHERE        (CAST(arrival_time AS time) BETWEEN '06:00:00.0000' AND '09:59:59.0000') AND (Thursday = 1) AND hour < 23 AND hour > 23
-	GROUP BY agency_id, agency_name, route_id, direction_id, agency_service_id, agency_stop_id, status, route_type, stop_name, stop_sequence, stop_lon, stop_lat 
+	GROUP BY agency_id, agency_name, route_id, direction_id, agency_service_id, agency_stop_id, route_type, stop_name, stop_sequence, stop_lon, stop_lat 
 GO
 IF OBJECT_ID('tempdb..#Thursday_PM_Peak_Transit_Stop_Headways') IS NOT NULL 
 	begin 
@@ -211,12 +211,12 @@ Go
 	Print 'Creating Thursday PM Peak Table.';
 GO
 		
-	SELECT        agency_id, agency_name, route_id, direction_id, agency_stop_id, status, route_type, stop_name, cast(stop_sequence as int) as stop_sequence, stop_lon, stop_lat, COUNT(stop_sequence) AS PM_Peak_Thursday_Total_Trips, 
+	SELECT        agency_id, agency_name, route_id, direction_id, agency_stop_id, route_type, stop_name, cast(stop_sequence as int) as stop_sequence, stop_lon, stop_lat, COUNT(stop_sequence) AS PM_Peak_Thursday_Total_Trips, 
 							 240 / COUNT(stop_sequence) AS Thursday_PM_Peak_Headway, CASE WHEN (240 / COUNT(stop_sequence) <= 15) THEN 'Meets Criteria' ELSE 'Does Not Meet Criteria' END AS TPA
 	into #Thursday_PM_Peak_Transit_Stop_Headways
 	FROM            route_stop_schedule
 	WHERE        (CAST(arrival_time AS time) BETWEEN '15:00:00.0000' AND '18:59:59.0000') AND (Thursday = 1) AND hour < 23
-	GROUP BY agency_id, agency_name, route_id, direction_id, agency_service_id, agency_stop_id, status, route_type, stop_name, stop_sequence, stop_lon, stop_lat 
+	GROUP BY agency_id, agency_name, route_id, direction_id, agency_service_id, agency_stop_id, route_type, stop_name, stop_sequence, stop_lon, stop_lat 
 GO
 IF OBJECT_ID('tempdb..#Friday_AM_Peak_Transit_Stop_Headways') IS NOT NULL 
 	begin 
@@ -229,12 +229,12 @@ Go
 	Print 'Creating Friday AM Peak Table.';
 GO
 	
-	SELECT        agency_id, agency_name, route_id, direction_id, agency_stop_id, status, route_type, stop_name, cast(stop_sequence as int) as stop_sequence, stop_lon, stop_lat, COUNT(stop_sequence) AS AM_Peak_Friday_Total_Trips, 
+	SELECT        agency_id, agency_name, route_id, direction_id, agency_stop_id, route_type, stop_name, cast(stop_sequence as int) as stop_sequence, stop_lon, stop_lat, COUNT(stop_sequence) AS AM_Peak_Friday_Total_Trips, 
 							 240 / COUNT(stop_sequence) AS Friday_AM_Peak_Headway, CASE WHEN (240 / COUNT(stop_sequence) <= 15) THEN 'Meets Criteria' ELSE 'Does Not Meet Criteria' END AS TPA
 	into #Friday_AM_Peak_Transit_Stop_Headways
 	FROM            route_stop_schedule
 	WHERE        (CAST(arrival_time AS time) BETWEEN '06:00:00.0000' AND '09:59:59.0000') AND (Friday = 1) AND hour < 23
-	GROUP BY agency_id, agency_name, route_id, direction_id, agency_service_id, agency_stop_id, status, route_type, stop_name, stop_sequence, stop_lon, stop_lat 
+	GROUP BY agency_id, agency_name, route_id, direction_id, agency_service_id, agency_stop_id, route_type, stop_name, stop_sequence, stop_lon, stop_lat 
 GO
 IF OBJECT_ID('tempdb..#Friday_PM_Peak_Transit_Stop_Headways') IS NOT NULL 
 	begin 
@@ -247,12 +247,12 @@ Go
 	Print 'Creating Friday PM Peak Table.';
 GO
 		
-	SELECT        agency_id, agency_name, route_id, direction_id, agency_stop_id, status, route_type, stop_name, cast(stop_sequence as int) as stop_sequence, stop_lon, stop_lat, COUNT(stop_sequence) AS PM_Peak_Friday_Total_Trips, 
+	SELECT        agency_id, agency_name, route_id, direction_id, agency_stop_id, route_type, stop_name, cast(stop_sequence as int) as stop_sequence, stop_lon, stop_lat, COUNT(stop_sequence) AS PM_Peak_Friday_Total_Trips, 
 							 240 / COUNT(stop_sequence) AS Friday_PM_Peak_Headway, CASE WHEN (240 / COUNT(stop_sequence) <= 15) THEN 'Meets Criteria' ELSE 'Does Not Meet Criteria' END AS TPA
 	into #Friday_PM_Peak_Transit_Stop_Headways
 	FROM            route_stop_schedule
 	WHERE        (CAST(arrival_time AS time) BETWEEN '15:00:00.0000' AND '18:59:59.0000') AND (Friday = 1) AND hour < 23
-	GROUP BY agency_id, agency_name, route_id, direction_id, agency_service_id, agency_stop_id, status, route_type, stop_name, stop_sequence, stop_lon, stop_lat 
+	GROUP BY agency_id, agency_name, route_id, direction_id, agency_service_id, agency_stop_id, route_type, stop_name, stop_sequence, stop_lon, stop_lat 
 GO
 ------------------------------------------------------------------------------------------------------------------------------------------------------
 Print 'Step 4. Building Views for Weekday (Monday thru Friday) AM/PM Peak Transit Routes/Stops with 15 min or better Headways.'
@@ -268,10 +268,10 @@ ELSE
 	PRINT '#Monday_AM_Peak_Trips_15min_or_Less Table Does Not Exist';
 GO
 		
-		SELECT agency_id, agency_name, route_id, agency_stop_id, stop_name, status, route_type, TPA, MAX(AM_Peak_Monday_Total_Trips) AS [Max AM Trips], MIN(Monday_AM_Peak_Headway) AS [Min AM Headway], COUNT(agency_stop_id) AS [Route Patterns], stop_lon, stop_lat
+		SELECT agency_id, agency_name, route_id, agency_stop_id, stop_name, route_type, TPA, MAX(AM_Peak_Monday_Total_Trips) AS [Max AM Trips], MIN(Monday_AM_Peak_Headway) AS [Min AM Headway], COUNT(agency_stop_id) AS [Route Patterns], stop_lon, stop_lat
 		into #Monday_AM_Peak_Trips_15min_or_Less
 		FROM   #Monday_AM_Peak_Transit_Stop_Headways
-		GROUP BY agency_id, agency_name, route_id, agency_stop_id, stop_name, status, route_type, TPA, stop_lon, stop_lat
+		GROUP BY agency_id, agency_name, route_id, agency_stop_id, stop_name, route_type, TPA, stop_lon, stop_lat
 		--HAVING (MIN(Monday_AM_Peak_Headway) <= 15)
 GO
 	Print 'Transit stops with 15 min or better PM Peak headways on Monday';
@@ -281,10 +281,10 @@ ELSE
 	PRINT '#Monday_PM_Peak_Trips_15min_or_Less Table Does Not Exist';
 GO
 	
-	SELECT agency_id, agency_name, route_id, agency_stop_id, stop_name, status, route_type, TPA, MAX(PM_Peak_Monday_Total_Trips) AS [Max PM Trips], MIN(Monday_PM_Peak_Headway) AS [Min PM Headway], COUNT(agency_stop_id) AS [Route Patterns], stop_lon, stop_lat
+	SELECT agency_id, agency_name, route_id, agency_stop_id, stop_name, route_type, TPA, MAX(PM_Peak_Monday_Total_Trips) AS [Max PM Trips], MIN(Monday_PM_Peak_Headway) AS [Min PM Headway], COUNT(agency_stop_id) AS [Route Patterns], stop_lon, stop_lat
 	into #Monday_PM_Peak_Trips_15min_or_Less
 	FROM   #Monday_PM_Peak_Transit_Stop_Headways
-	GROUP BY agency_id, agency_name, route_id, agency_stop_id, stop_name, status, route_type, TPA, stop_lon, stop_lat
+	GROUP BY agency_id, agency_name, route_id, agency_stop_id, stop_name, route_type, TPA, stop_lon, stop_lat
 	--HAVING (MIN(Monday_PM_Peak_Headway) <= 15)
 GO
 	Print 'Transit stops with 15 min or better AM Peak headways on Tuesday'
@@ -294,10 +294,10 @@ ELSE
 	PRINT '#Tuesday_AM_Peak_Trips_15min_or_Less Table Does Not Exist';
 GO
 		
-		SELECT agency_id, agency_name, route_id, agency_stop_id, stop_name, status, route_type, TPA, MAX(AM_Peak_Tuesday_Total_Trips) AS [Max AM Trips], MIN(Tuesday_AM_Peak_Headway) AS [Min AM Headway], COUNT(agency_stop_id) AS [Route Patterns], stop_lon, stop_lat
+		SELECT agency_id, agency_name, route_id, agency_stop_id, stop_name, route_type, TPA, MAX(AM_Peak_Tuesday_Total_Trips) AS [Max AM Trips], MIN(Tuesday_AM_Peak_Headway) AS [Min AM Headway], COUNT(agency_stop_id) AS [Route Patterns], stop_lon, stop_lat
 		into #Tuesday_AM_Peak_Trips_15min_or_Less
 		FROM   #Tuesday_AM_Peak_Transit_Stop_Headways
-		GROUP BY agency_id, agency_name, route_id, agency_stop_id, stop_name, status, route_type, TPA, stop_lon, stop_lat
+		GROUP BY agency_id, agency_name, route_id, agency_stop_id, stop_name, route_type, TPA, stop_lon, stop_lat
 		--HAVING (MIN(Tuesday_AM_Peak_Headway) <= 15)
 GO
 	Print 'Transit stops with 15 min or better PM Peak headways on Tuesday';
@@ -307,10 +307,10 @@ ELSE
 	PRINT '#Tuesday_PM_Peak_Trips_15min_or_Less Table Does Not Exist';
 GO
 	
-	SELECT agency_id, agency_name, route_id, agency_stop_id, stop_name, status, route_type, TPA, MAX(PM_Peak_Tuesday_Total_Trips) AS [Max PM Trips], MIN(Tuesday_PM_Peak_Headway) AS [Min PM Headway], COUNT(agency_stop_id) AS [Route Patterns], stop_lon, stop_lat
+	SELECT agency_id, agency_name, route_id, agency_stop_id, stop_name, route_type, TPA, MAX(PM_Peak_Tuesday_Total_Trips) AS [Max PM Trips], MIN(Tuesday_PM_Peak_Headway) AS [Min PM Headway], COUNT(agency_stop_id) AS [Route Patterns], stop_lon, stop_lat
 	into #Tuesday_PM_Peak_Trips_15min_or_Less
 	FROM   #Tuesday_PM_Peak_Transit_Stop_Headways
-	GROUP BY agency_id, agency_name, route_id, agency_stop_id, stop_name, status, route_type, TPA, stop_lon, stop_lat
+	GROUP BY agency_id, agency_name, route_id, agency_stop_id, stop_name, route_type, TPA, stop_lon, stop_lat
 	--HAVING (MIN(Tuesday_PM_Peak_Headway) <= 15)
 GO
 Print 'Transit stops with 15 min or better AM Peak headways on Wednesday'
@@ -320,10 +320,10 @@ ELSE
 	PRINT '#Wednesday_AM_Peak_Trips_15min_or_Less Table Does Not Exist';
 GO
 		
-		SELECT agency_id, agency_name, route_id, agency_stop_id, stop_name, status, route_type, TPA, MAX(AM_Peak_Wednesday_Total_Trips) AS [Max AM Trips], MIN(Wednesday_AM_Peak_Headway) AS [Min AM Headway], COUNT(agency_stop_id) AS [Route Patterns], stop_lon, stop_lat
+		SELECT agency_id, agency_name, route_id, agency_stop_id, stop_name, route_type, TPA, MAX(AM_Peak_Wednesday_Total_Trips) AS [Max AM Trips], MIN(Wednesday_AM_Peak_Headway) AS [Min AM Headway], COUNT(agency_stop_id) AS [Route Patterns], stop_lon, stop_lat
 		into #Wednesday_AM_Peak_Trips_15min_or_Less
 		FROM   #Wednesday_AM_Peak_Transit_Stop_Headways
-		GROUP BY agency_id, agency_name, route_id, agency_stop_id, stop_name, status, route_type, TPA, stop_lon, stop_lat
+		GROUP BY agency_id, agency_name, route_id, agency_stop_id, stop_name, route_type, TPA, stop_lon, stop_lat
 		--HAVING (MIN(Wednesday_AM_Peak_Headway) <= 15)
 GO
 	Print 'Transit stops with 15 min or better PM Peak headways on Wednesday';
@@ -333,10 +333,10 @@ ELSE
 	PRINT '#Wednesday_PM_Peak_Trips_15min_or_Less Table Does Not Exist';
 GO
 	
-	SELECT agency_id, agency_name, route_id, agency_stop_id, stop_name, status, route_type, TPA, MAX(PM_Peak_Wednesday_Total_Trips) AS [Max PM Trips], MIN(Wednesday_PM_Peak_Headway) AS [Min PM Headway], COUNT(agency_stop_id) AS [Route Patterns], stop_lon, stop_lat
+	SELECT agency_id, agency_name, route_id, agency_stop_id, stop_name, route_type, TPA, MAX(PM_Peak_Wednesday_Total_Trips) AS [Max PM Trips], MIN(Wednesday_PM_Peak_Headway) AS [Min PM Headway], COUNT(agency_stop_id) AS [Route Patterns], stop_lon, stop_lat
 	into #Wednesday_PM_Peak_Trips_15min_or_Less
 	FROM   #Wednesday_PM_Peak_Transit_Stop_Headways
-	GROUP BY agency_id, agency_name, route_id, agency_stop_id, stop_name, status, route_type, TPA, stop_lon, stop_lat
+	GROUP BY agency_id, agency_name, route_id, agency_stop_id, stop_name, route_type, TPA, stop_lon, stop_lat
 	--HAVING (MIN(Wednesday_PM_Peak_Headway) <= 15)
 GO
 Print 'Transit stops with 15 min or better AM Peak headways on Thursday'
@@ -346,10 +346,10 @@ ELSE
 	PRINT '#Thursday_AM_Peak_Trips_15min_or_Less Table Does Not Exist';
 GO
 		
-		SELECT agency_id, agency_name, route_id, agency_stop_id, stop_name, status, route_type, TPA, MAX(AM_Peak_Thursday_Total_Trips) AS [Max AM Trips], MIN(Thursday_AM_Peak_Headway) AS [Min AM Headway], COUNT(agency_stop_id) AS [Route Patterns], stop_lon, stop_lat
+		SELECT agency_id, agency_name, route_id, agency_stop_id, stop_name, route_type, TPA, MAX(AM_Peak_Thursday_Total_Trips) AS [Max AM Trips], MIN(Thursday_AM_Peak_Headway) AS [Min AM Headway], COUNT(agency_stop_id) AS [Route Patterns], stop_lon, stop_lat
 		into #Thursday_AM_Peak_Trips_15min_or_Less
 		FROM   #Thursday_AM_Peak_Transit_Stop_Headways
-		GROUP BY agency_id, agency_name, route_id, agency_stop_id, stop_name, status, route_type, TPA, stop_lon, stop_lat
+		GROUP BY agency_id, agency_name, route_id, agency_stop_id, stop_name, route_type, TPA, stop_lon, stop_lat
 		--HAVING (MIN(Thursday_AM_Peak_Headway) <= 15)
 GO
 	Print 'Transit stops with 15 min or better PM Peak headways on Thursday';
@@ -359,10 +359,10 @@ ELSE
 	PRINT '#Thursday_PM_Peak_Trips_15min_or_Less Table Does Not Exist';
 GO
 	
-	SELECT agency_id, agency_name, route_id, agency_stop_id, stop_name, status, route_type, TPA, MAX(PM_Peak_Thursday_Total_Trips) AS [Max PM Trips], MIN(Thursday_PM_Peak_Headway) AS [Min PM Headway], COUNT(agency_stop_id) AS [Route Patterns], stop_lon, stop_lat
+	SELECT agency_id, agency_name, route_id, agency_stop_id, stop_name, route_type, TPA, MAX(PM_Peak_Thursday_Total_Trips) AS [Max PM Trips], MIN(Thursday_PM_Peak_Headway) AS [Min PM Headway], COUNT(agency_stop_id) AS [Route Patterns], stop_lon, stop_lat
 	into #Thursday_PM_Peak_Trips_15min_or_Less
 	FROM   #Thursday_PM_Peak_Transit_Stop_Headways
-	GROUP BY agency_id, agency_name, route_id, agency_stop_id, stop_name, status, route_type, TPA, stop_lon, stop_lat
+	GROUP BY agency_id, agency_name, route_id, agency_stop_id, stop_name, route_type, TPA, stop_lon, stop_lat
 	--HAVING (MIN(Thursday_PM_Peak_Headway) <= 15)
 GO
 Print 'Transit stops with 15 min or better AM Peak headways on Friday'
@@ -372,10 +372,10 @@ ELSE
 	PRINT '#Friday_AM_Peak_Trips_15min_or_Less Table Does Not Exist';
 GO
 		
-		SELECT agency_id, agency_name, route_id, agency_stop_id, stop_name, status, route_type, TPA, MAX(AM_Peak_Friday_Total_Trips) AS [Max AM Trips], MIN(Friday_AM_Peak_Headway) AS [Min AM Headway], COUNT(agency_stop_id) AS [Route Patterns], stop_lon, stop_lat
+		SELECT agency_id, agency_name, route_id, agency_stop_id, stop_name, route_type, TPA, MAX(AM_Peak_Friday_Total_Trips) AS [Max AM Trips], MIN(Friday_AM_Peak_Headway) AS [Min AM Headway], COUNT(agency_stop_id) AS [Route Patterns], stop_lon, stop_lat
 		into #Friday_AM_Peak_Trips_15min_or_Less
 		FROM   #Friday_AM_Peak_Transit_Stop_Headways
-		GROUP BY agency_id, agency_name, route_id, agency_stop_id, stop_name, status, route_type, TPA, stop_lon, stop_lat
+		GROUP BY agency_id, agency_name, route_id, agency_stop_id, stop_name, route_type, TPA, stop_lon, stop_lat
 		--HAVING (MIN(Friday_AM_Peak_Headway) <= 15)
 GO
 	Print 'Transit stops with 15 min or better PM Peak headways on Friday';
@@ -385,10 +385,10 @@ ELSE
 	PRINT '#Friday_PM_Peak_Trips_15min_or_Less Table Does Not Exist';
 GO
 	
-	SELECT agency_id, agency_name, route_id, agency_stop_id, stop_name, status, route_type, TPA, MAX(PM_Peak_Friday_Total_Trips) AS [Max PM Trips], MIN(Friday_PM_Peak_Headway) AS [Min PM Headway], COUNT(agency_stop_id) AS [Route Patterns], stop_lon, stop_lat
+	SELECT agency_id, agency_name, route_id, agency_stop_id, stop_name, route_type, TPA, MAX(PM_Peak_Friday_Total_Trips) AS [Max PM Trips], MIN(Friday_PM_Peak_Headway) AS [Min PM Headway], COUNT(agency_stop_id) AS [Route Patterns], stop_lon, stop_lat
 	into #Friday_PM_Peak_Trips_15min_or_Less
 	FROM   #Friday_PM_Peak_Transit_Stop_Headways
-	GROUP BY agency_id, agency_name, route_id, agency_stop_id, stop_name, status, route_type, TPA, stop_lon, stop_lat
+	GROUP BY agency_id, agency_name, route_id, agency_stop_id, stop_name, route_type, TPA, stop_lon, stop_lat
 	--HAVING (MIN(Friday_PM_Peak_Headway) <= 15)
 GO
 ----------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -412,7 +412,6 @@ GO
 	[route_id] [varchar](max) NULL,
 	[agency_stop_id] [nvarchar](50) NULL,
 	[stop_name] [nvarchar](200) NULL,
-	[status] [varchar](50) NULL,
 	[route_type] [varchar](50) NULL,
 	[Max_AM_Trips] [int] NULL,
 	[Min_AM_Headway] [int] NULL,
@@ -436,14 +435,14 @@ GO
 	Print 'Inserting Monday Values'
 GO
 	INSERT INTO [TPA_TRANSIT_STOPS]
-							 (agency_id, agency_name, route_id, agency_stop_id, stop_name, status, route_type, Max_AM_Trips, Min_AM_Headway, Delete_Stop, TPA, Meets_Headway_Criteria, Stop_Description, Project_Description, stop_lon, stop_lat)
-	SELECT   agency_id, agency_name, route_id, agency_stop_id, stop_name, status, route_type, [Max AM Trips], [Min AM Headway], 0 as Delete_Stop, TPA, 0 as Meets_Headway_Criteria, 'Existing Transit Stop' as Stop_Description, null as Project_Description, stop_lon, stop_lat
+							 (agency_id, agency_name, route_id, agency_stop_id, stop_name, route_type, Max_AM_Trips, Min_AM_Headway, Delete_Stop, TPA, Meets_Headway_Criteria, Stop_Description, Project_Description, stop_lon, stop_lat)
+	SELECT   agency_id, agency_name, route_id, agency_stop_id, stop_name, route_type, [Max AM Trips], [Min AM Headway], 0 as Delete_Stop, TPA, 0 as Meets_Headway_Criteria, 'Existing Transit Stop' as Stop_Description, null as Project_Description, stop_lon, stop_lat
 	FROM         #Monday_AM_Peak_Trips_15min_or_Less
 	Where [Max AM Trips] is not null
 GO
 	INSERT INTO [TPA_TRANSIT_STOPS]
-							 (agency_id, agency_name, route_id, agency_stop_id, stop_name, status, route_type, Max_PM_Trips, Min_PM_Headway, Delete_Stop, TPA, Meets_Headway_Criteria, Stop_Description, Project_Description, stop_lon, stop_lat)
-	SELECT   agency_id, agency_name, route_id, agency_stop_id, stop_name, status, route_type, [Max PM Trips], [Min PM Headway],0 as Delete_Stop, TPA, 0 as Meets_Headway_Criteria, 'Existing Transit Stop' as Stop_Description, null as Project_Description, stop_lon, stop_lat
+							 (agency_id, agency_name, route_id, agency_stop_id, stop_name, route_type, Max_PM_Trips, Min_PM_Headway, Delete_Stop, TPA, Meets_Headway_Criteria, Stop_Description, Project_Description, stop_lon, stop_lat)
+	SELECT   agency_id, agency_name, route_id, agency_stop_id, stop_name, route_type, [Max PM Trips], [Min PM Headway],0 as Delete_Stop, TPA, 0 as Meets_Headway_Criteria, 'Existing Transit Stop' as Stop_Description, null as Project_Description, stop_lon, stop_lat
 	FROM         #Monday_PM_Peak_Trips_15min_or_Less
 	Where [Max PM Trips] is not null
 GO
@@ -457,14 +456,14 @@ GO
 	Print 'Inserting Tuesday Values'
 GO
 	INSERT INTO [TPA_TRANSIT_STOPS]
-							 (agency_id, agency_name, route_id, agency_stop_id, stop_name, status, route_type, Max_AM_Trips, Min_AM_Headway, Delete_Stop, TPA, Meets_Headway_Criteria, Stop_Description, Project_Description, stop_lon, stop_lat)
-	SELECT   agency_id, agency_name, route_id, agency_stop_id, stop_name, status, route_type, [Max AM Trips], [Min AM Headway], 0 as Delete_Stop, TPA, 0 as Meets_Headway_Criteria, 'Existing Transit Stop' as Stop_Description, null as Project_Description, stop_lon, stop_lat
+							 (agency_id, agency_name, route_id, agency_stop_id, stop_name, route_type, Max_AM_Trips, Min_AM_Headway, Delete_Stop, TPA, Meets_Headway_Criteria, Stop_Description, Project_Description, stop_lon, stop_lat)
+	SELECT   agency_id, agency_name, route_id, agency_stop_id, stop_name, route_type, [Max AM Trips], [Min AM Headway], 0 as Delete_Stop, TPA, 0 as Meets_Headway_Criteria, 'Existing Transit Stop' as Stop_Description, null as Project_Description, stop_lon, stop_lat
 	FROM         #Tuesday_AM_Peak_Trips_15min_or_Less
 	Where [Max AM Trips] is not null
 GO
 	INSERT INTO [TPA_TRANSIT_STOPS]
-							 (agency_id, agency_name, route_id, agency_stop_id, stop_name, status, route_type, Max_PM_Trips, Min_PM_Headway, Delete_Stop, TPA, Meets_Headway_Criteria, Stop_Description, Project_Description, stop_lon, stop_lat)
-	SELECT   agency_id, agency_name, route_id, agency_stop_id, stop_name, status, route_type, [Max PM Trips], [Min PM Headway],0 as Delete_Stop, TPA, 0 as Meets_Headway_Criteria, 'Existing Transit Stop' as Stop_Description, null as Project_Description, stop_lon, stop_lat
+							 (agency_id, agency_name, route_id, agency_stop_id, stop_name, route_type, Max_PM_Trips, Min_PM_Headway, Delete_Stop, TPA, Meets_Headway_Criteria, Stop_Description, Project_Description, stop_lon, stop_lat)
+	SELECT   agency_id, agency_name, route_id, agency_stop_id, stop_name, route_type, [Max PM Trips], [Min PM Headway],0 as Delete_Stop, TPA, 0 as Meets_Headway_Criteria, 'Existing Transit Stop' as Stop_Description, null as Project_Description, stop_lon, stop_lat
 	FROM         #Tuesday_PM_Peak_Trips_15min_or_Less
 	Where [Max PM Trips] is not null
 GO
@@ -478,14 +477,14 @@ GO
 Print 'Inserting Wednesday Values'
 GO
 	INSERT INTO [TPA_TRANSIT_STOPS]
-							 (agency_id, agency_name, route_id, agency_stop_id, stop_name, status, route_type, Max_AM_Trips, Min_AM_Headway, Delete_Stop, TPA, Meets_Headway_Criteria, Stop_Description, Project_Description, stop_lon, stop_lat)
-	SELECT   agency_id, agency_name, route_id, agency_stop_id, stop_name, status, route_type, [Max AM Trips], [Min AM Headway], 0 as Delete_Stop, TPA, 0 as Meets_Headway_Criteria, 'Existing Transit Stop' as Stop_Description, null as Project_Description, stop_lon, stop_lat
+							 (agency_id, agency_name, route_id, agency_stop_id, stop_name, route_type, Max_AM_Trips, Min_AM_Headway, Delete_Stop, TPA, Meets_Headway_Criteria, Stop_Description, Project_Description, stop_lon, stop_lat)
+	SELECT   agency_id, agency_name, route_id, agency_stop_id, stop_name, route_type, [Max AM Trips], [Min AM Headway], 0 as Delete_Stop, TPA, 0 as Meets_Headway_Criteria, 'Existing Transit Stop' as Stop_Description, null as Project_Description, stop_lon, stop_lat
 	FROM        #Wednesday_AM_Peak_Trips_15min_or_Less
 	Where [Max AM Trips] is not null
 GO
 	INSERT INTO [TPA_TRANSIT_STOPS]
-							 (agency_id, agency_name, route_id, agency_stop_id, stop_name, status, route_type, Max_PM_Trips, Min_PM_Headway, Delete_Stop, TPA, Meets_Headway_Criteria, Stop_Description, Project_Description, stop_lon, stop_lat)
-	SELECT   agency_id, agency_name, route_id, agency_stop_id, stop_name, status, route_type, [Max PM Trips], [Min PM Headway],0 as Delete_Stop, TPA, 0 as Meets_Headway_Criteria, 'Existing Transit Stop' as Stop_Description, null as Project_Description, stop_lon, stop_lat
+							 (agency_id, agency_name, route_id, agency_stop_id, stop_name, route_type, Max_PM_Trips, Min_PM_Headway, Delete_Stop, TPA, Meets_Headway_Criteria, Stop_Description, Project_Description, stop_lon, stop_lat)
+	SELECT   agency_id, agency_name, route_id, agency_stop_id, stop_name, route_type, [Max PM Trips], [Min PM Headway],0 as Delete_Stop, TPA, 0 as Meets_Headway_Criteria, 'Existing Transit Stop' as Stop_Description, null as Project_Description, stop_lon, stop_lat
 	FROM         #Wednesday_PM_Peak_Trips_15min_or_Less
 	Where [Max PM Trips] is not null
 GO
@@ -499,14 +498,14 @@ GO
 Print 'Inserting Thursday Values'
 GO
 	INSERT INTO [TPA_TRANSIT_STOPS]
-							 (agency_id, agency_name, route_id, agency_stop_id, stop_name, status, route_type, Max_AM_Trips, Min_AM_Headway, Delete_Stop, TPA, Meets_Headway_Criteria, Stop_Description, Project_Description, stop_lon, stop_lat)
-	SELECT   agency_id, agency_name, route_id, agency_stop_id, stop_name, status, route_type, [Max AM Trips], [Min AM Headway], 0 as Delete_Stop, TPA, 0 as Meets_Headway_Criteria, 'Existing Transit Stop' as Stop_Description, null as Project_Description, stop_lon, stop_lat
+							 (agency_id, agency_name, route_id, agency_stop_id, stop_name, route_type, Max_AM_Trips, Min_AM_Headway, Delete_Stop, TPA, Meets_Headway_Criteria, Stop_Description, Project_Description, stop_lon, stop_lat)
+	SELECT   agency_id, agency_name, route_id, agency_stop_id, stop_name, route_type, [Max AM Trips], [Min AM Headway], 0 as Delete_Stop, TPA, 0 as Meets_Headway_Criteria, 'Existing Transit Stop' as Stop_Description, null as Project_Description, stop_lon, stop_lat
 	FROM         #Thursday_AM_Peak_Trips_15min_or_Less
 	Where [Max AM Trips] is not null
 GO
 	INSERT INTO [TPA_TRANSIT_STOPS]
-							 (agency_id, agency_name, route_id, agency_stop_id, stop_name, status, route_type, Max_PM_Trips, Min_PM_Headway, Delete_Stop, TPA, Meets_Headway_Criteria, Stop_Description, Project_Description, stop_lon, stop_lat)
-	SELECT   agency_id, agency_name, route_id, agency_stop_id, stop_name, status, route_type, [Max PM Trips], [Min PM Headway],0 as Delete_Stop, TPA, 0 as Meets_Headway_Criteria, 'Existing Transit Stop' as Stop_Description, null as Project_Description, stop_lon, stop_lat
+							 (agency_id, agency_name, route_id, agency_stop_id, stop_name, route_type, Max_PM_Trips, Min_PM_Headway, Delete_Stop, TPA, Meets_Headway_Criteria, Stop_Description, Project_Description, stop_lon, stop_lat)
+	SELECT   agency_id, agency_name, route_id, agency_stop_id, stop_name, route_type, [Max PM Trips], [Min PM Headway],0 as Delete_Stop, TPA, 0 as Meets_Headway_Criteria, 'Existing Transit Stop' as Stop_Description, null as Project_Description, stop_lon, stop_lat
 	FROM        #Thursday_PM_Peak_Trips_15min_or_Less
 	Where [Max PM Trips] is not null
 GO
@@ -520,14 +519,14 @@ GO
 Print 'Inserting Friday Values'
 GO
 	INSERT INTO [TPA_TRANSIT_STOPS]
-							 (agency_id, agency_name, route_id, agency_stop_id, stop_name, status, route_type, Max_AM_Trips, Min_AM_Headway, Delete_Stop, TPA, Meets_Headway_Criteria, Stop_Description, Project_Description, stop_lon, stop_lat)
-	SELECT   agency_id, agency_name, route_id, agency_stop_id, stop_name, status, route_type, [Max AM Trips], [Min AM Headway], 0 as Delete_Stop, TPA, 0 as Meets_Headway_Criteria, 'Existing Transit Stop' as Stop_Description, null as Project_Description, stop_lon, stop_lat
+							 (agency_id, agency_name, route_id, agency_stop_id, stop_name, route_type, Max_AM_Trips, Min_AM_Headway, Delete_Stop, TPA, Meets_Headway_Criteria, Stop_Description, Project_Description, stop_lon, stop_lat)
+	SELECT   agency_id, agency_name, route_id, agency_stop_id, stop_name, route_type, [Max AM Trips], [Min AM Headway], 0 as Delete_Stop, TPA, 0 as Meets_Headway_Criteria, 'Existing Transit Stop' as Stop_Description, null as Project_Description, stop_lon, stop_lat
 	FROM         #Friday_AM_Peak_Trips_15min_or_Less
 	Where [Max AM Trips] is not null
 GO
 	INSERT INTO [TPA_TRANSIT_STOPS]
-							 (agency_id, agency_name, route_id, agency_stop_id, stop_name, status, route_type, Max_PM_Trips, Min_PM_Headway, Delete_Stop, TPA, Meets_Headway_Criteria, Stop_Description, Project_Description, stop_lon, stop_lat)
-	SELECT   agency_id, agency_name, route_id, agency_stop_id, stop_name, status, route_type, [Max PM Trips], [Min PM Headway],0 as Delete_Stop, TPA, 0 as Meets_Headway_Criteria, 'Existing Transit Stop' as Stop_Description, null as Project_Description, stop_lon, stop_lat
+							 (agency_id, agency_name, route_id, agency_stop_id, stop_name, route_type, Max_PM_Trips, Min_PM_Headway, Delete_Stop, TPA, Meets_Headway_Criteria, Stop_Description, Project_Description, stop_lon, stop_lat)
+	SELECT   agency_id, agency_name, route_id, agency_stop_id, stop_name, route_type, [Max PM Trips], [Min PM Headway],0 as Delete_Stop, TPA, 0 as Meets_Headway_Criteria, 'Existing Transit Stop' as Stop_Description, null as Project_Description, stop_lon, stop_lat
 	FROM         #Friday_PM_Peak_Trips_15min_or_Less
 	Where [Max PM Trips] is not null
 GO
@@ -554,12 +553,12 @@ GO
 	Print 'Creating Table TPA_Transit_Stops_2016_Build'
 GO
 
-SELECT   agency_id, agency_name, route_id, agency_stop_id, stop_name, status, route_type, AVG(Max_AM_Trips) AS Avg_Weekday_AM_Trips, AVG(Min_AM_Headway) AS Avg_Weekday_AM_Headway, 
+SELECT   agency_id, agency_name, route_id, agency_stop_id, stop_name, route_type, AVG(Max_AM_Trips) AS Avg_Weekday_AM_Trips, AVG(Min_AM_Headway) AS Avg_Weekday_AM_Headway, 
                          AVG(Max_PM_Trips) AS Avg_Weekday_PM_Trips, AVG(Min_PM_Headway) AS Avg_Weekday_PM_Headway, Delete_Stop, TPA, Meets_Headway_Criteria, TPA_Eligible, Stop_Description, Project_Description, stop_lon, stop_lat
 into TPA_Transit_Stops_2016_Build
 FROM         TPA_TRANSIT_STOPS
 --Where Avg_Weekday_AM_Headway is not null and Avg_Weekday_PM_Headway is not null
-GROUP BY agency_id, agency_name, route_id, agency_stop_id, stop_name, status, route_type, Delete_Stop, TPA_Eligible, TPA, Meets_Headway_Criteria, Stop_Description, Project_Description, stop_lon, stop_lat
+GROUP BY agency_id, agency_name, route_id, agency_stop_id, stop_name, route_type, Delete_Stop, TPA_Eligible, TPA, Meets_Headway_Criteria, Stop_Description, Project_Description, stop_lon, stop_lat
 --ORDER BY agency_id, route_id, agency_stop_id
 
 GO
@@ -576,15 +575,15 @@ Print 'Step 8. Insert Planned and Under Construction Transit Stops'
 -----------------------------------------------------------------------------------------
 GO
 --Fix the column name in the TPA_Future_Transit_Stops Table
---SELECT        agency_id, agency_name, route_id, agency_stop_id, stop_name, status, route_type, Avg_Weekday_AM_Headway, Avg_Weekday_PM_Headway, Delete_Stop, Meets_Headway_Criteria, stop_description, Project_Description, 
+--SELECT        agency_id, agency_name, route_id, agency_stop_id, stop_name, route_type, Avg_Weekday_AM_Headway, Avg_Weekday_PM_Headway, Delete_Stop, Meets_Headway_Criteria, stop_description, Project_Description, 
 --                         stop_lon, stop_lat
 --FROM            TPA_Future_Transit_Stops
 --Where System = 'Ferry'
 
 INSERT INTO TPA_Transit_Stops_2016_Build
-                         (agency_id, agency_name, route_id, agency_stop_id, stop_name, status, route_type, Avg_Weekday_AM_Headway, Avg_Weekday_PM_Headway, Delete_Stop, Meets_Headway_Criteria, Stop_Description, Project_Description, 
+                         (agency_id, agency_name, route_id, agency_stop_id, stop_name, route_type, Avg_Weekday_AM_Headway, Avg_Weekday_PM_Headway, Delete_Stop, Meets_Headway_Criteria, Stop_Description, Project_Description, 
                          stop_lon, stop_lat)
-SELECT        agency_id, agency_name, route_id, agency_stop_id, stop_name, status, route_type, Avg_Weekday_AM_Headway, Avg_Weekday_PM_Headway, Delete_Stop, Meets_Headway_Criteria, stop_description, Project_Description, 
+SELECT        agency_id, agency_name, route_id, agency_stop_id, stop_name, route_type, Avg_Weekday_AM_Headway, Avg_Weekday_PM_Headway, Delete_Stop, Meets_Headway_Criteria, stop_description, Project_Description, 
                          stop_lon, stop_lat
 FROM            TPA_Future_Transit_Stops
 Where stop_description not in ('Stevens Creek LRT','North Bayshore LRT (NASA/Bayshore to Google)','Tasman West LRT Realignment (Fair Oaks to Mountain View)', 'eBART – Phase 2 (Antioch to Brentwood)')
@@ -603,12 +602,12 @@ GO
 GO
 		create view rtd_route_stop_all_other_modes as
 SELECT        rtd_route_trips.agency_id, rtd_route_trips.agency_name, rtd_route_trips.route_id, stops.stop_name, stop_times.agency_stop_id, 
-                         rtd_route_trips.status, rtd_route_trips.route_type, stops.stop_lat, stops.stop_lon
+                         rtd_route_trips.rtd_route_trips.route_type, stops.stop_lat, stops.stop_lon
 FROM            stops INNER JOIN
                          stop_times ON stops.agency_stop_id = stop_times.agency_stop_id INNER JOIN
                          rtd_route_trips ON stop_times.agency_trip_id = rtd_route_trips.agency_trip_id
 GROUP BY rtd_route_trips.agency_id, rtd_route_trips.agency_name, rtd_route_trips.route_id, stops.stop_name, stop_times.agency_stop_id, 
-                         rtd_route_trips.status, rtd_route_trips.route_type, stops.stop_lat, stops.stop_lon
+                         rtd_route_trips.rtd_route_trips.route_type, stops.stop_lat, stops.stop_lon
 HAVING        (rtd_route_trips.route_type <> 3)
 GO
 ------------------------------------------------------------------------------------------------------------
@@ -616,11 +615,11 @@ Print 'Append all existing Rail, Light Rail, Cable Car, and Ferry Stops into TPA
 ------------------------------------------------------------------------------------------------------------
 GO
 INSERT INTO TPA_Transit_Stops_2016_Build
-                         (agency_id, agency_name, agency_stop_id, stop_name, status, route_type, stop_lon, stop_lat)
-SELECT        agency_id, agency_name, agency_stop_id, stop_name, status, route_type, stop_lon, stop_lat
+                         (agency_id, agency_name, agency_stop_id, stop_name, route_type, stop_lon, stop_lat)
+SELECT        agency_id, agency_name, agency_stop_id, stop_name, route_type, stop_lon, stop_lat
 FROM            rtd_route_stop_all_other_modes
 WHERE        (agency_stop_id NOT IN ('AT:12175078', 'BG:1091722', 'HF:12175092', 'AT:12175080', 'BG:1091727', 'SB:12048537'))
-GROUP BY agency_id, agency_name, agency_stop_id, stop_name, status, route_type, stop_lon, stop_lat
+GROUP BY agency_id, agency_name, agency_stop_id, stop_name, route_type, stop_lon, stop_lat
 --ORDER BY route_type, agency_id
 --select * from rtd_route_stop_all_other_modes where route_type='Ferry'
 GO
@@ -670,21 +669,21 @@ update TPA_Transit_Stops_2016_Build
 set route_id = agency_name
 where agency_id = 'SMART' and route_id is null
 GO
-update TPA_Transit_Stops_2016_Build
+/*update TPA_Transit_Stops_2016_Build
 set route_id = 'BART (Future)'
-where agency_id = 'BA' and route_type = 2 and status <> 'E' and route_id is null
-GO
+where agency_id = 'BA' and route_type = 2 and status <> 'E' and route_id is null*/
+/*GO
 update TPA_Transit_Stops_2016_Build
 set route_id = agency_name + '-' + route_type
 where status <> 'E' and route_id is null
 GO
---------------------------------------------------------------------------------------------------
+*/--------------------------------------------------------------------------------------------------
 Print 'Reclassify status values of E to Existing'
 --------------------------------------------------------------------------------------------------
 Go
-update TPA_Transit_Stops_2016_Build
+/*update TPA_Transit_Stops_2016_Build
 set status = 'Existing'
-where status = 'E'
+where status = 'E'*/
 GO
 --Also need to add a Distance Flag field to hold the boolean value for stops that have an adjacent stop within the AM/PM Peak Headway threshold.
 ALTER TABLE TPA_Transit_Stops_2016_Build
@@ -701,7 +700,7 @@ GO
 --for now you will need to generate a near table using ArcGIS.
 --Qry would need to count adjacent stops within 0.2 miles then insert into a Temp table.
 --
---SELECT        agency_id, route_type, Avg_Weekday_AM_Headway, Avg_Weekday_PM_Headway, Meets_Headway_Criteria, Distance_Eligible, status, Shape
+--SELECT        agency_id, route_type, Avg_Weekday_AM_Headway, Avg_Weekday_PM_Headway, Meets_Headway_Criteria, Distance_Eligible, Shape
 --FROM            TPA_Transit_Stops_2016_Build
 --WHERE        (route_type = 3)
 alter table [dbo].[TPA_Transit_Stops_2016_Build]
@@ -819,11 +818,11 @@ IF EXISTS(select * FROM sys.views where name = 'TPA_Transit_Stops_2016_Draft')
 GO
 
 create view TPA_Transit_Stops_2016_Draft as
-SELECT TOP (60000)        agency_id, agency_name, route_id, agency_stop_id, stop_name, status, route_type, Avg_Weekday_AM_Trips, Avg_Weekday_AM_Headway, Avg_Weekday_PM_Trips, Avg_Weekday_PM_Headway, Delete_Stop, 
+SELECT TOP (60000)        agency_id, agency_name, route_id, agency_stop_id, stop_name, route_type, Avg_Weekday_AM_Trips, Avg_Weekday_AM_Headway, Avg_Weekday_PM_Trips, Avg_Weekday_PM_Headway, Delete_Stop, 
                          Meets_Headway_Criteria, Distance_Eligible, TPA_Eligible, Stop_Description, Project_Description, stop_lon, stop_lat, SHAPE
 FROM            TPA_Transit_Stops_2016_Build 
 --Where Meets_Headway_Criteria = 1 
-order by agency_id, route_id, status, route_type
+order by agency_id, route_id, route_type
 GO
 Print 'Build Final Tale for Map View'
 Go
@@ -861,7 +860,7 @@ IF EXISTS(select * FROM sys.tables where name = 'TPA_Stops_2016_Final')
 	ELSE
 		PRINT 'Table Does Not Exist';
 Go
-SELECT     RecID, agency_id, agency_name, route_id, agency_stop_id, stop_name, status, route_type, Avg_Weekday_AM_Trips, Avg_Weekday_AM_Headway, Avg_Weekday_PM_Trips, Avg_Weekday_PM_Headway, Delete_Stop, Meets_Headway_Criteria, Distance_Eligible, 
+SELECT     RecID, agency_id, agency_name, route_id, agency_stop_id, stop_name, route_type, Avg_Weekday_AM_Trips, Avg_Weekday_AM_Headway, Avg_Weekday_PM_Trips, Avg_Weekday_PM_Headway, Delete_Stop, Meets_Headway_Criteria, Distance_Eligible, 
                   TPA_Eligible, Stop_Description, Project_Description, stop_lon, stop_lat, geometry::Point([stop_lon], [stop_lat], 4326) as SHAPE
 into TPA_Stops_2016_Final
 FROM        TPA_Stops_2016_Draft
@@ -882,4 +881,4 @@ Print 'End of Query' ---EOF
 --select * From [dbo].[rtd_route_stop_all_other_modes] --No output
 --select * from [dbo].[rtd_route_stop_schedule] -- No Output
 --select * From [dbo].[rtd_route_trips] --no output
---select * From [dbo].[TPA_Transit_Stops_2016_Draft] where route_type <>'Bus' order by agency_id, route_id, status, route_type, stop_name -- Only Planned Transit
+--select * From [dbo].[TPA_Transit_Stops_2016_Draft] where route_type <>'Bus' order by agency_id, route_id, route_type, stop_name -- Only Planned Transit
