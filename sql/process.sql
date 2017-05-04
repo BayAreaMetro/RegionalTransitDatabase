@@ -87,7 +87,7 @@ GO
 							 240 / COUNT(stop_sequence) AS Monday_AM_Peak_Headway, CASE WHEN (240 / COUNT(stop_sequence) <= 15) THEN 'Meets Criteria' ELSE 'Does Not Meet Criteria' END AS TPA
 	into #Monday_AM_Peak_Transit_Stop_Headways
 	FROM            dbo.route_stop_schedule
-	WHERE        (CAST(arrival_time AS time) BETWEEN '06:00:00.0000' AND '09:59:59.0000') AND (Monday = 1)
+	WHERE        (CAST(arrival_time AS time) BETWEEN '06:00:00.0000' AND '09:59:59.0000') AND (Monday = 1) AND hour < 23
 	GROUP BY agency_id, agency_name, route_id, direction_id, agency_service_id, agency_stop_id, status, system, stop_name, stop_sequence, stop_lon, stop_lat 
 GO
 
@@ -107,7 +107,7 @@ GO
 							 240 / COUNT(stop_sequence) AS Monday_PM_Peak_Headway, CASE WHEN (240 / COUNT(stop_sequence) <= 15) THEN 'Meets Criteria' ELSE 'Does Not Meet Criteria' END AS TPA
 	into #Monday_PM_Peak_Transit_Stop_Headways
 	FROM            dbo.route_stop_schedule
-	WHERE        (CAST(arrival_time AS time) BETWEEN '15:00:00.0000' AND '18:59:59.0000') AND (Monday = 1)
+	WHERE        (CAST(arrival_time AS time) BETWEEN '15:00:00.0000' AND '18:59:59.0000') AND (Monday = 1) AND hour < 23
 	GROUP BY agency_id, agency_name, route_id, direction_id, agency_service_id, agency_stop_id, status, system, stop_name, stop_sequence, stop_lon, stop_lat 
 GO
 
@@ -126,7 +126,7 @@ GO
 							 240 / COUNT(stop_sequence) AS Tuesday_AM_Peak_Headway, CASE WHEN (240 / COUNT(stop_sequence) <= 15) THEN 'Meets Criteria' ELSE 'Does Not Meet Criteria' END AS TPA
 	into #Tuesday_AM_Peak_Transit_Stop_Headways
 	FROM            dbo.route_stop_schedule
-	WHERE        (CAST(arrival_time AS time) BETWEEN '06:00:00.0000' AND '09:59:59.0000') AND (Tuesday = 1)
+	WHERE        (CAST(arrival_time AS time) BETWEEN '06:00:00.0000' AND '09:59:59.0000') AND (Tuesday = 1) AND hour < 23
 	GROUP BY agency_id, agency_name, route_id, direction_id, agency_service_id, agency_stop_id, status, system, stop_name, stop_sequence, stop_lon, stop_lat 
 GO
 IF OBJECT_ID('tempdb..#Tuesday_PM_Peak_Transit_Stop_Headways') IS NOT NULL 
@@ -144,7 +144,7 @@ GO
 							 240 / COUNT(stop_sequence) AS Tuesday_PM_Peak_Headway, CASE WHEN (240 / COUNT(stop_sequence) <= 15) THEN 'Meets Criteria' ELSE 'Does Not Meet Criteria' END AS TPA
 	into #Tuesday_PM_Peak_Transit_Stop_Headways
 	FROM            dbo.route_stop_schedule
-	WHERE        (CAST(arrival_time AS time) BETWEEN '15:00:00.0000' AND '18:59:59.0000') AND (Tuesday = 1)
+	WHERE        (CAST(arrival_time AS time) BETWEEN '15:00:00.0000' AND '18:59:59.0000') AND (Tuesday = 1) AND hour < 23
 	GROUP BY agency_id, agency_name, route_id, direction_id, agency_service_id, agency_stop_id, status, system, stop_name, stop_sequence, stop_lon, stop_lat 
 GO
 IF OBJECT_ID('tempdb..#Wednesday_AM_Peak_Transit_Stop_Headways') IS NOT NULL 
@@ -162,7 +162,7 @@ GO
 							 240 / COUNT(stop_sequence) AS Wednesday_AM_Peak_Headway, CASE WHEN (240 / COUNT(stop_sequence) <= 15) THEN 'Meets Criteria' ELSE 'Does Not Meet Criteria' END AS TPA
 	into #Wednesday_AM_Peak_Transit_Stop_Headways
 	FROM            dbo.route_stop_schedule
-	WHERE        (CAST(arrival_time AS time) BETWEEN '06:00:00.0000' AND '09:59:59.0000') AND (Wednesday = 1)
+	WHERE        (CAST(arrival_time AS time) BETWEEN '06:00:00.0000' AND '09:59:59.0000') AND (Wednesday = 1) AND hour < 23
 	GROUP BY agency_id, agency_name, route_id, direction_id, agency_service_id, agency_stop_id, status, system, stop_name, stop_sequence, stop_lon, stop_lat 
 GO
 IF OBJECT_ID('tempdb..#Wednesday_PM_Peak_Transit_Stop_Headways') IS NOT NULL 
@@ -179,7 +179,7 @@ GO
 							 240 / COUNT(stop_sequence) AS Wednesday_PM_Peak_Headway, CASE WHEN (240 / COUNT(stop_sequence) <= 15) THEN 'Meets Criteria' ELSE 'Does Not Meet Criteria' END AS TPA
 	into #Wednesday_PM_Peak_Transit_Stop_Headways
 	FROM            dbo.route_stop_schedule
-	WHERE        (CAST(arrival_time AS time) BETWEEN '15:00:00.0000' AND '18:59:59.0000') AND (Wednesday = 1)
+	WHERE        (CAST(arrival_time AS time) BETWEEN '15:00:00.0000' AND '18:59:59.0000') AND (Wednesday = 1) AND hour < 23
 	GROUP BY agency_id, agency_name, route_id, direction_id, agency_service_id, agency_stop_id, status, system, stop_name, stop_sequence, stop_lon, stop_lat 
 GO
 	IF OBJECT_ID('tempdb..#Thursday_AM_Peak_Transit_Stop_Headways') IS NOT NULL 
@@ -197,7 +197,7 @@ GO
 							 240 / COUNT(stop_sequence) AS Thursday_AM_Peak_Headway, CASE WHEN (240 / COUNT(stop_sequence) <= 15) THEN 'Meets Criteria' ELSE 'Does Not Meet Criteria' END AS TPA
 	into #Thursday_AM_Peak_Transit_Stop_Headways
 	FROM            dbo.route_stop_schedule
-	WHERE        (CAST(arrival_time AS time) BETWEEN '06:00:00.0000' AND '09:59:59.0000') AND (Thursday = 1)
+	WHERE        (CAST(arrival_time AS time) BETWEEN '06:00:00.0000' AND '09:59:59.0000') AND (Thursday = 1) AND hour < 23 AND hour > 23
 	GROUP BY agency_id, agency_name, route_id, direction_id, agency_service_id, agency_stop_id, status, system, stop_name, stop_sequence, stop_lon, stop_lat 
 GO
 IF OBJECT_ID('tempdb..#Thursday_PM_Peak_Transit_Stop_Headways') IS NOT NULL 
@@ -215,7 +215,7 @@ GO
 							 240 / COUNT(stop_sequence) AS Thursday_PM_Peak_Headway, CASE WHEN (240 / COUNT(stop_sequence) <= 15) THEN 'Meets Criteria' ELSE 'Does Not Meet Criteria' END AS TPA
 	into #Thursday_PM_Peak_Transit_Stop_Headways
 	FROM            dbo.route_stop_schedule
-	WHERE        (CAST(arrival_time AS time) BETWEEN '15:00:00.0000' AND '18:59:59.0000') AND (Thursday = 1)
+	WHERE        (CAST(arrival_time AS time) BETWEEN '15:00:00.0000' AND '18:59:59.0000') AND (Thursday = 1) AND hour < 23
 	GROUP BY agency_id, agency_name, route_id, direction_id, agency_service_id, agency_stop_id, status, system, stop_name, stop_sequence, stop_lon, stop_lat 
 GO
 IF OBJECT_ID('tempdb..#Friday_AM_Peak_Transit_Stop_Headways') IS NOT NULL 
@@ -233,7 +233,7 @@ GO
 							 240 / COUNT(stop_sequence) AS Friday_AM_Peak_Headway, CASE WHEN (240 / COUNT(stop_sequence) <= 15) THEN 'Meets Criteria' ELSE 'Does Not Meet Criteria' END AS TPA
 	into #Friday_AM_Peak_Transit_Stop_Headways
 	FROM            dbo.route_stop_schedule
-	WHERE        (CAST(arrival_time AS time) BETWEEN '06:00:00.0000' AND '09:59:59.0000') AND (Friday = 1)
+	WHERE        (CAST(arrival_time AS time) BETWEEN '06:00:00.0000' AND '09:59:59.0000') AND (Friday = 1) AND hour < 23
 	GROUP BY agency_id, agency_name, route_id, direction_id, agency_service_id, agency_stop_id, status, system, stop_name, stop_sequence, stop_lon, stop_lat 
 GO
 IF OBJECT_ID('tempdb..#Friday_PM_Peak_Transit_Stop_Headways') IS NOT NULL 
@@ -251,7 +251,7 @@ GO
 							 240 / COUNT(stop_sequence) AS Friday_PM_Peak_Headway, CASE WHEN (240 / COUNT(stop_sequence) <= 15) THEN 'Meets Criteria' ELSE 'Does Not Meet Criteria' END AS TPA
 	into #Friday_PM_Peak_Transit_Stop_Headways
 	FROM            dbo.route_stop_schedule
-	WHERE        (CAST(arrival_time AS time) BETWEEN '15:00:00.0000' AND '18:59:59.0000') AND (Friday = 1)
+	WHERE        (CAST(arrival_time AS time) BETWEEN '15:00:00.0000' AND '18:59:59.0000') AND (Friday = 1) AND hour < 23
 	GROUP BY agency_id, agency_name, route_id, direction_id, agency_service_id, agency_stop_id, status, system, stop_name, stop_sequence, stop_lon, stop_lat 
 GO
 ------------------------------------------------------------------------------------------------------------------------------------------------------
