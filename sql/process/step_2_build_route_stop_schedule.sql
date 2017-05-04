@@ -1,3 +1,17 @@
+--
+--set gtfs time to expected datetime, backing up source column
+
+EXEC sp_rename 'stop_times.arrival_time', 'gtfs_arrival_time', 'COLUMN'; 
+ALTER TABLE stop_times ADD arrival_time NVARCHAR(50) NULL
+
+update stop_times
+set arrival_time = gtfs_arrival_time
+where isdate(gtfs_arrival_time) = 1
+
+update stop_times
+set arrival_time = replace(gtfs_arrival_time, left(gtfs_arrival_time,2), cast(left(gtfs_arrival_time,2) as int) - 24)
+where isdate(gtfs_arrival_time) = 0 and arrival_hour > 23
+
 -----------------------------------------------------------------------------------------------
 Print 'Step 2. Building Route Stop Schedule Table (route_stop_schedule).'
 -----------------------------------------------------------------------------------------------
@@ -43,8 +57,9 @@ SELECT      agency_id, agency_name, route_id, direction_id, stop_name, arrival_t
 			thursday, friday, agency_service_id, COUNT(arrival_time) AS Duplicate_Arrival_Times
 into route_stop_schedule
 FROM            rtd_route_stop_schedule
-GROUP BY agency_id, agency_name, route_id, direction_id, stop_name, arrival_time, stop_sequence, agency_stop_id, route_type, stop_lat, stop_lon, monday, tuesday, wednesday, thursday, friday, 
+GROUP BY agency_id, agency_name, route_id, direction_id, stop_name, arrival_time, stop_sequence, 
+		agency_stop_id, route_type, stop_lat, stop_lon, monday, tuesday, wednesday, thursday, friday, 
                          agency_service_id
-        (route_type = 3)
---ORDER BY agency_service_id, agency_stop_id, route_id, direction_id, arrival_time, stop_sequence 
+        having (route_type = 3)
+ORDER BY agency_service_id, agency_stop_id, route_id, direction_id, arrival_time, stop_sequence 
 GO
