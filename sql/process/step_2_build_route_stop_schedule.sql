@@ -50,7 +50,6 @@ GO
 	ELSE
 		PRINT 'Table Does Not Exist';
 GO
-		create view route_stop_schedule as
 SELECT      agency_id, agency_name, route_id, direction_id, stop_name, arrival_time, 
 			cast(stop_sequence as int) as stop_sequence, agency_stop_id, 
 			route_type, stop_lat, stop_lon, monday, tuesday, wednesday, 
