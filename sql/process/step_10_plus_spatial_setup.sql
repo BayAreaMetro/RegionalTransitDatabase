@@ -61,7 +61,7 @@ ELSE
 	PRINT 'Table Does Not Exist';
 Go
 
---it sounds like OriginStops was made in Arc
+
 With OriginStops AS
 	(select 
 	* from [dbo].[TPA_Transit_Stops_2016_Build])
@@ -73,7 +73,7 @@ With OriginStops AS
 	OD.Shape.STDistance(DD.Shape) <= 321.869 --0.2 Miles
 	--OD.Shape.STDistance(DD.Shape) <= 804.672 --0.5 Miles
 	--OD.Shape.STDistance(DD.Shape) <= 1609.34 --1 mile
-	and OD.System = 'Bus'
+	and OD.route_type = 3
 	Order By OD.Shape.STDistance(DD.Shape)) as DDStops
 Go
 
