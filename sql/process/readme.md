@@ -79,3 +79,8 @@ The following all assign boolean categorical style fields based on the spatial w
 - `rtd_route_stop_schedule`     
 - `rtd_route_trips`     
 - `TPA_Transit_Stops_2016_Draft`   
+
+## Other files:
+
+-  `existing_and_planned.sql` - for now we are moving existing/planned queries out to this file and will put them back in later.  other relevant columns removed from a number of queries are found [here](https://github.com/MetropolitanTransportationCommission/RegionalTransitDatabase/commit/e14a773645881c15bf1d2e0d16a2dbc4a5ac5069)  
+
