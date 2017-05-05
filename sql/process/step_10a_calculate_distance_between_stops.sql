@@ -1,8 +1,8 @@
 ------------------------------------------------------------------------------------------------------------
-Print 'Append all existing Rail, Light Rail, Cable Car, and Ferry Stops into TPA_Transit_Stops_2016_Build'
+Print 'Append all existing Rail, Light Rail, Cable Car, and Ferry Stops into TPA_Transit_Stops_2017_Build'
 ------------------------------------------------------------------------------------------------------------
 GO
-INSERT INTO TPA_Transit_Stops_2016_Build
+INSERT INTO TPA_Transit_Stops_2017_Build
                          (agency_id, agency_name, agency_stop_id, stop_name, route_type, stop_lon, stop_lat)
 SELECT        agency_id, agency_name, agency_stop_id, stop_name, route_type, stop_lon, stop_lat
 FROM            rtd_route_stop_all_other_modes
@@ -18,28 +18,28 @@ Print 'Make Indexed Spatial Field on Transit Stops Table'
 
 GO
 --Also need to add a Distance Flag field to hold the boolean value for stops that have an adjacent stop within the AM/PM Peak Headway threshold.
-ALTER TABLE TPA_Transit_Stops_2016_Build
+ALTER TABLE TPA_Transit_Stops_2017_Build
 ADD Distance_Eligible int,
 Shape Geography
 GO
 
 GO
-update TPA_Transit_Stops_2016_Build
+update TPA_Transit_Stops_2017_Build
 set Shape = geography::STGeomFromText('POINT('+convert(varchar(20),stop_lon)+' '+convert(varchar(20),stop_lat)+')',4326)
 GO
 
-alter table [dbo].[TPA_Transit_Stops_2016_Build]
+alter table [dbo].[TPA_Transit_Stops_2017_Build]
 add RecID int IDENTITY(1,1) NOT NULL,
-CONSTRAINT [PK_TPA_Transit_Stops_2016_Build] PRIMARY KEY CLUSTERED 
+CONSTRAINT [PK_TPA_Transit_Stops_2017_Build] PRIMARY KEY CLUSTERED 
 (
 	RecID ASC
 ) WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
 
 Go
 ---- Create Spatial Index on Shape Col.
-create spatial index spin_Stops ON [dbo].[TPA_Transit_Stops_2016_Build](Shape);
+create spatial index spin_Stops ON [dbo].[TPA_Transit_Stops_2017_Build](Shape);
 --Create index on compare columns (agency_stop_id)
-create index IX_StopID on [dbo].[TPA_Transit_Stops_2016_Build](agency_stop_id)
+create index IX_StopID on [dbo].[TPA_Transit_Stops_2017_Build](agency_stop_id)
 
 
 ------------------------------------------------------------------------------------------------------
@@ -64,10 +64,10 @@ Go
 
 With OriginStops AS
 	(select 
-	* from [dbo].[TPA_Transit_Stops_2016_Build])
+	* from [dbo].[TPA_Transit_Stops_2017_Build])
 	select OD.agency_stop_id, DDStops.agency_stop_id as dd_stop_id, OD.route_type, OD.Shape as OD_SHape, DDStops.Shape as DD_Shape
 	 into #ODMatrix from OriginStops as OD
-	CROSS APPLY (Select Top(1) * from [dbo].[TPA_Transit_Stops_2016_Build] as DD
+	CROSS APPLY (Select Top(1) * from [dbo].[TPA_Transit_Stops_2017_Build] as DD
 	Where OD.agency_stop_id <> DD.agency_stop_id 
 	and 
 	OD.Shape.STDistance(DD.Shape) <= 321.869 --0.2 Miles
@@ -94,8 +94,8 @@ select agency_stop_id,
 
 	--Write Update statement to update those stops that meet the distance threshold in the main table.  Will need to build a join view to update the records
 	--select Distinct DS.agency_stop_id From #StopsThatMeetDistanceThreshold as DS INNER JOIN 
-	--TPA_Transit_Stops_2016_Build ON TPA_Transit_Stops_2016_Build.agency_stop_id = DS.agency_stop_id
-	UPDATE       TPA_Transit_Stops_2016_Build
+	--TPA_Transit_Stops_2017_Build ON TPA_Transit_Stops_2017_Build.agency_stop_id = DS.agency_stop_id
+	UPDATE       TPA_Transit_Stops_2017_Build
 	SET                Distance_Eligible = 1
 	FROM            #StopsThatMeetDistanceThreshold INNER JOIN
-	                       TPA_Transit_Stops_2016_Build ON TPA_Transit_Stops_2016_Build.agency_stop_id = #StopsThatMeetDistanceThreshold.agency_stop_id
+	                       TPA_Transit_Stops_2017_Build ON TPA_Transit_Stops_2017_Build.agency_stop_id = #StopsThatMeetDistanceThreshold.agency_stop_id
