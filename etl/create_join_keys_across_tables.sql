@@ -72,7 +72,7 @@ ALTER TABLE stop_times ADD arrival_hour INTEGER NULL
 
 update stop_times
 set agency_stop_id = agency_id + ':' + replace(replace(stop_id, CHAR(13),''),CHAR(10),'')
-,agency_trip_id = agency_id + ':' + replace(replace(trip_id, CHAR(13),''),CHAR(10),'')
+	,agency_trip_id = agency_id + replace(replace(trip_id, CHAR(13),''),CHAR(10),'')
 where agency_stop_id IS NULL 
 
 --select * 
