@@ -1,5 +1,28 @@
 ## Steps   
 
+### Goal  
+
+From source GTFS data, compile a database of tables for use in estimating bus frequency and stop adjacency for Transit Priority Area estimation.  
+
+### Input Tables:  
+
+-  `stop_times`
+-  `stops`
+-  `routes`
+-  `calendar`
+-  `agency`   
+
+### Output Tables/Views:  
+
+-  `rtd_route_trips`: join `agency`, `routes`, and `trips`, filter for bus only  
+-  `rtd_route_stop_schedule`: join `rtd_route_trips` with `stop_times` and `calendar`   
+-  `route_stop_schedule`: remove duplicate arrivals (by time) in `rtd_route_stop_schedule` and count them in column: `Duplicate_Arrival_Times`
+-  `TPA_TRANSIT_STOPS`:  a version of `route_stop_schedule` in which stops are flagged as 'TPA eligible' or not based on the criteria [here](https://github.com/MetropolitanTransportationCommission/RegionalTransitDatabase/blob/c0f04b36e99a4aa702b7bd3ecfd8608c6bf4b1bf/sql/process/step_3_build_headway_am_pm_views.sql#L17-L19). The schema is [here](https://github.com/MetropolitanTransportationCommission/RegionalTransitDatabase/blob/c0f04b36e99a4aa702b7bd3ecfd8608c6bf4b1bf/sql/process/step_5_insert_weekday_am_pm_headway_into_single_table.sql#L15-L35).   
+-  `rtd_route_stop_all_other_modes`: non-bus stops that are eventually added into `TPA_Transit_Stops_2016_Build` in order to calculate their TPA eligibility.  
+-  `TPA_Future_Transit_Stops`:  we don't have this table in the db yet, but it represents future or planned stops, which should be included as part of the eligibility calculation below.  
+-  `TPA_Transit_Stops_2016_Build`: built from `TPA_TRANSIT_STOPS` and contains the column `Distance_Eligible`, which flags whether a stop is within a distance threshold of other stops, another TPA eligibility criteria.             
+
+
 ##### Step 1. Build rtd_route_trips view.   
 view(table) created: `dbo.rtd_route_trips `    
 ##### Step 2. Building Route Stop Schedule Table (route_stop_schedule).   

@@ -36,7 +36,7 @@ FROM            stops INNER JOIN
                          stop_times ON stops.agency_stop_id = stop_times.agency_stop_id INNER JOIN
                          rtd_route_trips ON stop_times.agency_trip_id = rtd_route_trips.agency_trip_id INNER JOIN
                          calendar ON rtd_route_trips.agency_service_id = calendar.agency_service_id
-WHERE        (rtd_route_trips.route_type = 3)
+/*WHERE (rtd_route_trips.route_type = 3) - redundant, filter applied in rtd_route_trips already */
 Go
 ------------------------------------------------------------------------------------------
 Print 'Create route_stop_schedule to remove duplicate arrival times for select operators'
