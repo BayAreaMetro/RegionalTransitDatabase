@@ -10,70 +10,95 @@
 # Import arcpy module
 import arcpy
 
-project_dir = "C:/temp/RegionalTransitDatabase/"
+PROJECT_DIR = "C:/temp/RegionalTransitDatabase/"
 
-#layer paths
-Stop_Locations = project_dir + "data/network_analyst.gdb/Route_Pattern_Bus_Stops"
+#network globals
+NETWORK_DATASET = PROJECT_DIR + "data/TomTom_2015_12_NW.gdb/Routing/Routing_ND"
+IMPEDANCE_ATTRIBUTE = "Miles"
+U_TURN_POLICY = "ALLOW_UTURNS"
+RESTRICTIONS = "'Avoid Walkways';'Driving a Public Bus'" 
+ACCUMULATORS = "Miles;Minutes" 
+OUTPUT_PATH_SHAPE = "TRUE_LINES_WITHOUT_MEASURES" 
+USE_HIERARCHY_IN_ANALYSIS = "true" 
 
-#network data set must be loaded into an MXD Table of contents from catalog. 
-# see https://github.com/MetropolitanTransportationCommission/RegionalTransitDatabase/issues/16 for more
-Network_Dataset = project_dir + "/data/TomTom_2015_12_NW.gdb/Routing/Routing_ND"
+def initialize_network(namespace_name):
+    arcpy.MakeRouteLayer_na(NETWORK_DATASET, namespace_name, 
+        IMPEDANCE_ATTRIBUTE, "USE_INPUT_ORDER", "PRESERVE_BOTH", 
+        "NO_TIMEWINDOWS", ACCUMULATORS, U_TURN_POLICY, 
+        RESTRICTIONS, USE_HIERARCHY_IN_ANALYSIS, "", OUTPUT_PATH_SHAPE, "")
+
+NETWORK_NAMESPACE_NAME = "R11"
+initialize_network(NETWORK_NAMESPACE_NAME)
+
+#Stop Globals
+RESTRICTIONS = "'Avoid Walkways';'Driving a Public Bus'"
+GROUP_BY_FIELDS = "Agency_Route_ID" 
+SORT_FIELD = "stop_sequence"
+FIELD_MAPPINGS = "Name Agency_Route_ID #;RouteName Agency_Route_ID #"
+SOLVE_SUCCEEDED = "false"
+CHILD_DATA_ELEMENT = "Routes"
+# HHTS_TRIPS__2_ = Network_Analyst_Layer
+HHTS_TRIPS = "empty_fc"
+STOP_LOCATIONS = PROJECT_DIR + "data/network_analyst.gdb/Route_Pattern_Bus_Stops"
+
 
 #arguments
-Filter_Stop_Locations = "Route_ID ='1'"
-Restrictions = "'Avoid Walkways';'Driving a Public Bus'"
-Group_By_Fields = "Agency_Route_ID" 
-Sort_Field = "stop_sequence"
-Field_Mappings = "Name Agency_Route_ID #;RouteName Agency_Route_ID #"
-Impedance_Attribute = "Miles" # provide a default value if unspecified
-Restrictions = "'Avoid Walkways';'Driving a Public Bus'" # provide a default value if unspecified
-Accumulators = "Miles;Minutes" # provide a default value if unspecified
-Output_Path_Shape = "TRUE_LINES_WITHOUT_MEASURES" # provide a default value if unspecified
-U_Turn_Policy = "ALLOW_UTURNS" # provide a default value if unspecified
-Use_Hierarchy_in_Analysis = "true" # provide a default value if unspecified
-Network_Analyst_Layer = "R1"
-Solve_Succeeded = "false"
-Child_Data_Element = "Routes"
-HHTS_Trips__2_ = Network_Analyst_Layer
-HHTS_Trips = "\\\\Mac\\Home\\Documents\\Planning\\DataManagement\\DataManagement.gdb\\utm\\HHTS_Trips"
+class bus_route(object):
+    '''
+    br = bus_route("'AC - 1 - Inbound'")
+    >> 
+    >> br.stops_tempfile
+    array of stop ids 
+    >> br.tomtom_segment_ids
+    array of tomtom segment id's 
+    '''
 
-arcpy.MakeFeatureLayer_management(in_features=Stop_Locations, 
-    out_layer="temp_stops", 
-    where_clause=Filter_Stop_Locations, 
-    workspace="")
+    #layer paths
+    #network data set must be loaded into an MXD Table of contents from catalog. 
+    # see https://github.com/MetropolitanTransportationCommission/RegionalTransitDatabase/issues/16 for more
 
-# Process: Iterate Feature Selection
-# arcpy.IterateFeatureSelection_mb(Output_Layer, Group_By_Fields, "false")
 
-# Replace a layer/table view name with a path to a dataset (which can be a layer file) or create the layer/table view within the script
-# The following inputs are layers or table views: "Routing_ND"
+    def __init__(self, routename_id):
+        import re
+        _route_temp_namespace = re.sub("\W","", routename_id)
+        _routefilter = "Agency_Route_Pattern =" + routename_id
+        self.stop_tempfile = arcpy.MakeFeatureLayer_management(in_features=STOP_LOCATIONS, 
+            out_layer=_route_temp_namespace, 
+            where_clause=_routefilter, 
+            workspace="")
 
-# Process: Make Route Layer
-arcpy.MakeRouteLayer_na(Network_Dataset, Network_Analyst_Layer, 
-                        Impedance_Attribute, "USE_INPUT_ORDER", "PRESERVE_BOTH", 
-                        "NO_TIMEWINDOWS", Accumulators, U_Turn_Policy, 
-                        Restrictions, Use_Hierarchy_in_Analysis, "", Output_Path_Shape, "")
+        self.network_stops = arcpy.AddLocations_na(in_network_analysis_layer=NETWORK_NAMESPACE_NAME,
+                                 sub_layer="Stops",
+                                 in_table=self.stop_tempfile,
+                                 field_mappings=FIELD_MAPPINGS,
+                                 search_tolerance="5000 Meters",
+                                 sort_field=SORT_FIELD,
+                                 search_criteria="Streets SHAPE;Routing_ND_Junctions NONE",
+                                 match_type="MATCH_TO_CLOSEST",
+                                 append="APPEND",
+                                 snap_to_position_along_network="NO_SNAP",
+                                 snap_offset="5 Meters",
+                                 exclude_restricted_elements="INCLUDE",
+                                 search_query="Streets #;Routing_ND_Junctions #")
 
-# Process: Add Locations
-arcpy.AddLocations_na(in_network_analysis_layer=Network_Analyst_Layer,
-                         sub_layer="Stops",
-                         in_table="temp_stops",
-                         field_mappings=Field_Mappings,
-                         search_tolerance="5000 Meters",
-                         sort_field=Sort_Field,
-                         search_criteria="Streets SHAPE;Routing_ND_Junctions NONE",
-                         match_type="MATCH_TO_CLOSEST",
-                         append="APPEND",
-                         snap_to_position_along_network="NO_SNAP",
-                         snap_offset="5 Meters",
-                         exclude_restricted_elements="INCLUDE",
-                         search_query="Streets #;Routing_ND_Junctions #")
 
-# Replace a layer/table view name with a path to a dataset (which can be a layer file) or create the layer/table view within the script
-# The following inputs are layers or table views: "R1"
+    # Process: Iterate Feature Selection
+    # arcpy.IterateFeatureSelection_mb(Output_Layer, Group_By_Fields, "false")
 
-# Process: Solve
-arcpy.Solve_na(Network_Analyst_Layer, "SKIP", "TERMINATE", "")
+    # Replace a layer/table view name with a path to a dataset (which can be a layer file) or create the layer/table view within the script
+    # The following inputs are layers or table views: "Routing_ND"
+
+    # Process: Make Route Layer
+
+
+    # Process: Add Locations
+
+
+    # Replace a layer/table view name with a path to a dataset (which can be a layer file) or create the layer/table view within the script
+    # The following inputs are layers or table views: "R1"
+
+    # Process: Solve
+    arcpy.Solve_na(Network_Analyst_Layer, "SKIP", "TERMINATE", "")
 
 # # Process: Select Data
 # arcpy.SelectData_management(Network_Analyst_Layer, Child_Data_Element)
