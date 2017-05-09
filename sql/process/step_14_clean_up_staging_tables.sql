@@ -1,3 +1,7 @@
+USE AdventureWorks2012;   
+GO  
+EXEC sp_rename 'Sales.SalesTerritory', 'SalesTerr';  
+
 --Cleanup unneeded tables
 ------------------------------------------------------------
 Print 'Cleanup unneeded tables'
