@@ -39,30 +39,14 @@ A pseudo-shell/bat script with links reflecting the process thus far:
 -  [create_all_tables](https://github.com/MetropolitanTransportationCommission/RegionalTransitDatabase/blob/master/etl/create_all_tables.sql)   
 -  [load_combined_csv_to_db](https://github.com/MetropolitanTransportationCommission/RegionalTransitDatabase/blob/master/etl/load_combined_csv_to_db.bat)   
 -  [create_join_keys_across_tables](https://github.com/MetropolitanTransportationCommission/RegionalTransitDatabase/blob/master/etl/create_join_keys_across_tables.sql)   
--  [calculate route frequencies for various times of day and types of transit](https://github.com/MetropolitanTransportationCommission/RegionalTransitDatabase/tree/master/sql/process)
-
-##### To Calculate Route headways:     
-
-###### Processing for Route Data  
-
-Not on GTFS and not provided by ESRI toolkit.  
-
-Data Cleaning, etc, based upon some review.  
-
-`process.sql` to output the table schema here: https://github.com/MetropolitanTransportationCommission/RegionalTransitDatabase/blob/master/sql/process.sql#L403-L431   
-
-If there are views or tables that are missing the processing script they may be in the utility scripts in the sql directory.  
-
-###### Building the Route Lines   
-
-Take the points for each route from above and process them in network analyst to get routes.  
+-  [calculate route frequencies for various times of day and types of transit and ad-hoc fixes to data where necessary](https://github.com/MetropolitanTransportationCommission/RegionalTransitDatabase/tree/master/sql/process)
+-  [Build the Route Lines: Take the points for each route from previous step get route geometries](https://github.com/MetropolitanTransportationCommission/RegionalTransitDatabase/blob/4b28c1d1d206138b80c28580e69ca026a252cd11/python/network_analysis.py)   
 
 ##### To Calculate Stop Headways(Tabled momentarily):   
 
 Run the Preprocess GTFS Data for each operator.   
 
 Then run the [Count Trips at Stops](https://github.com/Esri/public-transit-tools/blob/master/better-bus-buffers/scripts/BBB_CountTripsAtStops.py) or [Points](https://github.com/Esri/public-transit-tools/blob/6451cf1de24d4e5b7337df402135f351a7eaf181/better-bus-buffers/scripts/BBB_CountTripsAtPoints.py) to calculate the Stop or Intersection frequency for Transit Service.   
-
 
 ##### Step 3. Build single Transit Stop FC with all Transit Frequency Output  
 
