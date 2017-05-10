@@ -29,7 +29,7 @@ Calculate frequency of service for stops and routes.
 
 #### [2016](https://metrotrans-my.sharepoint.com/personal/ksmith_mtc_ca_gov/_layouts/15/WopiFrame.aspx?sourcedoc=%7B2FB81C2E-8CF6-4BA4-8994-6B36F7E1B647%7D&file=511%20Data%20API%20Documentation.docx&action=default)
 
-#### Steps:   
+#### 2017:     
 
 A pseudo-shell/bat script with links reflecting the process thus far:   
 
@@ -51,10 +51,6 @@ Then run the [Count Trips at Stops](https://github.com/Esri/public-transit-tools
 ##### Step 3. Build single Transit Stop FC with all Transit Frequency Output  
 
 [This step](https://github.com/MetropolitanTransportationCommission/RegionalTransitDatabase/blob/06839cf5c2bb3dc15e72f64683754ff8ea168811/sql/Regional%20Transit%20Database%20Processing%20for%202016%20final.sql) consolidates the 511 Transit data into one FC. This FC should contain all of the Transit Frequency attributes (AM Peak/PM Peak values for each Weekday)   
-
-#### 2017   
-
-[Get GTFS Data from 511 API](https://github.com/MetropolitanTransportationCommission/RegionalTransitDatabase/blob/0b8fd03cba12a41753d44c8504f3285563a78ae6/get_511_gtfs_zips.py)   
 
 ### Outcomes   
 
