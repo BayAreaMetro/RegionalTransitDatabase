@@ -10,89 +10,70 @@
 # Import arcpy module
 import arcpy
 
-# Load required toolboxes
-arcpy.ImportToolbox("Model Functions")
+arcpy.env.overwriteOutput = True
 
-# Script arguments
-Input_Stop_Locations = arcpy.GetParameterAsText(0)
-if Input_Stop_Locations == '#' or not Input_Stop_Locations:
-    Input_Stop_Locations = "\\\\Mac\\Home\\Documents\\Planning\\DataManagement\\DataManagement.gdb\\BART_OD_Trips_StationUpd_Pro" # provide a default value if unspecified
+PROJECT_DIR = "C:/temp/RegionalTransitDatabase/"
 
-Filter_Stop_Locations = arcpy.GetParameterAsText(1)
-if Filter_Stop_Locations == '#' or not Filter_Stop_Locations:
-    Filter_Stop_Locations = "Route_ID ='11977_338'" # provide a default value if unspecified
+ntwrk_path = PROJECT_DIR + "data/TomTom_2015_12_NW.gdb/Routing/Routing_ND"
 
-Choose_Route_Network_Dataset = arcpy.GetParameterAsText(2)
-if Choose_Route_Network_Dataset == '#' or not Choose_Route_Network_Dataset:
-    Choose_Route_Network_Dataset = "\\\\Mac\\Home\\Documents\\GIS Data\\TomTomData\\TomTom_2015_12_NW.gdb\\Routing\\Routing_ND" # provide a default value if unspecified
+#network args
+ntwrk_args = {"network_dataset":ntwrk_path,
+"impedance_attribute":"miles",
+"u_turn_policy":"allow_uturns",
+"restrictions":"'avoid walkways';'driving a public bus'", 
+"accumulators":"miles;minutes", 
+"output_path_shape":"true_lines_without_measures", 
+"use_hierarchy_in_analysis":"true"}
 
-Impedance_Attribute = arcpy.GetParameterAsText(3)
-if Impedance_Attribute == '#' or not Impedance_Attribute:
-    Impedance_Attribute = "Miles" # provide a default value if unspecified
+def load_network(ntwrk_name, **kwargs):
+    print(kwargs["network_dataset"])
+    arcpy.MakeRouteLayer_na(kwargs["network_dataset"], ntwrk_name, 
+        kwargs["impedance_attribute"], "use_input_order", "preserve_both", 
+        "no_timewindows", kwargs["accumulators"], kwargs["u_turn_policy"], 
+        kwargs["restrictions"], kwargs["use_hierarchy_in_analysis"], "", kwargs["output_path_shape"], "")
+    return ntwrk_name
 
-Restrictions = arcpy.GetParameterAsText(4)
-if Restrictions == '#' or not Restrictions:
-    Restrictions = "'Avoid Ferries';'Avoid Four Wheel Drive Only Roads'" # provide a default value if unspecified
+load_network("N1",**ntwrk_args)
 
-Accumulators = arcpy.GetParameterAsText(5)
-if Accumulators == '#' or not Accumulators:
-    Accumulators = "Miles;Minutes" # provide a default value if unspecified
 
-Output_Path_Shape = arcpy.GetParameterAsText(6)
-if Output_Path_Shape == '#' or not Output_Path_Shape:
-    Output_Path_Shape = "TRUE_LINES_WITHOUT_MEASURES" # provide a default value if unspecified
+#stop arguments
+stop_args = {"restrictions" : "'avoid walkways';'driving a public bus'",
+            "group_by_fields" : "agency_route_id", 
+            "sort_field" : "stop_sequence",
+            "field_mappings": "name agency_route_id #;routename agency_route_id #",
+            "solve_succeeded" : "false",
+            "child_data_element" : "routes",
+            #hhts_trips__2_ = network_analyst_layer,
+            "hhts_trips" : "empty_fc",
+            "stop_locations" : PROJECT_DIR + "data/network_analyst.gdb/route_pattern_bus_stops"}
 
-U_Turn_Policy = arcpy.GetParameterAsText(7)
-if U_Turn_Policy == '#' or not U_Turn_Policy:
-    U_Turn_Policy = "ALLOW_UTURNS" # provide a default value if unspecified
+def load_stops(ntwrk_name,mtcgis_agency_route_pattern,**kwargs):
+    #mtcgis_agency_route_pattern_id is a legacy id that mtc uses to uniquely identify routes and stops
+    import re
+    route_shortname = re.sub("\W","", mtcgis_agency_route_pattern)
+    route_filter = "Agency_Route_Pattern =" + mtcgis_agency_route_pattern
+    arcpy.MakeFeatureLayer_management(in_features=kwargs["stop_locations"], 
+        out_layer=route_shortname, 
+        where_clause=route_filter, 
+        workspace="")
+    arcpy.na.AddLocations(in_network_analysis_layer=ntwrk_name,
+                     sub_layer="Stops",
+                     in_table=route_shortname,
+                     field_mappings=kwargs["field_mappings"],
+                     search_tolerance="5000 Meters",
+                     sort_field=kwargs["sort_field"],
+                     search_criteria="Streets SHAPE;Routing_ND_Junctions NONE",
+                     match_type="MATCH_TO_CLOSEST",
+                     append="APPEND",
+                     snap_to_position_along_network="NO_SNAP",
+                     snap_offset="5 Meters",
+                     exclude_restricted_elements="INCLUDE",
+                     search_query="Streets #;Routing_ND_Junctions #")
+    return route_shortname
 
-Use_Hierarchy_in_Analysis = arcpy.GetParameterAsText(8)
-if Use_Hierarchy_in_Analysis == '#' or not Use_Hierarchy_in_Analysis:
-    Use_Hierarchy_in_Analysis = "true" # provide a default value if unspecified
+route_name = "'AC - 1 - Inbound'"
+network_name = "N1"
+load_network(network_name,**ntwrk_args)
+load_stops(network_name, route_name, **stop_args)
 
-Field_Mappings = arcpy.GetParameterAsText(9)
-if Field_Mappings == '#' or not Field_Mappings:
-    Field_Mappings = "Name Route_ID #;RouteName Route_ID #" # provide a default value if unspecified
-
-Sort_Field = arcpy.GetParameterAsText(10)
-if Sort_Field == '#' or not Sort_Field:
-    Sort_Field = "Stop_No" # provide a default value if unspecified
-
-Group_By_Fields = arcpy.GetParameterAsText(11)
-if Group_By_Fields == '#' or not Group_By_Fields:
-    Group_By_Fields = "Route_ID #" # provide a default value if unspecified
-
-# Local variables:
-Output_Layer = "BART_OD_Trips_StationUpd_Pro"
-Selected_Features = Output_Layer
-Value = "11977_338"
-Network_Analyst_Layer = "Route"
-Route = Network_Analyst_Layer
-Route__2_ = Route
-Solve_Succeeded = "false"
-Output_Elements = Route__2_
-Child_Data_Element = "Routes"
-HHTS_Trips__2_ = Output_Elements
-HHTS_Trips = "\\\\Mac\\Home\\Documents\\Planning\\DataManagement\\DataManagement.gdb\\utm\\HHTS_Trips"
-
-# Process: Make Feature Layer
-arcpy.MakeFeatureLayer_management(Input_Stop_Locations, Output_Layer, Filter_Stop_Locations, "", "OBJECTID OBJECTID VISIBLE NONE;Shape Shape VISIBLE NONE;Route_ID Route_ID VISIBLE NONE;Trip_ID Trip_ID VISIBLE NONE;Stop_No Stop_No VISIBLE NONE;OR_ADDRESS_CITY OR_ADDRESS_CITY VISIBLE NONE;OR_ADDRESS_ZIP OR_ADDRESS_ZIP VISIBLE NONE;station_name station_name VISIBLE NONE;SourceID SourceID VISIBLE NONE;SourceOID SourceOID VISIBLE NONE;PosAlong PosAlong VISIBLE NONE;SideOfEdge SideOfEdge VISIBLE NONE;SnapX SnapX VISIBLE NONE;SnapY SnapY VISIBLE NONE;DistanceToNetworkInMeters DistanceToNetworkInMeters VISIBLE NONE")
-
-# Process: Iterate Feature Selection
-arcpy.IterateFeatureSelection_mb(Output_Layer, Group_By_Fields, "false")
-
-# Process: Make Route Layer
-arcpy.MakeRouteLayer_na(Choose_Route_Network_Dataset, "Route", Impedance_Attribute, "USE_INPUT_ORDER", "PRESERVE_BOTH", "NO_TIMEWINDOWS", Accumulators, U_Turn_Policy, Restrictions, Use_Hierarchy_in_Analysis, "", Output_Path_Shape, "")
-
-# Process: Add Locations
-arcpy.AddLocations_na(Network_Analyst_Layer, "Stops", Selected_Features, Field_Mappings, "5000 Meters", Sort_Field, "Streets SHAPE;Routing_ND_Junctions NONE", "MATCH_TO_CLOSEST", "CLEAR", "NO_SNAP", "5 Meters", "INCLUDE", "Streets #;Routing_ND_Junctions #")
-
-# Process: Solve
-arcpy.Solve_na(Route, "SKIP", "TERMINATE", "")
-
-# Process: Select Data
-arcpy.SelectData_management(Route__2_, Child_Data_Element)
-
-# Process: Append
-arcpy.Append_management("Route\\Routes", HHTS_Trips, "NO_TEST", "", "")
-
+arcpy.Solve_na(network_name, "SKIP", "TERMINATE", "")
