@@ -23,5 +23,5 @@ end;
 
 go
 
-update TPA_Transit_Stops_2016_Build
+update TPA_Transit_Stops_2017_Build
 set stop_name = dbo.ProperCase(stop_name);
