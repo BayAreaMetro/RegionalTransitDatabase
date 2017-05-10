@@ -10,6 +10,8 @@
 # Import arcpy module
 import arcpy
 
+arcpy.env.overwriteOutput = True
+
 PROJECT_DIR = "C:/temp/RegionalTransitDatabase/"
 
 ntwrk_path = PROJECT_DIR + "data/TomTom_2015_12_NW.gdb/Routing/Routing_ND"
@@ -69,52 +71,9 @@ def load_stops(ntwrk_name,mtcgis_agency_route_pattern,**kwargs):
                      search_query="Streets #;Routing_ND_Junctions #")
     return route_shortname
 
-route_name = "'AC - 1 - Outbound'"
-network_name = "N2"
+route_name = "'AC - 1 - Inbound'"
+network_name = "N1"
 load_network(network_name,**ntwrk_args)
 load_stops(network_name, route_name, **stop_args)
 
-
-#arguments
-class bus_route(object):
-    '''
-    br = bus_route("'AC - 1 - Inbound'")
-    >> 
-    >> br.stops_tempfile
-    array of stop ids 
-    >> br.tomtom_segment_ids
-    array of tomtom segment id's 
-    '''
-
-    #layer paths
-    #network data set must be loaded into an MXD Table of contents from catalog. 
-    # see https://github.com/MetropolitanTransportationCommission/RegionalTransitDatabase/issues/16 for more
-
-
-    def __init__(self, routename_id):
-
-
-    # Process: Iterate Feature Selection
-    # arcpy.IterateFeatureSelection_mb(Output_Layer, Group_By_Fields, "false")
-
-    # Replace a layer/table view name with a path to a dataset (which can be a layer file) or create the layer/table view within the script
-    # The following inputs are layers or table views: "Routing_ND"
-
-    # Process: Make Route Layer
-
-
-    # Process: Add Locations
-
-
-    # Replace a layer/table view name with a path to a dataset (which can be a layer file) or create the layer/table view within the script
-    # The following inputs are layers or table views: "R1"
-
-    # Process: Solve
-    arcpy.Solve_na(Network_Analyst_Layer, "SKIP", "TERMINATE", "")
-
-# # Process: Select Data
-# arcpy.SelectData_management(Network_Analyst_Layer, Child_Data_Element)
-
-# # Process: Append
-# arcpy.Append_management("Route\\Routes", HHTS_Trips, "NO_TEST", "", "")
-
+arcpy.Solve_na(network_name, "SKIP", "TERMINATE", "")
