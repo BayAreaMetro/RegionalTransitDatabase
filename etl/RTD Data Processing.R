@@ -101,23 +101,7 @@ Reduce(inner_join,df) %>%
   rm(df)
 
 #Add new column values for distinct Agency, Route, Trip, Service Ids for record count
-rtes$Route_Pattern_ID<-paste0(rtes$agency_id,"-",rtes$trip_id,"-", rtes$service_id,"-", rtes$route_id,"-", rtes$direction_id)
-
-# t <- count(rtes, 
-#             agency_id, 
-#             stop_id, 
-#             trip_id, 
-#             service_id, 
-#             monday, 
-#             tuesday,
-#             wednesday,
-#             thursday, 
-#             friday,
-#             route_id,
-#             direction_id,
-#             route_type)
-
-
+rtes$Route_Pattern_ID<-paste0(rtes$agency_id,"-",rtes$route_id,"-", rtes$direction_id)
 
 #All Bus Routes
 subset(rtes, rtes$monday == 1 
@@ -130,27 +114,11 @@ subset(rtes, rtes$monday == 1
        & rtes$arrival_time < "2017-05-10 09:00:00")-> Monday_AM_Peak_Bus_Routes
 
 #tally trips by route for given time period
-
-#Sql Method
-# SELECT      agency_id, agency_name, route_id, direction_id, agency_stop_id, 
-# route_type, stop_name, cast(stop_sequence as int) as stop_sequence, 
-# stop_lon, stop_lat, COUNT(stop_sequence) AS AM_Peak_Monday_Total_Trips, 
-# 240 / COUNT(stop_sequence) AS Monday_AM_Peak_Headway, 
-# CASE WHEN (240 / COUNT(stop_sequence) <= 15) THEN 'Meets Criteria' ELSE 'Does Not Meet Criteria' END AS TPA
-# into #Monday_AM_Peak_Transit_Stop_Headways
-# FROM            route_stop_schedule
-# WHERE        (CAST(arrival_time AS time) BETWEEN '06:00:00.0000' AND '09:59:59.0000') AND (Monday = 1)
-# GROUP BY agency_id, agency_name, route_id, direction_id, agency_service_id, agency_stop_id, route_type, stop_name, stop_sequence, stop_lon, stop_lat 
-
-
-#R Method
 Monday_AM_Peak_Bus_Routes %>% 
-  group_by(agency_id, trip_id, service_id, route_id, direction_id, stop_id) %>% 
-  count(Route_Pattern_ID) %>% mutate(Headways = round(240/n,0)) -> Monday_AM_Peak_Bus_Headways
+  group_by(agency_id, route_id, direction_id, stop_id) %>% 
+  count(stop_sequence) %>% mutate(Headways = round(240/n,0)) -> Monday_AM_Peak_Bus_Headways
 
-#Need to verify the tally method to ensure that the counts of trips by route are accurate
-
-names(Monday_AM_Peak_Bus_Headways)[4]<-"Trips"
+names(Monday_AM_Peak_Bus_Headways)[5]<-"Trips"
 
 #Select High Frequency Bus Service Routes (15 min or better headways)
 subset(Monday_AM_Peak_Bus_Headways, Monday_AM_Peak_Bus_Headways$Headways <16)->Monday_AM_Peak_High_Frequency_Bus_Service
@@ -167,12 +135,11 @@ subset(rtes, rtes$monday == 1
 
 #tally trips by route for given time period
 Monday_AM_Peak_Bus_Routes %>% 
-  group_by(agency_id, route_id, Route_Pattern_ID) %>% 
-  tally() %>% mutate(Headways = round(240/n,0)) -> Monday_AM_Peak_Bus_Headways
-#Need to verify the tally method to ensure that the counts of trips by route are accurate
+  group_by(agency_id, route_id, direction_id, stop_id) %>% 
+  count(stop_sequence) %>% mutate(Headways = round(240/n,0)) -> Monday_AM_Peak_Bus_Headways
 
-names(Monday_AM_Peak_Bus_Headways)[4]<-"Trips"
-#names(Monday_AM_Peak_Bus_Headways)[5]<-"Headways"
+names(Monday_AM_Peak_Bus_Headways)[5]<-"Trips"
+
 
 #Select High Frequency Bus Service Routes (15 min or better headways)
 subset(Monday_AM_Peak_Bus_Headways, Monday_AM_Peak_Bus_Headways$Headways <16)->Monday_AM_Peak_High_Frequency_Bus_Service
@@ -188,25 +155,14 @@ subset(rtes, rtes$monday == 1
        & rtes$arrival_time < "2017-05-10 18:59:00")-> Monday_PM_Peak_Bus_Routes
 
 #tally trips by route for given time period
-Monday_PM_Peak_Bus_Routes %>% 
-  group_by(Route_Pattern_ID) %>%
-  tally() -> Monday_PM_Peak_Bus_Trips
 
-Monday_PM_Peak_Bus_Trips <- group_by(Monday_PM_Peak_Bus_Routes,agency_id, route_id, Route_Pattern_ID)
-
-count(Monday_PM_Peak_Bus_Routes, Route_Pattern_ID)
-
-summarise(Monday_PM_Peak_Bus_Trips, )
-
-names(Monday_PM_Peak_Bus_Trips[4])->"Total_Stops"
-Monday_PM_Peak_Bus_Trips %>%
-  group_by(agency_id, route_id, Route_Pattern_ID) %>%  
-  tally() %>% mutate(Headways = round(240/n,0)) -> Monday_PM_Peak_Bus_Headways
+Monday_PM_Peak_Bus_Routes %>%
+  group_by(agency_id, route_id, direction_id, stop_id) %>% 
+  count(stop_sequence) %>% mutate(Headways = round(240/n,0)) -> Monday_PM_Peak_Bus_Headways
 
 #Need to verify the tally method to ensure that the counts of trips by route are accurate
 
 names(Monday_PM_Peak_Bus_Headways)[4]<-"Trips"
-names(Monday_PM_Peak_Bus_Headways)[5]<-"Headways"
 
 #Select High Frequency Bus Service Routes (15 min or better headways)
 subset(Monday_PM_Peak_Bus_Headways, Monday_PM_Peak_Bus_Headways$Headways <16)->Monday_PM_Peak_High_Frequency_Bus_Service
