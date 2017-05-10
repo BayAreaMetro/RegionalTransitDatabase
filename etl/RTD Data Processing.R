@@ -25,7 +25,7 @@ options(stringsAsFactors = FALSE)
 #See github repo for more details (https://github.com/MetropolitanTransportationCommission/RegionalTransitDatabase/tree/master/python)
 #Data can be downloaded from this location: https://mtcdrive.box.com/s/pkw8e0ng3n02b47mufaefqz5749cv5nm
 
-setwd("~/Documents/MTC/_Section/Planning/Projects/RTD_2017_Data_Processing/data_2017")
+setwd("~/Documents/GIS Data/Transit/RTD_2017/gtfs")
 
 ## bind all operator tables together
 routes = NULL
@@ -97,8 +97,8 @@ stop_times$departure_time <- as.POSIXct(stop_times$departure_time, format= "%H:%
 df<- list(stops,stop_times,trips,calendar,routes)
 Reduce(inner_join,df) %>%
   select(agency_id, stop_id, trip_id, service_id, monday, tuesday, wednesday, thursday, friday, route_id, direction_id, arrival_time, stop_sequence, route_type) %>%
-  arrange(agency_id, trip_id, service_id, monday, tuesday, wednesday, thursday, friday, route_id, direction_id, arrival_time, stop_sequence) -> 
-rm(df)
+  arrange(agency_id, trip_id, service_id, monday, tuesday, wednesday, thursday, friday, route_id, direction_id, arrival_time, stop_sequence) -> rtes
+  rm(df)
 
 #Add new column values for distinct Agency, Route, Trip, Service Ids for record count
 rtes$Route_Pattern_ID<-paste0(rtes$agency_id,"-",rtes$trip_id,"-", rtes$service_id,"-", rtes$route_id,"-", rtes$direction_id)
@@ -116,7 +116,7 @@ rtes$Route_Pattern_ID<-paste0(rtes$agency_id,"-",rtes$trip_id,"-", rtes$service_
 #             route_id,
 #             direction_id,
 #             route_type)
-  
+
 
 
 #All Bus Routes
@@ -126,13 +126,27 @@ subset(rtes, rtes$monday == 1
        # & rtes$thursday == 1 
        # & rtes$friday == 1 
        & rtes$route_type == 3
-       & rtes$arrival_time > "2017-05-09 05:59:00" 
-       & rtes$arrival_time < "2017-05-09 09:00:00")-> Monday_AM_Peak_Bus_Routes
+       & rtes$arrival_time > "2017-05-10 05:59:00" 
+       & rtes$arrival_time < "2017-05-10 09:00:00")-> Monday_AM_Peak_Bus_Routes
 
 #tally trips by route for given time period
+
+#Sql Method
+# SELECT      agency_id, agency_name, route_id, direction_id, agency_stop_id, 
+# route_type, stop_name, cast(stop_sequence as int) as stop_sequence, 
+# stop_lon, stop_lat, COUNT(stop_sequence) AS AM_Peak_Monday_Total_Trips, 
+# 240 / COUNT(stop_sequence) AS Monday_AM_Peak_Headway, 
+# CASE WHEN (240 / COUNT(stop_sequence) <= 15) THEN 'Meets Criteria' ELSE 'Does Not Meet Criteria' END AS TPA
+# into #Monday_AM_Peak_Transit_Stop_Headways
+# FROM            route_stop_schedule
+# WHERE        (CAST(arrival_time AS time) BETWEEN '06:00:00.0000' AND '09:59:59.0000') AND (Monday = 1)
+# GROUP BY agency_id, agency_name, route_id, direction_id, agency_service_id, agency_stop_id, route_type, stop_name, stop_sequence, stop_lon, stop_lat 
+
+
+#R Method
 Monday_AM_Peak_Bus_Routes %>% 
-  group_by(agency_id, stop_id, trip_id, service_id) %>% 
-  tally() %>% mutate(Headways = round(240/n,0)) -> Monday_AM_Peak_Bus_Headways
+  group_by(agency_id, trip_id, service_id, route_id, direction_id, stop_id) %>% 
+  count(Route_Pattern_ID) %>% mutate(Headways = round(240/n,0)) -> Monday_AM_Peak_Bus_Headways
 
 #Need to verify the tally method to ensure that the counts of trips by route are accurate
 
@@ -148,8 +162,8 @@ subset(rtes, rtes$monday == 1
        # & rtes$thursday == 1 
        # & rtes$friday == 1 
        & rtes$route_type == 3
-       & rtes$arrival_time > "2017-05-09 06:00:00" 
-       & rtes$arrival_time < "2017-05-09 09:59:00")-> Monday_AM_Peak_Bus_Routes
+       & rtes$arrival_time > "2017-05-10 06:00:00" 
+       & rtes$arrival_time < "2017-05-10 09:59:00")-> Monday_AM_Peak_Bus_Routes
 
 #tally trips by route for given time period
 Monday_AM_Peak_Bus_Routes %>% 
@@ -170,8 +184,8 @@ subset(rtes, rtes$monday == 1
        #& rtes$thursday == 1 
        #& rtes$friday == 1 
        & rtes$route_type == 3
-       & rtes$arrival_time > "2017-05-09 15:00:00" 
-       & rtes$arrival_time < "2017-05-09 18:59:00")-> Monday_PM_Peak_Bus_Routes
+       & rtes$arrival_time > "2017-05-10 15:00:00" 
+       & rtes$arrival_time < "2017-05-10 18:59:00")-> Monday_PM_Peak_Bus_Routes
 
 #tally trips by route for given time period
 Monday_PM_Peak_Bus_Routes %>% 
@@ -183,7 +197,7 @@ Monday_PM_Peak_Bus_Trips <- group_by(Monday_PM_Peak_Bus_Routes,agency_id, route_
 count(Monday_PM_Peak_Bus_Routes, Route_Pattern_ID)
 
 summarise(Monday_PM_Peak_Bus_Trips, )
-  
+
 names(Monday_PM_Peak_Bus_Trips[4])->"Total_Stops"
 Monday_PM_Peak_Bus_Trips %>%
   group_by(agency_id, route_id, Route_Pattern_ID) %>%  
