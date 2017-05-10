@@ -12,34 +12,67 @@ import arcpy
 
 PROJECT_DIR = "C:/temp/RegionalTransitDatabase/"
 
-#network globals
-NETWORK_DATASET = PROJECT_DIR + "data/TomTom_2015_12_NW.gdb/Routing/Routing_ND"
-IMPEDANCE_ATTRIBUTE = "Miles"
-U_TURN_POLICY = "ALLOW_UTURNS"
-RESTRICTIONS = "'Avoid Walkways';'Driving a Public Bus'" 
-ACCUMULATORS = "Miles;Minutes" 
-OUTPUT_PATH_SHAPE = "TRUE_LINES_WITHOUT_MEASURES" 
-USE_HIERARCHY_IN_ANALYSIS = "true" 
+ntwrk_path = PROJECT_DIR + "data/TomTom_2015_12_NW.gdb/Routing/Routing_ND"
 
-def initialize_network(namespace_name):
-    arcpy.MakeRouteLayer_na(NETWORK_DATASET, namespace_name, 
-        IMPEDANCE_ATTRIBUTE, "USE_INPUT_ORDER", "PRESERVE_BOTH", 
-        "NO_TIMEWINDOWS", ACCUMULATORS, U_TURN_POLICY, 
-        RESTRICTIONS, USE_HIERARCHY_IN_ANALYSIS, "", OUTPUT_PATH_SHAPE, "")
+#network args
+ntwrk_args = {"network_dataset":ntwrk_path,
+"impedance_attribute":"miles",
+"u_turn_policy":"allow_uturns",
+"restrictions":"'avoid walkways';'driving a public bus'", 
+"accumulators":"miles;minutes", 
+"output_path_shape":"true_lines_without_measures", 
+"use_hierarchy_in_analysis":"true"}
 
-NETWORK_NAMESPACE_NAME = "R11"
-initialize_network(NETWORK_NAMESPACE_NAME)
+def load_network(ntwrk_name, **kwargs):
+    print(kwargs["network_dataset"])
+    arcpy.MakeRouteLayer_na(kwargs["network_dataset"], ntwrk_name, 
+        kwargs["impedance_attribute"], "use_input_order", "preserve_both", 
+        "no_timewindows", kwargs["accumulators"], kwargs["u_turn_policy"], 
+        kwargs["restrictions"], kwargs["use_hierarchy_in_analysis"], "", kwargs["output_path_shape"], "")
+    return ntwrk_name
 
-#Stop Globals
-RESTRICTIONS = "'Avoid Walkways';'Driving a Public Bus'"
-GROUP_BY_FIELDS = "Agency_Route_ID" 
-SORT_FIELD = "stop_sequence"
-FIELD_MAPPINGS = "Name Agency_Route_ID #;RouteName Agency_Route_ID #"
-SOLVE_SUCCEEDED = "false"
-CHILD_DATA_ELEMENT = "Routes"
-# HHTS_TRIPS__2_ = Network_Analyst_Layer
-HHTS_TRIPS = "empty_fc"
-STOP_LOCATIONS = PROJECT_DIR + "data/network_analyst.gdb/Route_Pattern_Bus_Stops"
+load_network("N1",**ntwrk_args)
+
+
+#stop arguments
+stop_args = {"restrictions" : "'avoid walkways';'driving a public bus'",
+            "group_by_fields" : "agency_route_id", 
+            "sort_field" : "stop_sequence",
+            "field_mappings": "name agency_route_id #;routename agency_route_id #",
+            "solve_succeeded" : "false",
+            "child_data_element" : "routes",
+            #hhts_trips__2_ = network_analyst_layer,
+            "hhts_trips" : "empty_fc",
+            "stop_locations" : PROJECT_DIR + "data/network_analyst.gdb/route_pattern_bus_stops"}
+
+def load_stops(ntwrk_name,mtcgis_agency_route_pattern,**kwargs):
+    #mtcgis_agency_route_pattern_id is a legacy id that mtc uses to uniquely identify routes and stops
+    import re
+    route_shortname = re.sub("\W","", mtcgis_agency_route_pattern)
+    route_filter = "Agency_Route_Pattern =" + mtcgis_agency_route_pattern
+    arcpy.MakeFeatureLayer_management(in_features=kwargs["stop_locations"], 
+        out_layer=route_shortname, 
+        where_clause=route_filter, 
+        workspace="")
+    arcpy.na.AddLocations(in_network_analysis_layer=ntwrk_name,
+                     sub_layer="Stops",
+                     in_table=route_shortname,
+                     field_mappings=kwargs["field_mappings"],
+                     search_tolerance="5000 Meters",
+                     sort_field=kwargs["sort_field"],
+                     search_criteria="Streets SHAPE;Routing_ND_Junctions NONE",
+                     match_type="MATCH_TO_CLOSEST",
+                     append="APPEND",
+                     snap_to_position_along_network="NO_SNAP",
+                     snap_offset="5 Meters",
+                     exclude_restricted_elements="INCLUDE",
+                     search_query="Streets #;Routing_ND_Junctions #")
+    return route_shortname
+
+route_name = "'AC - 1 - Outbound'"
+network_name = "N2"
+load_network(network_name,**ntwrk_args)
+load_stops(network_name, route_name, **stop_args)
 
 
 #arguments
@@ -59,27 +92,6 @@ class bus_route(object):
 
 
     def __init__(self, routename_id):
-        import re
-        _route_temp_namespace = re.sub("\W","", routename_id)
-        _routefilter = "Agency_Route_Pattern =" + routename_id
-        self.stop_tempfile = arcpy.MakeFeatureLayer_management(in_features=STOP_LOCATIONS, 
-            out_layer=_route_temp_namespace, 
-            where_clause=_routefilter, 
-            workspace="")
-
-        self.network_stops = arcpy.AddLocations_na(in_network_analysis_layer=NETWORK_NAMESPACE_NAME,
-                                 sub_layer="Stops",
-                                 in_table=self.stop_tempfile,
-                                 field_mappings=FIELD_MAPPINGS,
-                                 search_tolerance="5000 Meters",
-                                 sort_field=SORT_FIELD,
-                                 search_criteria="Streets SHAPE;Routing_ND_Junctions NONE",
-                                 match_type="MATCH_TO_CLOSEST",
-                                 append="APPEND",
-                                 snap_to_position_along_network="NO_SNAP",
-                                 snap_offset="5 Meters",
-                                 exclude_restricted_elements="INCLUDE",
-                                 search_query="Streets #;Routing_ND_Junctions #")
 
 
     # Process: Iterate Feature Selection
