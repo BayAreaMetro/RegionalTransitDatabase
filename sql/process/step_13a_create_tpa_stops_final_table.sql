@@ -56,7 +56,7 @@ create index IX_StopID on [dbo].stops_tpa_draft(agency_stop_id)
 Go
 IF EXISTS(select * FROM sys.tables where name = 'stops_tpa_draft_final')
 			begin
-				drop TABLE stops_tpa_draft_final 
+				drop TABLE stops_tpa_final 
 				PRINT 'Dropping TABLE: stops_tpa_draft_final'
 			end
 	ELSE

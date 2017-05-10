@@ -95,13 +95,13 @@ The following all assign boolean categorical style fields based on the spatial w
 
 -  `TPA_Transit_Stops_2017_Build`   
 -  `TPA_TRANSIT_STOPS`   
--  `TPA_Stops_2016_Draft`   
+-  `TPA_Stops_2017_Draft`   
 
 ### Key Final Tables:
 - `rtd_route_stop_all_other_modes`     
 - `rtd_route_stop_schedule`     
 - `rtd_route_trips`     
-- `TPA_Transit_Stops_2016_Draft`   
+- `TPA_Transit_Stops_2017_Draft`   
 
 ## Other files:
 
