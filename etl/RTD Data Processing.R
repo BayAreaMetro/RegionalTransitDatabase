@@ -1,6 +1,5 @@
-#THis script builds a RTD dataset using 511 data from the API. 
+#This script builds a RTD dataset using 511 data from the API. 
 #The data must first be downloaded as zip archives and extracted to the working directory.
-
 library(lubridate)
 library(readr)
 library(plyr)
@@ -21,8 +20,11 @@ build_table <- function(some_path, col_names=TRUE, col_types=NULL) {
 
 # This makes reading data in from text files much more logical.
 options(stringsAsFactors = FALSE)
+
 #set working directory for datasets.  This is the path to where the extracted datasets are stored.
 #See github repo for more details (https://github.com/MetropolitanTransportationCommission/RegionalTransitDatabase/tree/master/python)
+#Data can be downloaded from this location: https://mtcdrive.box.com/s/pkw8e0ng3n02b47mufaefqz5749cv5nm
+
 setwd("~/Documents/MTC/_Section/Planning/Projects/RTD_2017_Data_Processing/data_2017")
 
 ## bind all operator tables together
@@ -131,6 +133,7 @@ subset(rtes, rtes$monday == 1
 Monday_AM_Peak_Bus_Routes %>% 
   group_by(agency_id, stop_id, trip_id, service_id) %>% 
   tally() %>% mutate(Headways = round(240/n,0)) -> Monday_AM_Peak_Bus_Headways
+
 #Need to verify the tally method to ensure that the counts of trips by route are accurate
 
 names(Monday_AM_Peak_Bus_Headways)[4]<-"Trips"
