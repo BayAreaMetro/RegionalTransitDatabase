@@ -2,7 +2,7 @@
 ------------------------------------------------------------
 Print 'Cleanup unneeded tables'
 ------------------------------------------------------------
-Drop Table [dbo].[TPA_Transit_Stops_2017_Build]
+Drop Table [dbo].[stops_tpa_staging]
 Drop Table [dbo].[TPA_TRANSIT_STOPS]
 Drop Table [dbo].TPA_Stops_2016_Draft
 

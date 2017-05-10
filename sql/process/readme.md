@@ -18,9 +18,9 @@ From source GTFS data, compile a database of tables for use in estimating bus fr
 -  `rtd_route_stop_schedule`: join `rtd_route_trips` with `stop_times` and `calendar`   
 -  `route_stop_schedule`: remove duplicate arrivals (by time) in `rtd_route_stop_schedule` and count them in column: `Duplicate_Arrival_Times`
 -  `TPA_TRANSIT_STOPS`:  a version of `route_stop_schedule` in which stops are flagged as 'TPA eligible' or not based on the criteria [here](https://github.com/MetropolitanTransportationCommission/RegionalTransitDatabase/blob/c0f04b36e99a4aa702b7bd3ecfd8608c6bf4b1bf/sql/process/step_3_build_headway_am_pm_views.sql#L17-L19). The schema is [here](https://github.com/MetropolitanTransportationCommission/RegionalTransitDatabase/blob/c0f04b36e99a4aa702b7bd3ecfd8608c6bf4b1bf/sql/process/step_5_insert_weekday_am_pm_headway_into_single_table.sql#L15-L35).   
--  `rtd_route_stop_all_other_modes`: non-bus stops that are eventually added into `TPA_Transit_Stops_2017_Build` in order to calculate their TPA eligibility.  
+-  `rtd_route_stop_all_other_modes`: non-bus stops that are eventually added into `stops_tpa_staging` in order to calculate their TPA eligibility.  
 -  `TPA_Future_Transit_Stops`:  we don't have this table in the db yet, but it represents future or planned stops, which should eventually be included as part of the eligibility calculation below.  
--  `TPA_Transit_Stops_2017_Build`: built from `TPA_TRANSIT_STOPS` and contains the column `Distance_Eligible`, which flags whether a stop is within a distance threshold of other stops, another TPA eligibility criteria.             
+-  `stops_tpa_staging`: built from `TPA_TRANSIT_STOPS` and contains the column `Distance_Eligible`, which flags whether a stop is within a distance threshold of other stops, another TPA eligibility criteria.             
 
 
 ##### Step 1. Build rtd_route_trips view.   
@@ -50,26 +50,26 @@ e.g.
 	Where #Parse DateTime
 ```
 ##### Step 6. Building Final Table for Map Display   
-table created: `dbo.TPA_Transit_Stops_2017_Build`    
+table created: `dbo.stops_tpa_staging`    
 ##### Step 7. Flag Bus Stops that meet the AM/PM Peak Thresholds   
 
 ```
-update dbo.TPA_Transit_Stops_2017_Build
+update dbo.stops_tpa_staging
 set Meets_Headway_Criteria = 1
 Where ((Avg_Weekday_AM_Headway <=15) and (Avg_Weekday_PM_Headway <=15))-- and (Meets_Headway_Criteria = 0 or Meets_Headway_Criteria is null)
 ```
 
 ##### Step 8. Insert Planned and Under Construction Transit Stops   
 
-A bunch of Fixes to data in `dbo.TPA_Transit_Stops_2017_Build`
+A bunch of Fixes to data in `dbo.stops_tpa_staging`
 
 -  Fix the column name in the TPA_Future_Transit_Stops Table  
 
 ##### Step 9. Build view of all existing Rail, Light Rail, Cable Car, and Ferry Stops      
 
 Step 10.   
--  Append all existing Rail, Light Rail, Cable Car, and Ferry Stops into TPA_Transit_Stops_2017_Build     
--  Fix Null Route ID values in TPA_Transit_Stops_2017_Build table     
+-  Append all existing Rail, Light Rail, Cable Car, and Ferry Stops into stops_tpa_staging     
+-  Fix Null Route ID values in stops_tpa_staging table     
 -  Ensure that all Rail, BRT, Light Rail and Ferry Stops are flagged TPA Eligible     
 -  Fix Route Names for unclassified values in the Future Transit Table     
 -  Fix route_id values that are null or missing     
@@ -93,7 +93,7 @@ The following all assign boolean categorical style fields based on the spatial w
 
 ### Key Temporary Tables:
 
--  `TPA_Transit_Stops_2017_Build`   
+-  `stops_tpa_staging`   
 -  `TPA_TRANSIT_STOPS`   
 -  `TPA_Stops_2017_Draft`   
 
@@ -101,7 +101,9 @@ The following all assign boolean categorical style fields based on the spatial w
 - `rtd_route_stop_all_other_modes`     
 - `rtd_route_stop_schedule`     
 - `rtd_route_trips`     
-- `TPA_Transit_Stops_2017_Draft`   
+- `stops_tpa_draft`   
+- `stops_tpa_final`   
+
 
 ## Other files:
 

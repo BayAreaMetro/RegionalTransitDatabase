@@ -8,7 +8,7 @@ GO
 --FROM            TPA_Future_Transit_Stops
 --Where System = 'Ferry'
 
-INSERT INTO TPA_Transit_Stops_2017_Build
+INSERT INTO stops_tpa_staging
                          (agency_id, agency_name, route_id, agency_stop_id, stop_name, route_type, Avg_Weekday_AM_Headway, Avg_Weekday_PM_Headway, Delete_Stop, Meets_Headway_Criteria, Stop_Description, Project_Description, 
                          stop_lon, stop_lat)
 SELECT        agency_id, agency_name, route_id, agency_stop_id, stop_name, route_type, Avg_Weekday_AM_Headway, Avg_Weekday_PM_Headway, Delete_Stop, Meets_Headway_Criteria, stop_description, Project_Description, 

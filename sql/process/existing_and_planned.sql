@@ -1,7 +1,7 @@
 Print 'Reclassify status values of E to Existing'
 --------------------------------------------------------------------------------------------------
 Go
-/*update TPA_Transit_Stops_2017_Build
+/*update stops_tpa_staging
 set status = 'Existing'
 where status = 'E'*/
 GO

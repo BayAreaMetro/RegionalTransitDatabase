@@ -3,19 +3,19 @@
 Print 'Creating Draft View for Mapping Purposes.  Contains only Eligible Transit Stops'
 ------------------------------------------------------------------------------------------------------
 GO
-IF EXISTS(select * FROM sys.views where name = 'stops_tpa_draft_staging')
+IF EXISTS(select * FROM sys.views where name = 'stops_tpa_draft')
 			begin
-				drop view stops_tpa_draft_staging 
-				PRINT 'Dropping View: stops_tpa_draft_staging'
+				drop view stops_tpa_draft 
+				PRINT 'Dropping View: stops_tpa_draft'
 			end
 	ELSE
 		PRINT 'View Does Not Exist';
 GO
 
-create view stops_tpa_draft_staging as
+create view stops_tpa_draft as
 SELECT top 1000000 agency_id, agency_name, route_id, agency_stop_id, stop_name, route_type, Avg_Weekday_AM_Trips, Avg_Weekday_AM_Headway, Avg_Weekday_PM_Trips, Avg_Weekday_PM_Headway, Delete_Stop, 
                          Meets_Headway_Criteria, Distance_Eligible, TPA_Eligible, Stop_Description, Project_Description, stop_lon, stop_lat, SHAPE
-FROM            TPA_Transit_Stops_2017_Build 
+FROM            stops_tpa_staging 
 --Where Meets_Headway_Criteria = 1 
 order by agency_id, route_id, route_type
 
@@ -34,7 +34,7 @@ IF EXISTS(select * FROM sys.tables where name = 'stops_tpa_draft')
 Go
 select * 
 into stops_tpa_draft
-from stops_tpa_draft_staging
+from stops_tpa_staging
 Go
 Print 'Add RecID Column with an Index'
 Go
@@ -54,10 +54,10 @@ create index IX_StopID on [dbo].stops_tpa_draft(agency_stop_id)
 
 
 Go
-IF EXISTS(select * FROM sys.tables where name = 'stops_tpa_draft_final')
+IF EXISTS(select * FROM sys.tables where name = 'stops_tpa_final')
 			begin
 				drop TABLE stops_tpa_final 
-				PRINT 'Dropping TABLE: stops_tpa_draft_final'
+				PRINT 'Dropping TABLE: stops_tpa_final'
 			end
 	ELSE
 		PRINT 'Table Does Not Exist';
