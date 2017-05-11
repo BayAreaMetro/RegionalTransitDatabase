@@ -12,7 +12,13 @@ From source GTFS data, compile a database of tables for use in estimating bus fr
 -  `calendar`
 -  `agency`   
 
-### Output Tables/Views:  
+### Output Tables/Views:   
+
+-  `stops_bus_route_pattern` (table)
+-  `stops_tpa_final` (table)
+-  `stops_meeting_headway_criteria` (view)
+
+#### Processing/Staging Tables:  
 
 -  `route_trips`: join `agency`, `routes`, and `trips`, filter for bus only  
 -  ~~`rtd_route_stop_schedule`: join `rtd_route_trips` with `stop_times` and `calendar`~~   
