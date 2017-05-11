@@ -19,10 +19,6 @@ Calculate frequency of service for stops and routes.
 [RTD April 2016](https://mtcdrive.box.com/s/7zvjm6lqudj2gh7cfokt9g3hnzwvxoq0)   
 [RTD April 2017](https://mtcdrive.box.com/s/pkw8e0ng3n02b47mufaefqz5749cv5nm)     
 
-#### Land Use Data    
-
-#### Transportation Data   
-
 ### Analysis Parameters   
 
 ### Methodology   
