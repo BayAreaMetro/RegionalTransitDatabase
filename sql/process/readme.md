@@ -12,15 +12,19 @@ From source GTFS data, compile a database of tables for use in estimating bus fr
 -  `calendar`
 -  `agency`   
 
-### Output Tables/Views:  
+### Output Tables/Views:   
+
+-  `stops_bus_route_pattern` (table)
+-  `stops_tpa_final` (table)
+-  `stops_meeting_headway_criteria` (view)
+
+#### Processing/Staging Tables:  
 
 -  `route_trips`: join `agency`, `routes`, and `trips`, filter for bus only  
 -  ~~`rtd_route_stop_schedule`: join `rtd_route_trips` with `stop_times` and `calendar`~~   
 -  `route_stop_schedule`: remove duplicate arrivals (by time) in `rtd_route_stop_schedule` and count them in column: `Duplicate_Arrival_Times`
--  `stops_tpa_staging_headway_base_calculations`:  a version of `route_stop_schedule` in which stops are flagged as 'TPA eligible' or not based on the criteria [here](https://github.com/MetropolitanTransportationCommission/RegionalTransitDatabase/blob/c0f04b36e99a4aa702b7bd3ecfd8608c6bf4b1bf/sql/process/step_3_build_headway_am_pm_views.sql#L17-L19). The schema is [here](https://github.com/MetropolitanTransportationCommission/RegionalTransitDatabase/blob/c0f04b36e99a4aa702b7bd3ecfd8608c6bf4b1bf/sql/process/step_5_insert_weekday_am_pm_headway_into_single_table.sql#L15-L35).  
+-  ~~`stops_tpa_staging_headway_base_calculations`:  a version of `route_stop_schedule` in which stops are flagged as 'TPA eligible' or not based on the criteria [here](https://github.com/MetropolitanTransportationCommission/RegionalTransitDatabase/blob/c0f04b36e99a4aa702b7bd3ecfd8608c6bf4b1bf/sql/process/step_3_build_headway_am_pm_views.sql#L17-L19). The schema is [here](https://github.com/MetropolitanTransportationCommission/RegionalTransitDatabase/blob/c0f04b36e99a4aa702b7bd3ecfd8608c6bf4b1bf/sql/process/step_5_insert_weekday_am_pm_headway_into_single_table.sql#L15-L35).~~  
 -  `stops_tpa_staging`: selected from `stops_tpa_staging_headway_base_calculations` and contains the column `Distance_Eligible`, which flags whether a stop is within a distance threshold of other stops, another TPA eligibility criteria.
--  `stops_bus_route_pattern_schedule`:   
--  `stops_bus_route_pattern`:  
 
 #### Tables Not yet included:   
 
