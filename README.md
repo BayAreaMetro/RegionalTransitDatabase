@@ -48,10 +48,6 @@ Run the Preprocess GTFS Data for each operator.
 
 Then run the [Count Trips at Stops](https://github.com/Esri/public-transit-tools/blob/master/better-bus-buffers/scripts/BBB_CountTripsAtStops.py) or [Points](https://github.com/Esri/public-transit-tools/blob/6451cf1de24d4e5b7337df402135f351a7eaf181/better-bus-buffers/scripts/BBB_CountTripsAtPoints.py) to calculate the Stop or Intersection frequency for Transit Service.   
 
-##### Step 3. Build single Transit Stop FC with all Transit Frequency Output  
-
-[This step](https://github.com/MetropolitanTransportationCommission/RegionalTransitDatabase/blob/06839cf5c2bb3dc15e72f64683754ff8ea168811/sql/Regional%20Transit%20Database%20Processing%20for%202016%20final.sql) consolidates the 511 Transit data into one FC. This FC should contain all of the Transit Frequency attributes (AM Peak/PM Peak values for each Weekday)   
-
 ### Outcomes   
 
 #### Flat Files:   
