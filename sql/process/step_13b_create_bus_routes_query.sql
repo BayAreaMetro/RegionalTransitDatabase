@@ -38,3 +38,24 @@ CONSTRAINT [PK_stops_bus_route_pattern] PRIMARY KEY CLUSTERED
 (
 	OBJECTID ASC
 ) WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+
+create view stops_meeting_headway_criteria as
+SELECT agency_id
+      ,agency_name
+      ,route_id
+      ,Route_Direction
+      ,stop_name
+      ,stop_sequence
+      ,agency_stop_id
+      ,stop_lat
+      ,stop_lon
+      ,route_short_name
+      ,trip_headsign
+      ,Agency_Route_Pattern
+      ,SHAPE
+      ,OBJECTID
+  FROM stops_bus_route_pattern
+  where stops_bus_route_pattern.agency_stop_id IN
+  (SELECT agency_stop_id
+  FROM stops_tpa_final
+  WHERE Meets_Headway_Criteria = 1)
