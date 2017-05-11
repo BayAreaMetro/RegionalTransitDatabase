@@ -4,6 +4,7 @@ library(lubridate)
 library(readr)
 library(plyr)
 library(dplyr)
+library(DT)
 
 
 
@@ -241,3 +242,8 @@ write.csv(Weekday_PM_Peak_High_Frequency_Bus_Service, file="Weekday_PM_Peak_High
 rm(pm_peak_hdway_hfbus)
 rm(pm_peak_hdway)
 rm(PM_Peak_Bus_Routes)
+
+#Create HTML Data Tables
+
+datatable(Weekday_AM_Peak_High_Frequency_Bus_Service)
+datatable(Weekday_PM_Peak_High_Frequency_Bus_Service)
