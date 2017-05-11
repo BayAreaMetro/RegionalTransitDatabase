@@ -14,92 +14,25 @@ From source GTFS data, compile a database of tables for use in estimating bus fr
 
 ### Output Tables/Views:   
 
--  `stops_bus_route_pattern` (table)
--  `stops_tpa_final` (table)
--  `stops_meeting_headway_criteria` (view)
+Tables below are followed by their SQL file prefix. e.g. `s1_*filename*`  
+
+-  `stops_bus_route_pattern` (table) - s13
+-  `stops_tpa_final` (table)  - s12
+-  `stops_meeting_headway_criteria` (view) -s13
 
 #### Processing/Staging Tables:  
 
--  `route_trips`: join `agency`, `routes`, and `trips`, filter for bus only  
--  ~~`rtd_route_stop_schedule`: join `rtd_route_trips` with `stop_times` and `calendar`~~   
--  `route_stop_schedule`: remove duplicate arrivals (by time) in `rtd_route_stop_schedule` and count them in column: `Duplicate_Arrival_Times`
--  ~~`stops_tpa_staging_headway_base_calculations`:  a version of `route_stop_schedule` in which stops are flagged as 'TPA eligible' or not based on the criteria [here](https://github.com/MetropolitanTransportationCommission/RegionalTransitDatabase/blob/c0f04b36e99a4aa702b7bd3ecfd8608c6bf4b1bf/sql/process/step_3_build_headway_am_pm_views.sql#L17-L19). The schema is [here](https://github.com/MetropolitanTransportationCommission/RegionalTransitDatabase/blob/c0f04b36e99a4aa702b7bd3ecfd8608c6bf4b1bf/sql/process/step_5_insert_weekday_am_pm_headway_into_single_table.sql#L15-L35).~~  
--  `stops_tpa_staging`: selected from `stops_tpa_staging_headway_base_calculations` and contains the column `Distance_Eligible`, which flags whether a stop is within a distance threshold of other stops, another TPA eligibility criteria.
+-  `route_trips` - s1   
+-  `route_stop_schedule` - s2   
+-  `stops_tpa_staging_headway_base_calculations` - s3,s4 -- temporary table (currently dropped)  
+-  `stops_tpa_staging`: -s6. Selected from `stops_tpa_staging_headway_base_calculations` and contains the column `Distance_Eligible`, which flags whether a stop is within a distance threshold of other stops, another TPA eligibility criteria. Stops are flagged as 'TPA eligible' or not based on the criteria [here](https://github.com/MetropolitanTransportationCommission/RegionalTransitDatabase/blob/c0f04b36e99a4aa702b7bd3ecfd8608c6bf4b1bf/sql/process/step_3_build_headway_am_pm_views.sql#L17-L19)    
+-  `stops_tpa_draft` -s12  
+-  `stops_tpa_final`s12. spatial version of the draft table  
+
 
 #### Tables Not yet included:   
 
--  ~~`rtd_route_stop_all_other_modes`: non-bus stops that are eventually added into `stops_tpa_staging` in order to calculate their TPA eligibility.~~  
+-  `rtd_route_stop_all_other_modes`?: non-bus stops that are eventually added into `stops_tpa_staging` in order to calculate their TPA eligibility.  
 -  `TPA_Future_Transit_Stops`:  we don't have this table in the db yet, but it represents future or planned stops, which should eventually be included as part of the eligibility calculation below.  
 
-
-             
-
-
-##### Step 1. Build rtd_route_trips view.   
-view(table) created: `rtd_route_trips `    
-##### Step 2. Building Route Stop Schedule Table (route_stop_schedule).   
-view(table) created: `rtd_route_stop_schedule `    
-##### Step 3. Building Weekday (Monday thru Friday) AM/PM Peak Transit Stop Headway Views.      
-Tables created:  
-	-  `Monday_AM_Peak_Transit_Stop_Headways`  
-	-  `Monday_PM_Peak_Transit_Stop_Headways`  
-	-  `Tuesday_AM_Peak_Transit_Stop_Headways`  
-	-  etc...   
-	FROM            route_stop_schedule
-##### Step 4. Building Views for Weekday (Monday thru Friday) AM/PM Peak Transit Routes/Stops with 15 min or better Headways.   
-Tables created:  
-	-  `Monday_AM_Peak_Trips_15min_or_Less`   
-	-  `Monday_PM_Peak_Trips_15min_or_Less`   
-	-  `Tuesday_AM_Peak_Trips_15min_or_Less`   
-	-  etc...   
-##### Step 5. Insert Weekday (Monday thru Friday) AM/PM Peak Headway values into a container for summarization (stops_tpa_staging_headway_base_calculations table).   
-e.g.
-```
-	Update [stops_tpa_staging_headway_base_calculations]
-	Set Weekday = 'Monday   
-	Where #Parse DateTime
-```
-##### Step 6. Building Final Table for Map Display   
-table created: `stops_tpa_staging`    
-##### Step 7. Flag Bus Stops that meet the AM/PM Peak Thresholds   
-
-```
-update stops_tpa_staging
-set Meets_Headway_Criteria = 1
-Where ((Avg_Weekday_AM_Headway <=15) and (Avg_Weekday_PM_Headway <=15))-- and (Meets_Headway_Criteria = 0 or Meets_Headway_Criteria is null)
-```
-
-##### Step 8. Insert Planned and Under Construction Transit Stops   
-
-A bunch of Fixes to data in `stops_tpa_staging`
-
--  Fix the column name in the TPA_Future_Transit_Stops Table  
-
-##### Step 9. Build view of all existing Rail, Light Rail, Cable Car, and Ferry Stops      
-
-Step 10.   
--  Append all existing Rail, Light Rail, Cable Car, and Ferry Stops into stops_tpa_staging     
--  Fix Null Route ID values in stops_tpa_staging table     
--  Ensure that all Rail, BRT, Light Rail and Ferry Stops are flagged TPA Eligible     
--  Fix Route Names for unclassified values in the Future Transit Table     
--  Fix route_id values that are null or missing     
--  Also need to add a Distance Flag field to hold the boolean value for stops that have an adjacent stop within the AM/PM Peak   Headway threshold.
--  Add Geography to Shape Field     
-A BUNCH of spatial data work goes here (indexes, within, etc)   
-
-Step 11. 
-
-The following all assign boolean categorical style fields based on the spatial work from the above spatial step
-
--  Flag bus stops that are TPA Eligible   
--  Flag stops that do not meet the distance criteria   
--  Flag stops that do not meet the headway criteria   
--  Flag stops that are not TPA Eligible   
--  Flag Rail, Ferry, Light Rail, Cable Car, Bus Rapid Transit stops that are TPA Eligible   
--  Fix stop_name values that are in UPPER Case format   
--  Creating Final View for Mapping Purposes.  Contains only Eligible Transit Stops   
-
-## Other files:
-
--  `existing_and_planned.sql` - for now we are moving existing/planned queries out to this file and will put them back in later.  other relevant columns removed from a number of queries are found [here](https://github.com/MetropolitanTransportationCommission/RegionalTransitDatabase/commit/e14a773645881c15bf1d2e0d16a2dbc4a5ac5069)  
 

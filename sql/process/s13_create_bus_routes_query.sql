@@ -1,9 +1,13 @@
-SELECT        rtd_route_trips.agency_id, rtd_route_trips.agency_name, rtd_route_trips.route_id, rtd_route_trips.direction_id, stops.stop_name, 
-                         CAST(stop_times.arrival_time AS time) AS arrival_time, stop_times.stop_sequence, stop_times.agency_stop_id,  
-                         stops.stop_lat, stops.stop_lon, calendar.monday, calendar.tuesday, calendar.wednesday, calendar.thursday, calendar.friday, 
-                         calendar.agency_service_id, rtd_route_trips.route_short_name, rtd_route_trips.trip_headsign, rtd_route_trips.trip_id, stop_times.agency_trip_id, 
-                         geometry::Point(stops.stop_lon, stops.stop_lat, 4326) AS SHAPE
-INTO              stops_bus_route_pattern_schedule
+SELECT        rtd_route_trips.agency_id, rtd_route_trips.agency_name, rtd_route_trips.route_id, 
+              rtd_route_trips.direction_id, stops.stop_name, 
+              CAST(stop_times.arrival_time AS time) AS arrival_time, 
+              stop_times.stop_sequence, stop_times.agency_stop_id,  
+              stops.stop_lat, stops.stop_lon, calendar.monday, calendar.tuesday, 
+              calendar.wednesday, calendar.thursday, calendar.friday, 
+              calendar.agency_service_id, rtd_route_trips.route_short_name, rtd_route_trips.trip_headsign, 
+              rtd_route_trips.trip_id, stop_times.agency_trip_id, 
+              geometry::Point(stops.stop_lon, stops.stop_lat, 4326) AS SHAPE
+INTO          stops_bus_route_pattern_schedule
 FROM            stops INNER JOIN
                          stop_times ON stops.agency_stop_id = stop_times.agency_stop_id INNER JOIN
                          rtd_route_trips ON stop_times.agency_trip_id = rtd_route_trips.agency_trip_id INNER JOIN

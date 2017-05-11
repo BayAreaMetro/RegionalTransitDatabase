@@ -1,17 +1,3 @@
-------------------------------------------------------------------------------------------------------------
-Print 'Append all existing Rail, Light Rail, Cable Car, and Ferry Stops into stops_tpa_staging'
-------------------------------------------------------------------------------------------------------------
-GO
-INSERT INTO stops_tpa_staging
-                         (agency_id, agency_name, agency_stop_id, stop_name, route_type, stop_lon, stop_lat)
-SELECT        agency_id, agency_name, agency_stop_id, stop_name, route_type, stop_lon, stop_lat
-FROM            rtd_route_stop_all_other_modes
-WHERE        (agency_stop_id NOT IN ('AT:12175078', 'BG:1091722', 'HF:12175092', 'AT:12175080', 'BG:1091727', 'SB:12048537'))
-GROUP BY agency_id, agency_name, agency_stop_id, stop_name, route_type, stop_lon, stop_lat
---ORDER BY route_type, agency_id
---select * from rtd_route_stop_all_other_modes where route_type='Ferry'
-GO
-
 ------------------------------------------------------------------------------------------------------
 Print 'Make Indexed Spatial Field on Transit Stops Table'
 ------------------------------------------------------------------------------------------------------
