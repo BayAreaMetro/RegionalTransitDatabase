@@ -1,6 +1,6 @@
 
 ------------------------------------------------------------------------------------------------------
-Print 'Creating Draft View for Mapping Purposes.  Contains only Eligible Transit Stops'
+Print 'Creating Draft View.  Contains only Eligible Transit Stops'
 ------------------------------------------------------------------------------------------------------
 GO
 IF EXISTS(select * FROM sys.views where name = 'stops_tpa_draft')
@@ -66,3 +66,7 @@ SELECT     RecID, agency_id, agency_name, route_id, agency_stop_id, stop_name, r
                   TPA_Eligible, Stop_Description, Project_Description, stop_lon, stop_lat, geometry::Point([stop_lon], [stop_lat], 4326) as SHAPE
 into stops_tpa_draft_final
 FROM        stops_tpa_draft
+
+Go
+
+DROP table stops_tpa_draft;

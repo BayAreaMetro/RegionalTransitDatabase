@@ -1,5 +1,5 @@
 -----------------------------------------------------------------------------------------------
-Print 'Step 9. Build view of all existing Rail, Light Rail, Cable Car, and Ferry Stops'
+Print 'Step 7. Build view of all existing Rail, Light Rail, Cable Car, and Ferry Stops'
 -----------------------------------------------------------------------------------------------
 GO
 	IF EXISTS(select * FROM sys.views where name = 'rtd_route_stop_all_other_modes')
