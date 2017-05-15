@@ -64,36 +64,18 @@ SELECT agency_id
   FROM stops_tpa_final
   WHERE Meets_Headway_Criteria = 1)
 
--- a quick check shows that average values are for routes, not stops
-SELECT agency_stop_id, route_id, Avg_Weekday_AM_Headway,
-    PERCENTILE_CONT(0.5) 
-        WITHIN GROUP (ORDER BY Avg_Weekday_AM_Headway)
-        OVER (PARTITION BY agency_stop_id, route_id) AS MedianCont
-FROM stops_tpa_final
-
-/*agency_stop_id  route_id  Avg_Weekday_AM_Headway  MedianCont
-AC:50000  29  24  24
-AC:50101  96  30  30
-AC:50104  48  60  60
-AC:50105  67  30  30
-AC:50108  677 240 240
-AC:50108  691 NULL  NULL
-AC:50110  40  10  10
-AC:50110  840 240 240
-AC:50112  20  30  30
-AC:50112  21  30  30
-AC:50112  339 NULL  NULL
-AC:50112  39  80  80
-AC:50113  76  30  30*/
-
---so we can just select any value
 create view routes_meeting_headway_criteria as
 SELECT sbr.Agency_Route_Pattern,
-      max(rs.Avg_Weekday_AM_Trips) as Avg_Weekday_AM_Trips,
-      max(rs.Avg_Weekday_AM_Headway) as Avg_Weekday_AM_Headway,
-      max(rs.Avg_Weekday_PM_Trips) as Avg_Weekday_PM_Trips,
-      max(rs.Avg_Weekday_PM_Headway) as Avg_Weekday_PM_Headway,
-      max(rs.Meets_Headway_Criteria) as Meets_Headway_Criteria --seems a bit suspect, max better than min!
+      max(rs.Avg_Weekday_AM_Trips) as min_Avg_Weekday_AM_Trips,
+      max(rs.Avg_Weekday_AM_Headway) as min_Avg_Weekday_AM_Headway,
+      max(rs.Avg_Weekday_PM_Trips) as min_Avg_Weekday_PM_Trips,
+      max(rs.Avg_Weekday_PM_Headway) as min_Avg_Weekday_PM_Headway,
+      max(rs.Meets_Headway_Criteria) as min_Meets_Headway_Criteria,
+      min(rs.Avg_Weekday_AM_Trips) as min_Avg_Weekday_AM_Trips,
+      min(rs.Avg_Weekday_AM_Headway) as min_Avg_Weekday_AM_Headway,
+      min(rs.Avg_Weekday_PM_Trips) as min_Avg_Weekday_PM_Trips,
+      min(rs.Avg_Weekday_PM_Headway) as min_Avg_Weekday_PM_Headway,
+      min(rs.Meets_Headway_Criteria) as min_Meets_Headway_Criteria
     FROM stops_bus_route_pattern sbr LEFT JOIN
     (
       select 

@@ -84,26 +84,33 @@ arcpy.Merge_management(
 #it into a more effective id to join with network geoms
 #might not be necessary
 ########################################
-# target_file =  "data/network_output_draft3.gdb/routes_meeting_headway_criteria"
+target_file =  "data/network_output_draft3.gdb/routes_meeting_headway_criteria"
 
-# MXD_PATH = PROJECT_DIR + "network_analyst.mxd"
-# target_file_path = PROJECT_DIR + STOPS_FILE
+MXD_PATH = PROJECT_DIR + "network_analyst.mxd"
+target_file_path = PROJECT_DIR + STOPS_FILE
 
-# #######################################
-# # remove whitespace from route pattern string to make 
-# # it into a more effective id to join with network geoms
-# #######################################
-# arcpy.management.AddField(in_table=target_file_path, 
-#   field_name="agency_route_pattern_id", 
-#   field_type="TEXT", 
-#   field_precision="", 
-#   field_scale="", field_length="400", 
-#   field_alias="", field_is_nullable="NULLABLE", 
-#   field_is_required="NON_REQUIRED", 
-#   field_domain="")
+#######################################
+# remove whitespace from route pattern string to make 
+# it into a more effective id to join with network geoms
+#######################################
+arcpy.management.AddField(in_table=target_file_path, 
+  field_name="agency_route_pattern_id", 
+  field_type="TEXT", 
+  field_precision="", 
+  field_scale="", field_length="400", 
+  field_alias="", field_is_nullable="NULLABLE", 
+  field_is_required="NON_REQUIRED", 
+  field_domain="")
 
-# arcpy.management.CalculateField(in_table=target_file_path, field="agency_route_pattern_id", 
-#   expression="remove_spaces(!Agency_Route_Pattern!)", 
-#   expression_type="PYTHON_9.3", 
-#   code_block="import re\ndef remove_spaces(string):\n    return re.sub('\W','', string)")
+arcpy.management.CalculateField(in_table=target_file_path, field="agency_route_pattern_id", 
+  expression="remove_spaces(!Agency_Route_Pattern!)", 
+  expression_type="PYTHON_9.3", 
+  code_block="import re\ndef remove_spaces(string):\n    return re.sub('\W','', string)")
 
+# Replace a layer/table view name with a path to a dataset (which can be a layer file) or create the layer/table view within the script
+# The following inputs are layers or table views: "draft2_high_frequency_bus_service", "routes_meeting_headway_criteria"
+arcpy.AddJoin_management(in_layer_or_view="draft3_high_frequency_bus_service", 
+  in_field="Name", 
+  join_table="routes_meeting_headway_criteria", 
+  join_field="agency_route_pattern_id", 
+  join_type="KEEP_COMMON")
