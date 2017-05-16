@@ -1,5 +1,7 @@
 --Create view for adjacency summary
---See
+--See the following url for context:
+--https://github.com/MetropolitanTransportationCommission/RegionalTransitDatabase/blob/02f0a5ed623ea9c644da81ec5e84595e084c980c/python/NearTransitStopMatrix.py
+
 create view dbo.RTD_Route_Stop_Adjacency as
 SELECT DISTINCT 
                          a.IN_FID, OP_IN_FID.agency_id AS IN_Agency_ID, OP_IN_FID.agency_stop_id AS IN_Agency_Stop_ID, OP_IN_FID.Route_Pattern_ID AS IN_Agency_Route_Pattern, a.NEAR_FID, 
