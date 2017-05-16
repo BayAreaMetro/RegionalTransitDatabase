@@ -111,7 +111,7 @@ rtes$Route_Pattern_ID<-paste0(rtes$agency_id,"-",rtes$route_id,"-", rtes$directi
 
 #Review Routes
 #View(rtes)
-write.csv(rtes, file="Route_Pattern_Stop_Schedule.csv", row.names=FALSE)
+#write.csv(rtes, file="Route_Pattern_Stop_Schedule.csv", row.names=FALSE)
 # Create Headways from Weekday Trips
 
 #All AM Peak Bus Routes
@@ -260,9 +260,16 @@ Weekday_Peak_Bus_Routes_TPA_Listing$arrival_time <- strftime(Weekday_Peak_Bus_Ro
 #For Route Building using NA Tools
 df<- list(rtes,Weekday_High_Frequency_Bus_Service_Review)
 Reduce(inner_join,df) %>%
-  select(agency_id, route_id, direction_id, trip_headsign, stop_id, stop_sequence, arrival_time, Total_Trips, Headway, Peak_Period, TPA_Criteria) %>%
-  arrange(agency_id, route_id, direction_id, Peak_Period, arrival_time, stop_sequence ) -> Weekday_Peak_Bus_Routes_Stops_Builder
+  group_by(agency_id, route_id, direction_id, trip_id,Peak_Period, Route_Pattern_ID,trip_headsign, stop_id, stop_sequence, Total_Trips, Headway, Peak_Period, TPA_Criteria) %>%
+  select(agency_id, route_id, direction_id, trip_id, Route_Pattern_ID, trip_headsign, stop_id, stop_sequence, Total_Trips, Headway, Peak_Period, TPA_Criteria) %>%
+  arrange(agency_id, route_id, direction_id, trip_id, Peak_Period, stop_sequence ) -> Weekday_Peak_Bus_Routes_Stops_Builder
 rm(df)
+
+#Select Distinct Records based upon Agency Route Direction values.  Removes stop ids from output.
+group_by(Weekday_Peak_Bus_Routes_Stops_Builder, agency_id, route_id, direction_id, Route_Pattern_ID,trip_headsign, stop_id, stop_sequence, Total_Trips, Headway, Peak_Period, TPA_Criteria) %>%
+  distinct(agency_id, route_id, direction_id, Route_Pattern_ID,trip_headsign, stop_id, stop_sequence, Total_Trips, Headway, Peak_Period, TPA_Criteria) -> Weekday_Peak_Bus_Routes_Stops_Builder
+#Remove select cols.
+Weekday_Peak_Bus_Routes_Stops_Builder <- Weekday_Peak_Bus_Routes_Stops_Builder[-c(1:11)]
 #Write out to csv table
 write.csv(Weekday_Peak_Bus_Routes_Stops_Builder,file="Weekday_Peak_Bus_Routes_Stops_Builder.csv", row.names=FALSE)
 
