@@ -154,7 +154,7 @@ Weekday_AM_Peak_High_Frequency_Bus_Service <- Weekday_AM_Peak_High_Frequency_Bus
 #DF Cleanup
 rm(am_peak_hdway)
 rm(am_peak_hdway_hfbus)
-rm(AM_Peak_Bus_Routes)
+#rm(AM_Peak_Bus_Routes)
 
 #All PM Bus Routes
 subset(rtes, rtes$monday == 1 
@@ -200,7 +200,7 @@ Weekday_PM_Peak_High_Frequency_Bus_Service$Route_Pattern_ID<-paste0(Weekday_PM_P
 #DF Cleanup
 rm(pm_peak_hdway_hfbus)
 rm(pm_peak_hdway)
-rm(PM_Peak_Bus_Routes)
+#rm(PM_Peak_Bus_Routes)
 
 #Combine Weekday High Frequency Bus Service Data Frames for AM/PM Peak Periods
 rbind(Weekday_AM_Peak_High_Frequency_Bus_Service,Weekday_PM_Peak_High_Frequency_Bus_Service) %>%
@@ -245,17 +245,26 @@ Reduce(inner_join,df) %>%
   arrange(agency_id, route_id, direction_id, Peak_Period, arrival_time, stop_sequence ) -> Weekday_Peak_Bus_Routes_TPA_Listing
 rm(df)
 
+
 #Reformat arrival_time col. to hour | min format prior to export to Data Table.
 Weekday_Peak_Bus_Routes_TPA_Listing$arrival_time <- strftime(Weekday_Peak_Bus_Routes_TPA_Listing$arrival_time, format = "%H:%M")
 
 #Create HTML Data Tables
-datatable(Weekday_High_Frequency_Bus_Service_Review)
+#datatable(Weekday_High_Frequency_Bus_Service_Review)
 #datatable(Weekday_Peak_Bus_Routes)
-datatable(Weekday_Peak_Bus_Routes_TPA_Listing)
+#datatable(Weekday_Peak_Bus_Routes_TPA_Listing)
 #Export to table
 #write.csv(Weekday_AM_Peak_High_Frequency_Bus_Service, file="Weekday_AM_Peak_High_Frequency_Bus_Service.csv")
 #write.csv(Weekday_PM_Peak_High_Frequency_Bus_Service, file="Weekday_PM_Peak_High_Frequency_Bus_Service.csv")
 
+#For Route Building using NA Tools
+df<- list(rtes,Weekday_High_Frequency_Bus_Service_Review)
+Reduce(inner_join,df) %>%
+  select(agency_id, route_id, direction_id, trip_headsign, stop_id, stop_sequence, arrival_time, Total_Trips, Headway, Peak_Period, TPA_Criteria) %>%
+  arrange(agency_id, route_id, direction_id, Peak_Period, arrival_time, stop_sequence ) -> Weekday_Peak_Bus_Routes_Stops_Builder
+rm(df)
+#Write out to csv table
+write.csv(Weekday_Peak_Bus_Routes_Stops_Builder,file="Weekday_Peak_Bus_Routes_Stops_Builder.csv", row.names=FALSE)
 
 #Table Cleanup
 rm(rtes)
