@@ -1,6 +1,5 @@
 #This script builds a RTD dataset using 511 data from the API. 
 #The data must first be downloaded as zip archives and extracted to the working directory.
-#Check your packages to ensure that these libraries are available.  Install them if needed.
 library(lubridate)
 library(readr)
 library(plyr)
@@ -98,7 +97,7 @@ stop_times$departure_time <- as.POSIXct(stop_times$departure_time, format= "%H:%
 # Join the data together.  Need to verify the join function for these records.  
 df<- list(stops,stop_times,trips,calendar,routes)
 Reduce(inner_join,df) %>%
-  select(agency_id, stop_id, trip_id, service_id, monday, tuesday, wednesday, thursday, friday, route_id, trip_headsign, direction_id, arrival_time, stop_sequence, route_type) %>%
+  select(agency_id, stop_id, trip_id, service_id, monday, tuesday, wednesday, thursday, friday, route_id, trip_headsign, direction_id, arrival_time, stop_sequence, route_type, stop_lat, stop_lon) %>%
   arrange(agency_id, trip_id, service_id, monday, tuesday, wednesday, thursday, friday, route_id, trip_headsign, direction_id, arrival_time, stop_sequence) -> rtes
 rm(df)
 
@@ -109,6 +108,10 @@ rtes$direction_id[rtes$direction_id == 1] <- "Inbound"
 # Add new column values for distinct Agency, Route, Trip, Service Ids for record count (Not really used)
 rtes$Route_Pattern_ID<-paste0(rtes$agency_id,"-",rtes$route_id,"-", rtes$direction_id)
 
+
+#Review Routes
+#View(rtes)
+write.csv(rtes, file="Route_Pattern_Stop_Schedule.csv", row.names=FALSE)
 # Create Headways from Weekday Trips
 
 #All AM Peak Bus Routes
@@ -151,7 +154,7 @@ Weekday_AM_Peak_High_Frequency_Bus_Service <- Weekday_AM_Peak_High_Frequency_Bus
 #DF Cleanup
 rm(am_peak_hdway)
 rm(am_peak_hdway_hfbus)
-#rm(AM_Peak_Bus_Routes)
+rm(AM_Peak_Bus_Routes)
 
 #All PM Bus Routes
 subset(rtes, rtes$monday == 1 
@@ -197,7 +200,7 @@ Weekday_PM_Peak_High_Frequency_Bus_Service$Route_Pattern_ID<-paste0(Weekday_PM_P
 #DF Cleanup
 rm(pm_peak_hdway_hfbus)
 rm(pm_peak_hdway)
-#rm(PM_Peak_Bus_Routes)
+rm(PM_Peak_Bus_Routes)
 
 #Combine Weekday High Frequency Bus Service Data Frames for AM/PM Peak Periods
 rbind(Weekday_AM_Peak_High_Frequency_Bus_Service,Weekday_PM_Peak_High_Frequency_Bus_Service) %>%
@@ -246,9 +249,16 @@ rm(df)
 Weekday_Peak_Bus_Routes_TPA_Listing$arrival_time <- strftime(Weekday_Peak_Bus_Routes_TPA_Listing$arrival_time, format = "%H:%M")
 
 #Create HTML Data Tables
-#datatable(Weekday_High_Frequency_Bus_Service_Review)
+datatable(Weekday_High_Frequency_Bus_Service_Review)
 #datatable(Weekday_Peak_Bus_Routes)
-#datatable(Weekday_Peak_Bus_Routes_TPA_Listing)
+datatable(Weekday_Peak_Bus_Routes_TPA_Listing)
 #Export to table
 #write.csv(Weekday_AM_Peak_High_Frequency_Bus_Service, file="Weekday_AM_Peak_High_Frequency_Bus_Service.csv")
 #write.csv(Weekday_PM_Peak_High_Frequency_Bus_Service, file="Weekday_PM_Peak_High_Frequency_Bus_Service.csv")
+
+
+#Table Cleanup
+rm(rtes)
+rm(AM_Peak_Bus_Routes)
+rm(PM_Peak_Bus_Routes)
+rm(Weekday_High_Frequency_Bus_Service)
