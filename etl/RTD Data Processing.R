@@ -20,6 +20,88 @@ build_table <- function(some_path, col_names=TRUE, col_types=NULL) {
   return(operator_df)
 }
 
+######################
+##Begin Common Bus Route Frequency Functions
+######################
+
+filter_by_time <- function(rt_df, start_filter,end_filter) {
+  subset(rt_df, rt_df$monday == 1 
+         & rt_df$tuesday == 1
+         & rt_df$wednesday == 1
+         & rt_df$thursday == 1
+         & rt_df$friday == 1
+         & rt_df$route_type == 3
+         & rt_df$arrival_time >start_filter
+         & rt_df$arrival_time < end_filter)-> rt_df_out
+  return(rt_df_out)
+}
+
+remove_duplicate_stops <- function(rt_df){
+  rt_df %>%
+    distinct(agency_id, route_id, direction_id, 
+             trip_headsign, stop_id, stop_sequence, arrival_time) %>%
+    arrange(agency_id, route_id, direction_id,
+            arrival_time,stop_sequence)->rt_df_out
+  return(rt_df_out)
+}
+
+count_trips_by_route <- function(rt_df) {
+  rt_df %>% 
+    group_by(agency_id, 
+             route_id, 
+             direction_id, 
+             trip_headsign, 
+             stop_id) %>% 
+    count(stop_sequence) %>% 
+    mutate(Headways = round(240/n,0)) -> 
+    rt_df_out
+  return(rt_df_out)
+}
+
+select_distinct_on_agency_route_direction <- function(rt_df) {
+  group_by(rt_df, 
+           agency_id, 
+           route_id, 
+           direction_id,
+           trip_headsign) %>%
+    mutate(Total_Trips = round(mean(Trips),0), 
+           Headway = round(mean(Headways),0)) %>%
+    distinct(agency_id, 
+             route_id, 
+             direction_id, 
+             trip_headsign, 
+             Total_Trips, 
+             Headway) -> 
+    rt_df_out
+  return(rt_df_out)
+}
+
+get_bus_service <- function(df_in,max_hdwy=16) {
+  #4C
+  df2 <- count_trips_by_route(df_in)
+  
+  #4D Rename count col. (n) to Trips
+  names(df2)[6]<-"Trips"
+  
+  #4E Select High Frequency Bus Service Routes (15 min or better headways)
+  df3 <- subset(df2, 
+                df2$Headways < max_hdwy) 
+  
+  #4F Select Distinct Records based upon Agency Route Direction values.  Removes stop ids from output.
+  df_out <- select_distinct_on_agency_route_direction(df3)
+  
+  #4G Add Peak_Period Column
+  df_out["Peak_Period"] <-"AM Peak"
+  
+  #4H Drop Duplicate Columns from DF
+  df_out <- df_out[-c(7:9)]
+  return(df_out)
+}
+
+######################
+##End Common Route Frequency Functions
+######################
+
 # This makes reading data in from text files much more logical.
 options(stringsAsFactors = FALSE)
 ###########################################################################################
@@ -123,92 +205,57 @@ rtes$Route_Pattern_ID<-paste0(rtes$agency_id,"-",rtes$route_id,"-", rtes$directi
 ###########################################################################################
 # Section 4. Create AM Peak Headways from Weekday Trips
 
-# 4A. All AM Peak Bus Routes
-subset(rtes, rtes$monday == 1 
-       & rtes$tuesday == 1
-       & rtes$wednesday == 1
-       & rtes$thursday == 1
-       & rtes$friday == 1
-       & rtes$route_type == 3
-       & rtes$arrival_time > "2017-05-12 06:00:00" 
-       & rtes$arrival_time < "2017-05-12 09:59:00")-> AM_Peak_Bus_Routes
+######################
+##Begin AM Processing
+######################
 
-# 4B. Remove any duplicates due to multiple entries for the same stop at the same time period.
-AM_Peak_Bus_Routes %>%
-  distinct(agency_id, route_id, direction_id, trip_headsign, stop_id, stop_sequence, arrival_time) %>%
-  arrange(agency_id, route_id, direction_id,arrival_time,stop_sequence)->AM_Peak_Bus_Routes
+arrival_time_filter <- paste(c(format(Sys.Date(), "%Y-%m-%d"),
+                               "06:00:00"),collapse=" ")
+departure_time_filter <- paste(c(format(Sys.Date(), "%Y-%m-%d"),
+                                 "09:59:00"),collapse=" ")
 
-# 4C. Count trips by route for given time period
-AM_Peak_Bus_Routes %>% 
-  group_by(agency_id, route_id, direction_id, trip_headsign, stop_id) %>% 
-  count(stop_sequence) %>% mutate(Headways = round(240/n,0)) -> am_peak_hdway
+#4A Filter Stops to AM Peak Bus Routes
+AM_Peak_Bus_Routes <- filter_by_time(df_sr,
+                                     arrival_time_filter,
+                                     departure_time_filter)
+#4B remove duplicates due to multiple entries for the same stop
+AM_Peak_Bus_Routes <- remove_duplicate_stops(AM_Peak_Bus_Routes)
 
-# 4D. Rename count col. (n) to Trips
-names(am_peak_hdway)[6]<-"Trips"
+Weekday_AM_Peak_High_Frequency_Bus_Service <- 
+  get_bus_service(AM_Peak_Bus_Routes)
 
-# 4E. Select High Frequency Bus Service Routes (15 min or better headways)
-subset(am_peak_hdway, am_peak_hdway$Headways <16) -> am_peak_hdway_hfbus
+#4I DF Cleanup
+Weekday_AM_Peak_High_Frequency_Bus_Service <- df4
+rm(arrival_time_filter)
+rm(departure_time_filter)
 
-# 4F. Select Distinct Records based upon Agency Route Direction values.  Removes stop ids from output.
-group_by(am_peak_hdway_hfbus, agency_id, route_id, direction_id,trip_headsign) %>%
-  mutate(Total_Trips = round(mean(Trips),0), Headway = round(mean(Headways),0)) %>%
-  distinct(agency_id, route_id, direction_id, trip_headsign, Total_Trips, Headway) -> Weekday_AM_Peak_High_Frequency_Bus_Service
-
-# 4G. Add Peak_Period Class to DF
-Weekday_AM_Peak_High_Frequency_Bus_Service["Peak_Period"] <-"AM Peak"
-
-# 4H. Drop Duplicate Columns from DF
-Weekday_AM_Peak_High_Frequency_Bus_Service <- Weekday_AM_Peak_High_Frequency_Bus_Service[-c(7:9)]
-
-# 4I. DF Cleanup
-rm(am_peak_hdway)
-rm(am_peak_hdway_hfbus)
-
+###################
+#####End AM Processing
+###################
 
 ###########################################################################################
 # Section 5. Create PM Peak Headways from Weekday Trips
 
-# 5A. All PM Bus Routes
-subset(rtes, rtes$monday == 1 
-       & rtes$tuesday == 1
-       & rtes$wednesday == 1
-       & rtes$thursday == 1
-       & rtes$friday == 1
-       & rtes$route_type == 3
-       & rtes$arrival_time > "2017-05-12 15:00:00" 
-       & rtes$arrival_time < "2017-05-12 18:59:00")-> PM_Peak_Bus_Routes
+arrival_time_filter <- paste0(c(format(Sys.Date(), "%Y-%m-%d"),
+                                "15:00:00"),collapse=" ")
 
-# 5B. Remove any duplicates due to multiple entries for the same stop at the same time period.
-PM_Peak_Bus_Routes %>%
-  distinct(agency_id, route_id, direction_id, trip_headsign,stop_id, stop_sequence, arrival_time) %>%
-  arrange(agency_id, route_id, direction_id,trip_headsign,arrival_time,stop_sequence)->PM_Peak_Bus_Routes
+departure_time_filter <- paste(c(format(Sys.Date(), "%Y-%m-%d"),
+                                 "18:59:00"),collapse=" ")
 
-# 5C. Count trips by route for given time period
-PM_Peak_Bus_Routes %>% 
-  group_by(agency_id, route_id, direction_id, trip_headsign,stop_id) %>% 
-  count(stop_sequence) %>% mutate(Headways = round(240/n,0)) -> pm_peak_hdway
+#4A Filter Stops 
+PM_Peak_Bus_Routes <- filter_by_time(df_sr,
+                                     arrival_time_filter,
+                                     departure_time_filter)
 
-# 5D. rename count col. (n) to Trips
-names(pm_peak_hdway)[6]<-"Trips"
+#4B Remove any duplicates due to multiple entries for the same stop
+PM_Peak_Bus_Routes <- remove_duplicate_stops(PM_Peak_Bus_Routes)
 
-# 5E. Select High Frequency Bus Service Routes (15 min or better headways)
-subset(pm_peak_hdway, pm_peak_hdway$Headways <16) -> pm_peak_hdway_hfbus
+Weekday_PM_Peak_High_Frequency_Bus_Service <- 
+  get_bus_service(PM_Peak_Bus_Routes)
 
-# 5F. Select Distinct Records based upon Agency Route Direction values.  Removes stop ids from output.
-group_by(pm_peak_hdway_hfbus, agency_id, route_id, trip_headsign,direction_id) %>%
-  mutate(Total_Trips = round(mean(Trips),0), Headway = round(mean(Headways),0)) %>%
-  distinct(agency_id, route_id, direction_id, trip_headsign,Total_Trips, Headway) -> Weekday_PM_Peak_High_Frequency_Bus_Service
-
-# 5G. Add Peak_Period Class to DF
-Weekday_PM_Peak_High_Frequency_Bus_Service["Peak_Period"] <-"PM Peak"
-
-# 5H. Drop Duplicate Columns from DF
-Weekday_PM_Peak_High_Frequency_Bus_Service <- Weekday_PM_Peak_High_Frequency_Bus_Service[-c(7:9)]
-
-# 5I. DF Cleanup
-rm(pm_peak_hdway_hfbus)
-rm(pm_peak_hdway)
-
+###################
+#####End PM Processing
+###################
 
 # 5H-1. Add column values for distinct Agency, Route, Direction and Peak Period for record count
 Weekday_AM_Peak_High_Frequency_Bus_Service$Route_Pattern_ID<-paste0(Weekday_AM_Peak_High_Frequency_Bus_Service$agency_id,"-",Weekday_AM_Peak_High_Frequency_Bus_Service$route_id,"-", Weekday_AM_Peak_High_Frequency_Bus_Service$Peak_Period)
