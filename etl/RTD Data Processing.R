@@ -186,16 +186,35 @@ stop_times$departure_time <- as.POSIXct(stop_times$departure_time, format= "%H:%
 # 3B. Join the data together.  Need to verify the join function for these records.  
 df<- list(stops,stop_times,trips,calendar,routes)
 Reduce(inner_join,df) %>%
-  select(agency_id, stop_id, trip_id, service_id, monday, tuesday, wednesday, thursday, friday, route_id, trip_headsign, direction_id, arrival_time, stop_sequence, route_type, stop_lat, stop_lon) %>%
-  arrange(agency_id, trip_id, service_id, monday, tuesday, wednesday, thursday, friday, route_id, trip_headsign, direction_id, arrival_time, stop_sequence) -> rtes
+  select(agency_id, stop_id, trip_id, service_id, 
+         monday, tuesday, wednesday, thursday, friday, 
+         route_id, trip_headsign, direction_id, 
+         arrival_time, stop_sequence, 
+         route_type, stop_lat, stop_lon) %>%
+  arrange(agency_id, trip_id, service_id, 
+          monday, tuesday, wednesday, thursday, friday, 
+          route_id, trip_headsign, direction_id, 
+          arrival_time, stop_sequence) -> df_sr
 rm(df)
+
+#clean up source data
+rm(stops)
+rm(routes)
+rm(stop_times)
+rm(trips)
+rm(agency)
+rm(calendar)
 
 # 3C. Update direction_id. 0 = Outbound, 1 = Inbound
 rtes$direction_id[rtes$direction_id == 0] <- "Outbound"
 rtes$direction_id[rtes$direction_id == 1] <- "Inbound"
 
 # 3D. Add new column values for distinct Agency, Route, Trip, Service Ids for record count (Not really used)
-rtes$Route_Pattern_ID<-paste0(rtes$agency_id,"-",rtes$route_id,"-", rtes$direction_id)
+df_sr$Route_Pattern_ID<-
+  paste0(df_sr$agency_id,"-",
+         df_sr$route_id,"-", 
+         df_sr$direction_id)
+
 
 
 #Review Routes
