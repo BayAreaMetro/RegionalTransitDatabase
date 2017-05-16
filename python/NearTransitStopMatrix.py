@@ -11,6 +11,7 @@
 # https://github.com/MetropolitanTransportationCommission/RegionalTransitDatabase/blob/c6875ea35b0baea2a8e5eecae143c8ffe3798b74/etl/RTD%20Data%20Processing.R#L284-L292
 # Output can then be used in a sql table to generate a summary of shared or adjacent transit stops by operator, stop and route.
 # See the following sql script which uses both the input and output used in this python script to generate the summary.
+# https://github.com/MetropolitanTransportationCommission/RegionalTransitDatabase/blob/2d9ce3ee372b1f8f75156e90f4da1230499e7d35/sql/process/AdjacencyAnalysis.sql
 # ---------------------------------------------------------------------------
 
 # Set the necessary product code
