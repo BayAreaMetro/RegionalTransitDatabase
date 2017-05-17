@@ -171,11 +171,11 @@ load_multiple_gtfs <- function(gtfs_data_path="~/Documents/MTC/_Section/Planning
   
   stop_times$arrival_time <- as.POSIXct(stop_times$arrival_time, format= "%H:%M:%S")
   stop_times$departure_time <- as.POSIXct(stop_times$departure_time, format= "%H:%M:%S")
-  routes_joined <- reduce_to_rtes(stops,stop_times,trips,calendar,routes)
+  routes_joined <- reduce_to_route_stops(stops,stop_times,trips,calendar,routes)
   return(routes_joined)
 }
 
-reduce_to_rtes <- function(stops,stop_times,trips,calendar,routes) {
+reduce_to_route_stops <- function(stops,stop_times,trips,calendar,routes) {
   # 3B. Join the data together.  Need to verify the join function for these records.  
   df<- list(stops,stop_times,trips,calendar,routes)
   Reduce(inner_join,df) %>%
@@ -213,17 +213,11 @@ df_sr <- load_multiple_gtfs(getwd())
 # Section 3. Field Customization and Data Type Handling
 
 # 3C. Update direction_id. 0 = Outbound, 1 = Inbound
-df_sr$direction_id[rtes$direction_id == 0] <- "Outbound"
-df_sr$direction_id[rtes$direction_id == 1] <- "Inbound"
-
-# 3D. Add new column values for distinct Agency, Route, Trip, Service Ids for record count (Not really used)
-df_sr$Route_Pattern_ID<-
-  paste0(rtes$agency_id,"-",
-         rtes$route_id,"-", 
-         rtes$direction_id)
+df_sr$direction_id[df_sr$direction_id == 0] <- "Outbound"
+df_sr$direction_id[df_sr$direction_id == 1] <- "Inbound"
 
 #Review Routes
-#View(rtes)
+#View(df_sr)
 #write.csv(rtes, file="Route_Pattern_Stop_Schedule.csv", row.names=FALSE)
 
 
@@ -240,14 +234,14 @@ departure_time_filter <- paste(c(format(Sys.Date(), "%Y-%m-%d"),
                                  "09:59:00"),collapse=" ")
 
 #4A Filter Stops to AM Peak Bus Routes
-AM_Peak_Bus_Routes <- filter_by_time(df_sr,
-                                     arrival_time_filter,
-                                     departure_time_filter)
+am_stops <- filter_by_time(df_sr,
+                           arrival_time_filter,
+                           departure_time_filter)
 #4B remove duplicates due to multiple entries for the same stop
-AM_Peak_Bus_Routes <- remove_duplicate_stops(AM_Peak_Bus_Routes)
+am_stops <- remove_duplicate_stops(am_stops)
 
-Weekday_AM_Peak_High_Frequency_Bus_Service <- 
-  get_bus_service(AM_Peak_Bus_Routes)
+am_routes <- get_bus_service(am_stops)
+am_routes["Peak_Period"] <-"AM Peak"
 
 #4I DF Cleanup
 rm(arrival_time_filter)
@@ -266,105 +260,110 @@ arrival_time_filter <- paste0(c(format(Sys.Date(), "%Y-%m-%d"),
 departure_time_filter <- paste(c(format(Sys.Date(), "%Y-%m-%d"),
                                  "18:59:00"),collapse=" ")
 
-#4A Filter Stops 
-PM_Peak_Bus_Routes <- filter_by_time(df_sr,
-                                     arrival_time_filter,
-                                     departure_time_filter)
+#5A Filter Stops 
+pm_stops <- filter_by_time(df_sr,
+                           arrival_time_filter,
+                           departure_time_filter)
 
-#4B Remove any duplicates due to multiple entries for the same stop
-PM_Peak_Bus_Routes <- remove_duplicate_stops(PM_Peak_Bus_Routes)
+#5B Remove any duplicates due to multiple entries for the same stop
+pm_stops <- remove_duplicate_stops(pm_stops)
 
-Weekday_PM_Peak_High_Frequency_Bus_Service <- 
-  get_bus_service(PM_Peak_Bus_Routes)
+pm_routes <- get_bus_service(pm_stops)
+pm_routes["Peak_Period"] <-"PM Peak"
 
 ###################
 #####End PM Processing
 ###################
 
-# 5H-1. Add column values for distinct Agency, Route, Direction and Peak Period for record count
-Weekday_AM_Peak_High_Frequency_Bus_Service$Route_Pattern_ID<-paste0(Weekday_AM_Peak_High_Frequency_Bus_Service$agency_id,"-",Weekday_AM_Peak_High_Frequency_Bus_Service$route_id,"-", Weekday_AM_Peak_High_Frequency_Bus_Service$Peak_Period)
-Weekday_PM_Peak_High_Frequency_Bus_Service$Route_Pattern_ID<-paste0(Weekday_PM_Peak_High_Frequency_Bus_Service$agency_id,"-",Weekday_PM_Peak_High_Frequency_Bus_Service$route_id,"-", Weekday_PM_Peak_High_Frequency_Bus_Service$Peak_Period)
-
 ###########################################################################################
 # Section 6. Build Weekday High Frequency Bus Service Dataset
 
-# 6A. Combine Weekday High Frequency Bus Service Data Frames for AM/PM Peak Periods
-rbind(Weekday_AM_Peak_High_Frequency_Bus_Service,Weekday_PM_Peak_High_Frequency_Bus_Service) %>%
-  arrange(Route_Pattern_ID) -> Weekday_High_Frequency_Bus_Service
+join_high_frequency_routes <- function(am_stops,pm_stops,am_routes,pm_routes){
+  # Combine Weekday High Frequency Bus Service Data Frames for AM/PM Peak Periods
+  df1 <- rbind(am_routes,
+        pm_routes)
 
-# 6B. Count number of routes that operate in both directions during peak periods.
-      #TPA_Criteria = 2 or 3 then Route operates in both directions during peak periods
-      #TPA Criteria = 1 possible loop route or route only operates in ection during peak periods.
+  # Add a ID to be used later in ESRI
+  df1$Route_Pattern_ID<-paste0(df1$agency_id,
+                               "-",df1$route_id,"-",
+                               df1$Peak_Period)
 
-Total_By_Direction <- Weekday_High_Frequency_Bus_Service %>%
-  group_by(agency_id, route_id, Peak_Period, Route_Pattern_ID) %>%
-  summarise(TPA_Criteria = n())
+  # Count number of routes that operate in both directions during peak periods.
+        #TPA_Criteria = 2 or 3 then Route operates in both directions during peak periods
+        #TPA Criteria = 1 possible loop route or route only operates in ection during peak periods.
+  
+  df2 <- df1 %>%
+    group_by(agency_id, route_id, Peak_Period, Route_Pattern_ID) %>%
+    summarise(TPA_Criteria = n())
+  
+  # 6C. Join Total By Direction with Weekday High Frequency Bus Service tables to flag those routes that meet the criteria.
+  df3 <- list(df1,df2)
+  df4 <- Reduce(inner_join,df3) %>%
+    select(agency_id, route_id, direction_id, trip_headsign,Total_Trips, Headway, Peak_Period, TPA_Criteria) %>%
+    arrange(agency_id, route_id, direction_id, Peak_Period)
 
-# 6C. Join Total By Direction with Weekday High Frequency Bus Service tables to flag those routes that meet the criteria.
-df<- list(Weekday_High_Frequency_Bus_Service,Total_By_Direction)
-Reduce(inner_join,df) %>%
-  select(agency_id, route_id, direction_id, trip_headsign,Total_Trips, Headway, Peak_Period, TPA_Criteria) %>%
-  arrange(agency_id, route_id, direction_id, Peak_Period) -> Weekday_High_Frequency_Bus_Service_Review
-rm(df)
-
-# 6D. Update values in TPA Criteria field. 2,3 = Meets Criteria, 1 = Review for Acceptance
-Weekday_High_Frequency_Bus_Service_Review$TPA_Criteria[Weekday_High_Frequency_Bus_Service_Review$TPA_Criteria==3] <- "Meets TPA Criteria"
-Weekday_High_Frequency_Bus_Service_Review$TPA_Criteria[Weekday_High_Frequency_Bus_Service_Review$TPA_Criteria==2] <- "Meets TPA Criteria"
-Weekday_High_Frequency_Bus_Service_Review$TPA_Criteria[Weekday_High_Frequency_Bus_Service_Review$TPA_Criteria==1] <- "Does Not Meet TPA Criteria"
+  # 6D. Update values in TPA Criteria field. 2,3 = Meets Criteria, 1 = Review for Acceptance
+  df4$TPA_Criteria[df3$TPA_Criteria==3] <- "Meets TPA Criteria"
+  df4$TPA_Criteria[df3$TPA_Criteria==2] <- "Meets TPA Criteria"
+  df4$TPA_Criteria[df3$TPA_Criteria==1] <- "Does Not Meet TPA Criteria"
   # 6D-1. Update values in TPA Criteria field.  All Loops in AM/PM Peak periods that have 15 mins or better headways = Meets TPA Criteria
-  Weekday_High_Frequency_Bus_Service_Review$TPA_Criteria[grepl('loop', Weekday_High_Frequency_Bus_Service_Review$trip_headsign, ignore.case = TRUE)] <- "Meets TPA Criteria"
+  df4$TPA_Criteria[grepl('loop', df3$trip_headsign, ignore.case = TRUE)] <- "Meets TPA Criteria"
 
+  df5 <- rbind(am_stops,am_stops) %>%
+    arrange(agency_id, route_id, direction_id,arrival_time,stop_sequence)
+  
+  # 6G. Join Weekday_Peak_Bus_Routes with df3 to generate a stop schedule for all AM/PM Peak Period stops that have headways of 15 mins. or better.
+  df6 <- list(df5,df4)
+  df7 <- Reduce(inner_join,df6) %>%
+      select(agency_id, route_id, direction_id, trip_headsign, stop_id, stop_sequence, arrival_time, Total_Trips, Headway, Peak_Period, TPA_Criteria) %>%
+      arrange(agency_id, route_id, direction_id, Peak_Period, arrival_time, stop_sequence )
 
-# 6E. Add Column for Peak Period Class
-AM_Peak_Bus_Routes["Peak_Period"] <-"AM Peak"
-PM_Peak_Bus_Routes["Peak_Period"] <-"PM Peak"
-
-# 6F. Build full schedule for all bus routes during the Peak Period
-rbind(AM_Peak_Bus_Routes,PM_Peak_Bus_Routes) %>%
-  arrange(agency_id, route_id, direction_id,arrival_time,stop_sequence) -> Weekday_Peak_Bus_Routes
-
-# 6G. Join Weekday_Peak_Bus_Routes with Weekday_High_Frequency_Bus_Service_Review to generate a stop schedule for all AM/PM Peak Period stops that have headways of 15 mins. or better.
-df<- list(Weekday_Peak_Bus_Routes,Weekday_High_Frequency_Bus_Service_Review)
-Reduce(inner_join,df) %>%
-  select(agency_id, route_id, direction_id, trip_headsign, stop_id, stop_sequence, arrival_time, Total_Trips, Headway, Peak_Period, TPA_Criteria) %>%
-  arrange(agency_id, route_id, direction_id, Peak_Period, arrival_time, stop_sequence ) -> Weekday_Peak_Bus_Routes_TPA_Listing
-rm(df)
   # 6G-1. Reformat arrival_time col. to hour | min format prior to export to Data Table.
-  Weekday_Peak_Bus_Routes_TPA_Listing$arrival_time <- strftime(Weekday_Peak_Bus_Routes_TPA_Listing$arrival_time, format = "%H:%M")
+  df7$arrival_time <- strftime(df7$arrival_time, format = "%H:%M")
 
-# 6H. Create HTML Data Tables and export datasets for review by PMs
-#datatable(Weekday_High_Frequency_Bus_Service_Review)
-#datatable(Weekday_Peak_Bus_Routes)
-#datatable(Weekday_Peak_Bus_Routes_TPA_Listing)
-#Export to table
-#write.csv(Weekday_AM_Peak_High_Frequency_Bus_Service, file="Weekday_AM_Peak_High_Frequency_Bus_Service.csv")
-#write.csv(Weekday_PM_Peak_High_Frequency_Bus_Service, file="Weekday_PM_Peak_High_Frequency_Bus_Service.csv")
+  return(df7)
+}
+
+df_rt_hf <- join_high_frequency_routes(am_stops,pm_stops,am_routes,pm_routes)
 
 ###########################################################################################
 # Section 7. Build Weekday High Frequency Bus Service Stops for Route Building using NA Tools
   
-  
+
 #Step 7A.
-df<- list(rtes,Weekday_High_Frequency_Bus_Service_Review)
-Reduce(inner_join,df) %>%
-  group_by(agency_id, route_id, direction_id, trip_id,Peak_Period, Route_Pattern_ID,trip_headsign, stop_id, stop_sequence, Total_Trips, Headway, Peak_Period, TPA_Criteria, stop_lon, stop_lat) %>%
-  select(agency_id, route_id, direction_id, trip_id, Route_Pattern_ID, trip_headsign, stop_id, stop_sequence, Total_Trips, Headway, Peak_Period, TPA_Criteria, stop_lon, stop_lat) %>%
-  arrange(agency_id, route_id, direction_id, trip_id, Peak_Period, stop_sequence ) -> Weekday_Peak_Bus_Routes_Stops_Builder
+df<- list(df_sr,df_rt_hf)
+
+df_stp_rt_hf <- Reduce(inner_join,df) %>%
+  group_by(agency_id, route_id, direction_id, trip_id,Peak_Period, Route_Pattern_ID,
+           trip_headsign, stop_id, stop_sequence, Total_Trips, Headway, Peak_Period, 
+           TPA_Criteria, stop_lon, stop_lat) %>%
+    select(agency_id, route_id, direction_id, trip_id, Route_Pattern_ID, 
+           trip_headsign, stop_id, stop_sequence, Total_Trips, 
+           Headway, Peak_Period, TPA_Criteria, 
+           stop_lon, stop_lat) %>%
+      arrange(agency_id, route_id, direction_id, 
+              trip_id, Peak_Period, stop_sequence)
+
 rm(df)
 
 #Step 7B. Select Distinct Records based upon Agency Route Direction values.  Removes stop ids from output.
-group_by(Weekday_Peak_Bus_Routes_Stops_Builder, agency_id, route_id, direction_id, Route_Pattern_ID,trip_headsign, stop_id, stop_sequence, Total_Trips, Headway, Peak_Period, TPA_Criteria, stop_lon, stop_lat) %>%
-  distinct(agency_id, route_id, direction_id, Route_Pattern_ID,trip_headsign, stop_id, stop_sequence, Total_Trips, Headway, Peak_Period, TPA_Criteria, stop_lon, stop_lat) -> Weekday_Peak_Bus_Routes_Stops_Builder
+df_stp_rt_hf <- group_by(df_stp_rt_hf, 
+         agency_id, route_id, direction_id, Route_Pattern_ID,trip_headsign, 
+         stop_id, stop_sequence, Total_Trips, Headway, Peak_Period, 
+         TPA_Criteria, stop_lon, stop_lat) %>%
+  distinct(agency_id, route_id, direction_id, Route_Pattern_ID,
+           trip_headsign, stop_id, stop_sequence, Total_Trips, 
+           Headway, Peak_Period, TPA_Criteria, stop_lon, stop_lat) 
 
 # Step 7C. Remove select cols.
-Weekday_Peak_Bus_Routes_Stops_Builder <- Weekday_Peak_Bus_Routes_Stops_Builder[-c(1:13)]
+df_stp_rt_hf <- df_stp_rt_hf[-c(1:13)]
 
 #Step 7D. Write out to csv table
-write.csv(Weekday_Peak_Bus_Routes_Stops_Builder,file="Weekday_Peak_Bus_Routes_Stops_Builder.csv", row.names=FALSE)
+write.csv(df_stp_rt_hf,file="Weekday_Peak_Bus_Routes_Stops_Builder.csv", row.names=FALSE)
 
 ###########################################################################################
 # Step 8. Table Cleanup
-rm(rtes)
+rm(df_sr)
 rm(AM_Peak_Bus_Routes)
 rm(PM_Peak_Bus_Routes)
-rm(Weekday_High_Frequency_Bus_Service)
+rm(df1)
