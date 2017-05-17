@@ -74,3 +74,7 @@ rm(stop_times_fix)
    stop_sequence = col_integer(),
    agency_id = col_character()
  ))
+
+#When exporting the data frame to a data table, be sure to reformat the arrival_time value to text.
+#Reformat arrival_time col. to hour | min | sec format prior to export to Data Table.
+Weekday_Peak_Bus_Routes_TPA_Listing$arrival_time <- as.character(Weekday_Peak_Bus_Routes_TPA_Listing$arrival_time)
