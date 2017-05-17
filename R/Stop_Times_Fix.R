@@ -18,8 +18,6 @@ stop_times_fix <- read_csv("AC/stop_times.txt", col_types =cols(
   stop_sequence = col_integer()
 ))
 
-hour <- strsplit(stop_times_fix$arrival_time, ":")
-
 format_new_hour_string <- function(x,hour_replacement) {
   xl <- length(unlist(strsplit(x,":")))
   if (xl > 3){
