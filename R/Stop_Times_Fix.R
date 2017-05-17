@@ -7,61 +7,49 @@ require(sqldf)
 
 # This makes reading data in from text files much more logical.
 options(stringsAsFactors = FALSE)
-setwd("~/Documents/MTC/_Section/Planning/Projects/RTD_2017_Data_Processing/data_2017")
+setwd("C:/projects/RTD/RegionalTransitDatabase/data/05_2017_511_GTFS")
 
 #Fix bad times in the arrival and departure time fields
-stop_times_fix <- read_csv("stop_times.txt", col_types =cols(
+stop_times_fix <- read_csv("AC/stop_times.txt", col_types =cols(
   trip_id = col_character(),
   arrival_time = col_character(),
   departure_time = col_character(),
   stop_id = col_character(),
-  stop_sequence = col_integer(),
-  agency_id = col_character()
+  stop_sequence = col_integer()
 ))
 
-gsubfn("^24:", "00:", x = stop_times_fix$arrival_time)->stop_times_fix$arrival_time
-gsubfn("^25:", "01:", x = stop_times_fix$arrival_time)->stop_times_fix$arrival_time
-gsubfn("^26:", "02:", x = stop_times_fix$arrival_time)->stop_times_fix$arrival_time
-gsubfn("^27:", "03:", x = stop_times_fix$arrival_time)->stop_times_fix$arrival_time
-gsubfn("^28:", "04:", x = stop_times_fix$arrival_time)->stop_times_fix$arrival_time
-gsubfn("^29:", "05:", x = stop_times_fix$arrival_time)->stop_times_fix$arrival_time
-gsubfn("^30:", "06:", x = stop_times_fix$arrival_time)->stop_times_fix$arrival_time
-gsubfn("^31:", "07:", x = stop_times_fix$arrival_time)->stop_times_fix$arrival_time
-gsubfn("^32:", "08:", x = stop_times_fix$arrival_time)->stop_times_fix$arrival_time
-gsubfn("^33:", "09:", x = stop_times_fix$arrival_time)->stop_times_fix$arrival_time
-gsubfn("^34:", "10:", x = stop_times_fix$arrival_time)->stop_times_fix$arrival_time
-gsubfn("^35:", "11:", x = stop_times_fix$arrival_time)->stop_times_fix$arrival_time
-gsubfn("^36:", "12:", x = stop_times_fix$arrival_time)->stop_times_fix$arrival_time
-gsubfn("^37:", "13:", x = stop_times_fix$arrival_time)->stop_times_fix$arrival_time
-gsubfn("^38:", "14:", x = stop_times_fix$arrival_time)->stop_times_fix$arrival_time
-gsubfn("^39:", "15:", x = stop_times_fix$arrival_time)->stop_times_fix$arrival_time
-gsubfn("^40:", "16:", x = stop_times_fix$arrival_time)->stop_times_fix$arrival_time
-gsubfn("^41:", "17:", x = stop_times_fix$arrival_time)->stop_times_fix$arrival_time
-gsubfn("^42:", "18:", x = stop_times_fix$arrival_time)->stop_times_fix$arrival_time
-gsubfn("^43:", "19:", x = stop_times_fix$arrival_time)->stop_times_fix$arrival_time
-gsubfn("^44:", "20:", x = stop_times_fix$arrival_time)->stop_times_fix$arrival_time
+hour <- strsplit(stop_times_fix$arrival_time, ":")
 
-gsubfn("^24:", "00:", x = stop_times_fix$departure_time)->stop_times_fix$departure_time
-gsubfn("^25:", "01:", x = stop_times_fix$departure_time)->stop_times_fix$departure_time
-gsubfn("^26:", "02:", x = stop_times_fix$departure_time)->stop_times_fix$departure_time
-gsubfn("^27:", "03:", x = stop_times_fix$departure_time)->stop_times_fix$departure_time
-gsubfn("^28:", "04:", x = stop_times_fix$departure_time)->stop_times_fix$departure_time
-gsubfn("^29:", "05:", x = stop_times_fix$departure_time)->stop_times_fix$departure_time
-gsubfn("^30:", "06:", x = stop_times_fix$departure_time)->stop_times_fix$departure_time
-gsubfn("^31:", "07:", x = stop_times_fix$departure_time)->stop_times_fix$departure_time
-gsubfn("^32:", "08:", x = stop_times_fix$departure_time)->stop_times_fix$departure_time
-gsubfn("^33:", "09:", x = stop_times_fix$departure_time)->stop_times_fix$departure_time
-gsubfn("^34:", "10:", x = stop_times_fix$departure_time)->stop_times_fix$departure_time
-gsubfn("^35:", "11:", x = stop_times_fix$departure_time)->stop_times_fix$departure_time
-gsubfn("^36:", "12:", x = stop_times_fix$departure_time)->stop_times_fix$departure_time
-gsubfn("^37:", "13:", x = stop_times_fix$departure_time)->stop_times_fix$departure_time
-gsubfn("^38:", "14:", x = stop_times_fix$departure_time)->stop_times_fix$departure_time
-gsubfn("^39:", "15:", x = stop_times_fix$departure_time)->stop_times_fix$departure_time
-gsubfn("^40:", "16:", x = stop_times_fix$departure_time)->stop_times_fix$departure_time
-gsubfn("^41:", "17:", x = stop_times_fix$departure_time)->stop_times_fix$departure_time
-gsubfn("^42:", "18:", x = stop_times_fix$departure_time)->stop_times_fix$departure_time
-gsubfn("^43:", "19:", x = stop_times_fix$departure_time)->stop_times_fix$departure_time
-gsubfn("^44:", "20:", x = stop_times_fix$departure_time)->stop_times_fix$departure_time
+format_new_hour_string <- function(x,hour_replacement) {
+  xl <- length(unlist(strsplit(x,":")))
+  if (xl > 3){
+    stop("unexpected time string")
+  }
+  hour <- as.integer(unlist(strsplit(x,":"))[[1]])
+  minute <- as.integer(unlist(strsplit(x,":"))[[2]])
+  second <- as.integer(unlist(strsplit(x,":"))[[3]])
+  x <- paste(c(hour,minute,second),collapse=":")
+  return(x)
+}
+
+fix_hour <- function(x) {
+  hour <- as.integer(unlist(strsplit(x,":"))[[1]])
+  if(!is.na(hour) & hour > 23) {
+    hour <- hour-24
+    x <- format_new_hour_string(x,hour)
+    if (hour > 47){
+      stop("hour is greater than 47 in stop times")
+    }
+  }
+  x
+}
+
+t1 <- stop_times_fix$arrival_time
+t2 <- stop_times_fix$departure_time
+stop_times_fix$arrival_time <- sapply(t1,FUN=fix_hour)
+stop_times_fix$departure_time <- sapply(t2,FUN=fix_hour)
+
+
 #Output table fixes
 write.csv(stop_times_fix, file="stop_times_fix.txt", row.names=FALSE)
 rm(stop_times_fix)
