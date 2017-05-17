@@ -102,124 +102,130 @@ get_bus_service <- function(df_in,max_hdwy=16) {
 ##End Common Route Frequency Functions
 ######################
 
-# This makes reading data in from text files much more logical.
-options(stringsAsFactors = FALSE)
+######################
+##Begin Common ETL Functions
+######################c
+
+load_multiple_gtfs <- function(gtfs_data_path="~/Documents/MTC/_Section/Planning/Projects/rtd_2017/REGION/data_2017") {
+
+  #Set workspace where gtfs datasets are stored.  These datasets shoud have the txt file extension.
+  setwd(gtfs_data_path)
+  
+  ## 2A. Bind all operator tables together. Append Agency_ID column to each GTFS Table,
+  routes = NULL
+  for (txt in dir(pattern = "routes.txt$",full.names=TRUE,recursive=TRUE)){
+    routes = rbind(routes, build_table(txt))
+  }
+  #write.csv(routes, file="routes.csv", row.names=FALSE)
+  
+  stops = NULL
+  for (txt in dir(pattern = "stops.txt$",full.names=TRUE,recursive=TRUE)){
+    stops = rbind(stops, build_table(txt))
+  }
+  #write.csv(stops, file="stops.csv", row.names=FALSE)
+  #rm(stops) # drop large dataframe
+  stop_times = NULL
+  ##Need to check values for stop_times to adjust time values for records that are greater than the 24 hour clock
+  ## See errors listed in this link: file:///Users/ksmith/Documents/GIS%20Data/Transit/RTD_2017/R%20Scripts/rtd_2017.html.  Fix should be included in loop
+  for (txt in dir(pattern = "stop_times.txt$",full.names=TRUE,recursive=TRUE)){
+    
+    stop_times = rbind(stop_times, build_table(txt, col_types= 
+                                                 cols(
+                                                   trip_id = col_character(),
+                                                   arrival_time = col_character(),
+                                                   departure_time = col_character(),
+                                                   stop_id = col_character(),
+                                                   stop_sequence = col_integer())))
+  }
+  #write.csv(stop_times, file="stop_times.csv", row.names=FALSE)
+  #rm(stop_times) # drop large dataframe
+  trips = NULL
+  for (txt in dir(pattern = "trips.txt$",full.names=TRUE,recursive=TRUE)){
+    trips = rbind(trips, build_table(txt))
+  }
+  #write.csv(trips, file="trips.csv", row.names=FALSE)
+  calendar = NULL
+  for (txt in dir(pattern = "calendar.txt$",full.names=TRUE,recursive=TRUE)){
+    calendar = rbind(calendar, build_table(txt))
+  }
+  #write.csv(calendar, file="calendar.csv", row.names=FALSE)
+  
+  agency = NULL
+  for (txt in dir(pattern = "agency.txt$",full.names=TRUE,recursive=TRUE)){
+    agency = rbind(agency, build_table(txt))
+  }
+  #write.csv(agency, file="agency.csv", row.names=FALSE)
+  
+  shapes = NULL
+  for (txt in dir(pattern = "shapes.txt$",full.names=TRUE,recursive=TRUE)){
+    shapes = rbind(shapes, build_table(txt, col_types =
+                                         cols(
+                                           shape_id = col_character(),
+                                           shape_pt_lon = col_double(),
+                                           shape_pt_lat = col_double(),
+                                           shape_pt_sequence = col_integer(),
+                                           shape_dist_traveled = col_double())))
+  }
+  #write.csv(shapes, file="shapes.csv", row.names=FALSE)
+  rm(txt)
+  
+  stop_times$arrival_time <- as.POSIXct(stop_times$arrival_time, format= "%H:%M:%S")
+  stop_times$departure_time <- as.POSIXct(stop_times$departure_time, format= "%H:%M:%S")
+  routes_joined <- reduce_to_rtes(stops,stop_times,trips,calendar,routes)
+  return(routes_joined)
+}
+
+reduce_to_rtes <- function(stops,stop_times,trips,calendar,routes) {
+  # 3B. Join the data together.  Need to verify the join function for these records.  
+  df<- list(stops,stop_times,trips,calendar,routes)
+  Reduce(inner_join,df) %>%
+    select(agency_id, stop_id, trip_id, service_id, 
+           monday, tuesday, wednesday, thursday, friday, 
+           route_id, trip_headsign, direction_id, 
+           arrival_time, stop_sequence, 
+           route_type, stop_lat, stop_lon) %>%
+    arrange(agency_id, trip_id, service_id, 
+            monday, tuesday, wednesday, thursday, friday, 
+            route_id, trip_headsign, direction_id, 
+            arrival_time, stop_sequence) -> df_sr
+  #clean up source data
+  rm(df)
+  return(df_sr)
+}
+
+######################
+##End Common ETL Functions
+######################
+
 ###########################################################################################
 # Section 2. Raw GTFS Data Import and Export
 
+# This makes reading data in from text files much more logical.
+options(stringsAsFactors = FALSE)
+
 #set working directory for datasets.  This is the path to where the extracted datasets are stored.
 #See github repo for more details (https://github.com/MetropolitanTransportationCommission/RegionalTransitDatabase/tree/master/python)
-#Data can be downloaded from this location: https://mtcdrive.box.com/s/pkw8e0ng3n02b47mufaefqz5749cv5nm
+#Data can be downloaded from this location: https://mtcdrive.box.com/s/pkw8e0ng3n02b47mufaefqz5749cv5nm  
 
-# Set workspace where gtfs datasets are stored.  These datasets shoud have the txt file extension.
-setwd("~/Documents/MTC/_Section/Planning/Projects/rtd_2017/REGION/data_2017")
-
-## 2A. Bind all operator tables together. Append Agency_ID column to each GTFS Table,
-routes = NULL
-for (txt in dir(pattern = "routes.txt$",full.names=TRUE,recursive=TRUE)){
-  routes = rbind(routes, build_table(txt))
-}
-#write.csv(routes, file="routes.csv", row.names=FALSE)
-
-stops = NULL
-for (txt in dir(pattern = "stops.txt$",full.names=TRUE,recursive=TRUE)){
-  stops = rbind(stops, build_table(txt))
-}
-#write.csv(stops, file="stops.csv", row.names=FALSE)
-#rm(stops) # drop large dataframe
-stop_times = NULL
-##Need to check values for stop_times to adjust time values for records that are greater than the 24 hour clock
-## See errors listed in this link: file:///Users/ksmith/Documents/GIS%20Data/Transit/RTD_2017/R%20Scripts/rtd_2017.html.  Fix should be included in loop
-for (txt in dir(pattern = "stop_times.txt$",full.names=TRUE,recursive=TRUE)){
-  
-  stop_times = rbind(stop_times, build_table(txt, col_types= 
-                                               cols(
-                                                 trip_id = col_character(),
-                                                 arrival_time = col_character(),
-                                                 departure_time = col_character(),
-                                                 stop_id = col_character(),
-                                                 stop_sequence = col_integer())))
-}
-#write.csv(stop_times, file="stop_times.csv", row.names=FALSE)
-#rm(stop_times) # drop large dataframe
-trips = NULL
-for (txt in dir(pattern = "trips.txt$",full.names=TRUE,recursive=TRUE)){
-  trips = rbind(trips, build_table(txt))
-}
-#write.csv(trips, file="trips.csv", row.names=FALSE)
-calendar = NULL
-for (txt in dir(pattern = "calendar.txt$",full.names=TRUE,recursive=TRUE)){
-  calendar = rbind(calendar, build_table(txt))
-}
-#write.csv(calendar, file="calendar.csv", row.names=FALSE)
-
-agency = NULL
-for (txt in dir(pattern = "agency.txt$",full.names=TRUE,recursive=TRUE)){
-  agency = rbind(agency, build_table(txt))
-}
-#write.csv(agency, file="agency.csv", row.names=FALSE)
-
-shapes = NULL
-for (txt in dir(pattern = "shapes.txt$",full.names=TRUE,recursive=TRUE)){
-  shapes = rbind(shapes, build_table(txt, col_types =
-                                       cols(
-                                         shape_id = col_character(),
-                                         shape_pt_lon = col_double(),
-                                         shape_pt_lat = col_double(),
-                                         shape_pt_sequence = col_integer(),
-                                         shape_dist_traveled = col_double())))
-}
-#write.csv(shapes, file="shapes.csv", row.names=FALSE)
-rm(txt)
+df_sr <- load_multiple_gtfs(getwd())
 
 ###########################################################################################
-# Section 3. Process Operator Stop and Route Schedules
-
-
-# 3A. Convert character values for arrival time to Date Time class
-stop_times$arrival_time <- as.POSIXct(stop_times$arrival_time, format= "%H:%M:%S")
-stop_times$departure_time <- as.POSIXct(stop_times$departure_time, format= "%H:%M:%S")
-
-# Note: When running this script, be sure to change the filter date for arrival_time.
-# See Sections 'All Monday AM Peak Bus Routes', 'All Monday PM Peak Bus Routes', 'All AM Peak Bus Routes', 'All PM Peak Bus Routes'
-
-# 3B. Join the data together.  Need to verify the join function for these records.  
-df<- list(stops,stop_times,trips,calendar,routes)
-Reduce(inner_join,df) %>%
-  select(agency_id, stop_id, trip_id, service_id, 
-         monday, tuesday, wednesday, thursday, friday, 
-         route_id, trip_headsign, direction_id, 
-         arrival_time, stop_sequence, 
-         route_type, stop_lat, stop_lon) %>%
-  arrange(agency_id, trip_id, service_id, 
-          monday, tuesday, wednesday, thursday, friday, 
-          route_id, trip_headsign, direction_id, 
-          arrival_time, stop_sequence) -> df_sr
-rm(df)
-
-#clean up source data
-rm(stops)
-rm(routes)
-rm(stop_times)
-rm(trips)
-rm(agency)
-rm(calendar)
+# Section 3. Field Customization and Data Type Handling
 
 # 3C. Update direction_id. 0 = Outbound, 1 = Inbound
-rtes$direction_id[rtes$direction_id == 0] <- "Outbound"
-rtes$direction_id[rtes$direction_id == 1] <- "Inbound"
+df_sr$direction_id[rtes$direction_id == 0] <- "Outbound"
+df_sr$direction_id[rtes$direction_id == 1] <- "Inbound"
 
 # 3D. Add new column values for distinct Agency, Route, Trip, Service Ids for record count (Not really used)
 df_sr$Route_Pattern_ID<-
-  paste0(df_sr$agency_id,"-",
-         df_sr$route_id,"-", 
-         df_sr$direction_id)
-
-
+  paste0(rtes$agency_id,"-",
+         rtes$route_id,"-", 
+         rtes$direction_id)
 
 #Review Routes
 #View(rtes)
 #write.csv(rtes, file="Route_Pattern_Stop_Schedule.csv", row.names=FALSE)
+
 
 ###########################################################################################
 # Section 4. Create AM Peak Headways from Weekday Trips
@@ -244,7 +250,6 @@ Weekday_AM_Peak_High_Frequency_Bus_Service <-
   get_bus_service(AM_Peak_Bus_Routes)
 
 #4I DF Cleanup
-Weekday_AM_Peak_High_Frequency_Bus_Service <- df4
 rm(arrival_time_filter)
 rm(departure_time_filter)
 
