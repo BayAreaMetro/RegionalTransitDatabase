@@ -29,12 +29,7 @@ Calculate frequency of service for stops and routes.
 
 A pseudo-shell/bat script with links reflecting the process thus far:   
 
--  [get_and_format_511_for_sql](https://github.com/MetropolitanTransportationCommission/RegionalTransitDatabase/blob/master/python/get_and_format_511_for_sql.py)     
--  [interpolate blank stop times](https://github.com/MetropolitanTransportationCommission/RegionalTransitDatabase/blob/master/python/preprocess_gtfs_folders.py)   
--  [combine_provider_tables](https://github.com/MetropolitanTransportationCommission/RegionalTransitDatabase/blob/master/etl/combine_provider_tables.R)   
--  [create_all_tables](https://github.com/MetropolitanTransportationCommission/RegionalTransitDatabase/blob/master/etl/create_all_tables.sql)   
--  [load_combined_csv_to_db](https://github.com/MetropolitanTransportationCommission/RegionalTransitDatabase/blob/master/etl/load_combined_csv_to_db.bat)   
--  [create_join_keys_across_tables](https://github.com/MetropolitanTransportationCommission/RegionalTransitDatabase/blob/master/etl/create_join_keys_across_tables.sql)   
+-  [get_and_format_511_gtfs_data](https://github.com/MetropolitanTransportationCommission/RegionalTransitDatabase/blob/master/python/get_and_format_511_for_sql.py)     
 -  [calculate route frequencies for various times of day and types of transit, ad-hoc fixes to data where necessary](https://github.com/MetropolitanTransportationCommission/RegionalTransitDatabase/blob/6afc5c9fff45fc1df07b1176b961e5c92e10f696/R/make_weekday_peak_bus_stops_csv.R)
 -  [Build the Route Lines: Take the points for each route from previous step and then get route geometries](https://github.com/MetropolitanTransportationCommission/RegionalTransitDatabase/blob/a66673c376f9cb5468b39424f9439af18587c63b/python/network_analysis.py)   
 
