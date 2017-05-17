@@ -35,7 +35,7 @@ A pseudo-shell/bat script with links reflecting the process thus far:
 -  [create_all_tables](https://github.com/MetropolitanTransportationCommission/RegionalTransitDatabase/blob/master/etl/create_all_tables.sql)   
 -  [load_combined_csv_to_db](https://github.com/MetropolitanTransportationCommission/RegionalTransitDatabase/blob/master/etl/load_combined_csv_to_db.bat)   
 -  [create_join_keys_across_tables](https://github.com/MetropolitanTransportationCommission/RegionalTransitDatabase/blob/master/etl/create_join_keys_across_tables.sql)   
--  [calculate route frequencies for various times of day and types of transit, ad-hoc fixes to data where necessary](https://github.com/MetropolitanTransportationCommission/RegionalTransitDatabase/tree/master/sql/process)
+-  [calculate route frequencies for various times of day and types of transit, ad-hoc fixes to data where necessary](https://github.com/MetropolitanTransportationCommission/RegionalTransitDatabase/blob/6afc5c9fff45fc1df07b1176b961e5c92e10f696/R/make_weekday_peak_bus_stops_csv.R)
 -  [Build the Route Lines: Take the points for each route from previous step and then get route geometries](https://github.com/MetropolitanTransportationCommission/RegionalTransitDatabase/blob/4b28c1d1d206138b80c28580e69ca026a252cd11/python/network_analysis.py)   
 
 ##### To Calculate Stop Headways(Tabled momentarily):   
