@@ -9,7 +9,10 @@
 ###########################################################################################
 # Section 1. Functions
 
-#Add Agency_ID for Route.  Author: Tom Buckley
+######################
+##String Fixes
+######################
+
 build_table <- function(some_path, col_names=TRUE, col_types=NULL) {
   operator_df = read_csv(some_path, col_names, col_types)
   operator_prefix <- strsplit(some_path, "/")[[1]][2]
@@ -17,8 +20,41 @@ build_table <- function(some_path, col_names=TRUE, col_types=NULL) {
   return(operator_df)
 }
 
+format_new_hour_string <- function(x,hour_replacement) {
+  xl <- length(unlist(strsplit(x,":")))
+  if (xl > 3){
+    stop("unexpected time string")
+  }
+  hour <- as.integer(unlist(strsplit(x,":"))[[1]])
+  minute <- as.integer(unlist(strsplit(x,":"))[[2]])
+  second <- as.integer(unlist(strsplit(x,":"))[[3]])
+  x <- paste(c(hour,minute,second),collapse=":")
+  return(x)
+}
+
+fix_hour <- function(x) {
+  # use:
+  #   t1 <- stop_times$arrival_time
+  #   t2 <- stop_times$departure_time
+  #   stop_times$arrival_time <- sapply(t1,FUN=fix_hour)
+  #   stop_times$departure_time <- sapply(t2,FUN=fix_hour)
+  hour <- as.integer(unlist(strsplit(x,":"))[[1]])
+  if(!is.na(hour) & hour > 23) {
+    hour <- hour-24
+    x <- format_new_hour_string(x,hour)
+    if (hour > 47){
+      stop("hour is greater than 47 in stop times")
+    }
+  }
+  x
+}
+
 ######################
-##Begin Common Bus Route Frequency Functions
+##End String Fixes
+######################
+
+######################
+##Begin Bus Route Frequency Functions
 ######################
 
 filter_by_time <- function(rt_df, start_filter,end_filter) {

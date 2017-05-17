@@ -3,7 +3,7 @@ library(gsubfn)
 library(stringr)
 library(magrittr)
 library(dplyr)
-require(sqldf)
+source("r511.R")
 
 # This makes reading data in from text files much more logical.
 options(stringsAsFactors = FALSE)
@@ -18,35 +18,10 @@ stop_times_fix <- read_csv("AC/stop_times.txt", col_types =cols(
   stop_sequence = col_integer()
 ))
 
-format_new_hour_string <- function(x,hour_replacement) {
-  xl <- length(unlist(strsplit(x,":")))
-  if (xl > 3){
-    stop("unexpected time string")
-  }
-  hour <- as.integer(unlist(strsplit(x,":"))[[1]])
-  minute <- as.integer(unlist(strsplit(x,":"))[[2]])
-  second <- as.integer(unlist(strsplit(x,":"))[[3]])
-  x <- paste(c(hour,minute,second),collapse=":")
-  return(x)
-}
-
-fix_hour <- function(x) {
-  hour <- as.integer(unlist(strsplit(x,":"))[[1]])
-  if(!is.na(hour) & hour > 23) {
-    hour <- hour-24
-    x <- format_new_hour_string(x,hour)
-    if (hour > 47){
-      stop("hour is greater than 47 in stop times")
-    }
-  }
-  x
-}
-
 t1 <- stop_times_fix$arrival_time
 t2 <- stop_times_fix$departure_time
 stop_times_fix$arrival_time <- sapply(t1,FUN=fix_hour)
 stop_times_fix$departure_time <- sapply(t2,FUN=fix_hour)
-
 
 #Output table fixes
 write.csv(stop_times_fix, file="stop_times_fix.txt", row.names=FALSE)
