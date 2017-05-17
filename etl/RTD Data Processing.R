@@ -309,7 +309,7 @@ join_high_frequency_routes <- function(am_stops,pm_stops,am_routes,pm_routes){
   # 6D-1. Update values in TPA Criteria field.  All Loops in AM/PM Peak periods that have 15 mins or better headways = Meets TPA Criteria
   df4$TPA_Criteria[grepl('loop', df3$trip_headsign, ignore.case = TRUE)] <- "Meets TPA Criteria"
 
-  df5 <- rbind(am_stops,am_stops) %>%
+  df5 <- rbind(am_stops,pm_stops) %>%
     arrange(agency_id, route_id, direction_id,arrival_time,stop_sequence)
   
   # 6G. Join Weekday_Peak_Bus_Routes with df3 to generate a stop schedule for all AM/PM Peak Period stops that have headways of 15 mins. or better.
