@@ -3,7 +3,7 @@ library(gsubfn)
 library(stringr)
 library(magrittr)
 library(dplyr)
-source("r511.R")
+source("r511.r")
 
 # This makes reading data in from text files much more logical.
 options(stringsAsFactors = FALSE)

@@ -248,8 +248,13 @@ load_multiple_gtfs <- function(gtfs_data_path="~/Documents/MTC/_Section/Planning
   #write.csv(shapes, file="shapes.csv", row.names=FALSE)
   rm(txt)
 
+  t1 <- stop_times$arrival_time
+  t2 <- stop_times$departure_time
+  stop_times$arrival_time <- sapply(t1,FUN=fix_hour)
+  stop_times$departure_time <- sapply(t2,FUN=fix_hour)
   stop_times$arrival_time <- as.POSIXct(stop_times$arrival_time, format= "%H:%M:%S")
   stop_times$departure_time <- as.POSIXct(stop_times$departure_time, format= "%H:%M:%S")
+
   routes_joined <- reduce_to_route_stops(stops,stop_times,trips,calendar,routes)
   return(routes_joined)
 }
@@ -269,6 +274,9 @@ reduce_to_route_stops <- function(stops,stop_times,trips,calendar,routes) {
             arrival_time, stop_sequence) -> df_sr
   #clean up source data
   rm(df)
+  df_sr$Route_Pattern_ID<-paste0(df_sr$agency_id,
+                                 "-",df_sr$route_id,"-",
+                                 df_sr$direction_id)
   return(df_sr)
 }
 

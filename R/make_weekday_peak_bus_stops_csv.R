@@ -1,3 +1,11 @@
+######################
+#SET THE PROJECT PATH BEFORE USE
+#######################
+
+PROJECT_PATH <- "C:/projects/RTD/RegionalTransitDatabase/"
+GTFS_PATH <- paste0(PROJECT_PATH,"data/05_2017_511_GTFS",collapse="")
+R_HELPER_FUNCTIONS_PATH <- paste0(PROJECT_PATH,"R/r511.R",collapse="")
+
 #This script builds a RTD dataset using 511 data from the API.
 #The data must first be downloaded as zip archives and extracted to the working directory.
 library(lubridate)
@@ -7,8 +15,7 @@ library(dplyr)
 library(DT)
 library(tidyr)
 library(stringr)
-
-source("r511.R")
+source(R_HELPER_FUNCTIONS_PATH)
 
 ###########################################################################################
 # Section 2. Raw GTFS Data Import and Export
@@ -20,7 +27,9 @@ options(stringsAsFactors = FALSE)
 #See github repo for more details (https://github.com/MetropolitanTransportationCommission/RegionalTransitDatabase/tree/master/python)
 #Data can be downloaded from this location: https://mtcdrive.box.com/s/pkw8e0ng3n02b47mufaefqz5749cv5nm
 
-df_sr <- load_multiple_gtfs("C:/projects/RTD/RegionalTransitDatabase/data/05_2017_511_GTFS")
+options(warn=-1)
+df_sr <- load_multiple_gtfs(GTFS_PATH)
+options(warn=0)
 
 ###########################################################################################
 # Section 3. Field Customization and Data Type Handling
@@ -96,6 +105,8 @@ df_rt_hf <- join_high_frequency_routes_to_stops(am_stops,pm_stops,am_routes,pm_r
 ###########################################################################################
 # Section 7. Build Weekday High Frequency Bus Service Stops for Route Building using NA Tools
 
+#arrival_time on df_rt_hf appears to be null and prevents the join below
+df_rt_hf$arrival_time <- NULL
 
 #Step 7A.
 df<- list(df_sr,df_rt_hf)
@@ -112,6 +123,7 @@ df_stp_rt_hf <- Reduce(inner_join,df) %>%
               trip_id, Peak_Period, stop_sequence)
 
 rm(df)
+
 
 #Step 7B. Select Distinct Records based upon Agency Route Direction values.  Removes stop ids from output.
 df_stp_rt_hf <- group_by(df_stp_rt_hf,
@@ -130,7 +142,3 @@ write.csv(df_stp_rt_hf,file="Weekday_Peak_Bus_Routes_Stops_Builder.csv", row.nam
 
 ###########################################################################################
 # Step 8. Table Cleanup
-rm(df_sr)
-rm(AM_Peak_Bus_Routes)
-rm(PM_Peak_Bus_Routes)
-rm(df1)
