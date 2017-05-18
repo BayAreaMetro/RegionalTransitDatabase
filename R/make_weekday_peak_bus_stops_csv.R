@@ -1,72 +1,35 @@
-######################
-#SET THE PROJECT PATH BEFORE USE
-#######################
-
 PROJECT_PATH <- getwd() #assumes your working directory is just the root of the RegionalTransitDatabase git folder
-GTFS_PATH <- paste0(PROJECT_PATH,"/data/05_2017_511_GTFS/",collapse="")
+GTFS_PATH <- paste0(PROJECT_PATH,"/data/05_2017_511_GTFS/AC.zip",collapse="")
 R_HELPER_FUNCTIONS_PATH <- paste0(PROJECT_PATH,"/R/r511.R",collapse="")
-
-#This script builds a RTD dataset using 511 data from the API.
-#The data must first be downloaded as zip archives and extracted to the working directory.
-# install.packages("lubridate")
-# install.packages("readr")
-# install.packages("plyr")
-# install.packages("dplyr")
-# install.packages("DT")
-# install.packages("tidyr")
-# install.packages("stringr")
-
-library(lubridate)
-library(readr)
-library(plyr)
-library(dplyr)
-library(DT)
-library(tidyr)
-library(stringr)
 source(R_HELPER_FUNCTIONS_PATH)
 
-###########################################################################################
-# Section 2. Raw GTFS Data Import and Export
+# if (!require(devtools)) {
+#   install.packages('devtools')
+# }
+# devtools::install_github('ropensci/gtfsr')
 
-# This makes reading data in from text files much more logical.
-options(stringsAsFactors = FALSE)
+library(gtfsr)
+library(dplyr)
 
-#set working directory for datasets.  This is the path to where the extracted datasets are stored.
-#See github repo for more details (https://github.com/MetropolitanTransportationCommission/RegionalTransitDatabase/tree/master/python)
-#Data can be downloaded from this location: https://mtcdrive.box.com/s/pkw8e0ng3n02b47mufaefqz5749cv5nm
+gtfs_obj <- import_gtfs(GTFS_PATH, local=TRUE)
 
-options(warn=-1)
-df_sr <- load_multiple_gtfs(GTFS_PATH)
-options(warn=0)
+df_sr <- get_stops_by_route(gtfs_obj)
 
-###########################################################################################
-# Section 3. Field Customization and Data Type Handling
+df_sr <- fix_arrival_time(df_sr)
 
-# 3C. Update direction_id. 0 = Outbound, 1 = Inbound
 df_sr$direction_id[df_sr$direction_id == 0] <- "Outbound"
 df_sr$direction_id[df_sr$direction_id == 1] <- "Inbound"
 
-#Review Routes
-#View(df_sr)
-#write.csv(rtes, file="Route_Pattern_Stop_Schedule.csv", row.names=FALSE)
-
-
-###########################################################################################
-# Section 4. Create AM Peak Headways from Weekday Trips
-
-######################
-##Begin AM Processing
-######################
-
-arrival_time_filter <- paste(c(format(Sys.Date(), "%Y-%m-%d"),
-                               "06:00:00"),collapse=" ")
-departure_time_filter <- paste(c(format(Sys.Date(), "%Y-%m-%d"),
-                                 "09:59:00"),collapse=" ")
+time_start <- paste(c(format(Sys.Date(), "%Y-%m-%d"),
+                      "06:00:00"),collapse=" ")
+time_end <- paste(c(format(Sys.Date(), "%Y-%m-%d"),
+                    "09:59:00"),collapse=" ")
 
 #4A Filter Stops to AM Peak Bus Routes
 am_stops <- filter_by_time(df_sr,
-                           arrival_time_filter,
-                           departure_time_filter)
+                           time_start,
+                           time_end)
+
 #4B remove duplicates due to multiple entries for the same stop
 am_stops <- remove_duplicate_stops(am_stops)
 
@@ -84,16 +47,16 @@ rm(departure_time_filter)
 ###########################################################################################
 # Section 5. Create PM Peak Headways from Weekday Trips
 
-arrival_time_filter <- paste0(c(format(Sys.Date(), "%Y-%m-%d"),
-                                "15:00:00"),collapse=" ")
+time_start <- paste0(c(format(Sys.Date(), "%Y-%m-%d"),
+                       "15:00:00"),collapse=" ")
 
-departure_time_filter <- paste(c(format(Sys.Date(), "%Y-%m-%d"),
-                                 "18:59:00"),collapse=" ")
+time_end <- paste(c(format(Sys.Date(), "%Y-%m-%d"),
+                    "18:59:00"),collapse=" ")
 
 #5A Filter Stops
 pm_stops <- filter_by_time(df_sr,
-                           arrival_time_filter,
-                           departure_time_filter)
+                           time_start,
+                           time_end)
 
 #5B Remove any duplicates due to multiple entries for the same stop
 pm_stops <- remove_duplicate_stops(pm_stops)
@@ -123,21 +86,21 @@ df_stp_rt_hf <- Reduce(inner_join,df) %>%
   group_by(agency_id, route_id, direction_id, trip_id,Peak_Period, Route_Pattern_ID,
            trip_headsign, stop_id, stop_sequence, Total_Trips, Headway, Peak_Period,
            TPA_Criteria, stop_lon, stop_lat) %>%
-    select(agency_id, route_id, direction_id, trip_id, Route_Pattern_ID,
-           trip_headsign, stop_id, stop_sequence, Total_Trips,
-           Headway, Peak_Period, TPA_Criteria,
-           stop_lon, stop_lat) %>%
-      arrange(agency_id, route_id, direction_id,
-              trip_id, Peak_Period, stop_sequence)
+  select(agency_id, route_id, direction_id, trip_id, Route_Pattern_ID,
+         trip_headsign, stop_id, stop_sequence, Total_Trips,
+         Headway, Peak_Period, TPA_Criteria,
+         stop_lon, stop_lat) %>%
+  arrange(agency_id, route_id, direction_id,
+          trip_id, Peak_Period, stop_sequence)
 
 rm(df)
 
 
 #Step 7B. Select Distinct Records based upon Agency Route Direction values.  Removes stop ids from output.
 df_stp_rt_hf <- group_by(df_stp_rt_hf,
-         agency_id, route_id, direction_id, Route_Pattern_ID,trip_headsign,
-         stop_id, stop_sequence, Total_Trips, Headway, Peak_Period,
-         TPA_Criteria, stop_lon, stop_lat) %>%
+                         agency_id, route_id, direction_id, Route_Pattern_ID,trip_headsign,
+                         stop_id, stop_sequence, Total_Trips, Headway, Peak_Period,
+                         TPA_Criteria, stop_lon, stop_lat) %>%
   distinct(agency_id, route_id, direction_id, Route_Pattern_ID,
            trip_headsign, stop_id, stop_sequence, Total_Trips,
            Headway, Peak_Period, TPA_Criteria, stop_lon, stop_lat)

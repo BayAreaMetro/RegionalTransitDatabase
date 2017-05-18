@@ -6,13 +6,6 @@
 # library(tidyr)
 # library(stringr)
 
-###########################################################################################
-# Section 1. Functions
-
-######################
-##String Fixes
-######################
-
 add_operator_id_to_table <- function(some_path, col_names=TRUE, col_types=NULL) {
   operator_df = read_csv(some_path, col_names, col_types)
   operator_prefix <- strsplit(some_path, "/")[[1]][2]
@@ -48,14 +41,6 @@ fix_hour <- function(x) {
   }
   x
 }
-
-######################
-##End String Fixes
-######################
-
-######################
-##Begin Bus Route Frequency Functions
-######################
 
 filter_by_time <- function(rt_df, start_filter,end_filter) {
   subset(rt_df, rt_df$monday == 1
@@ -177,115 +162,8 @@ join_high_frequency_routes_to_stops <- function(am_stops,pm_stops,am_routes,pm_r
   return(df7)
 }
 
-######################
-##End Common Route Frequency Functions
-######################
-
-######################
-##Begin Common ETL Functions
-######################c
-
-combine_provider_tables <- function(tablename="routes",gtfs_data_path, col_types=NULL) {
-  table_search_string <- paste0(tablename,".txt$")
-  print(table_search_string)
-  table_csv_name <- paste0(gtfs_data_path,tablename,".csv")
-  ## 2A. Bind all operator tables together. Append Agency_ID column to each GTFS Table,
-  df1 = NULL
-  cachedwd <- getwd()
-  setwd(gtfs_data_path)
-  for (txt in dir(pattern = table_search_string,full.names=TRUE,recursive=TRUE)){
-    {
-      df1 = rbind(df1, add_operator_id_to_table(txt))
-    }
-  }
-  write.csv(df1, file=table_csv_name, row.names=FALSE)
-  setwd(cachedwd)
-}
-
-combine_all_table_types_and_write_to_disk <- function(gtfs_data_path) {
-  combine_provider_tables(tablename="routes",gtfs_data_path)
-  combine_provider_tables(tablename="stops",gtfs_data_path)
-  combine_provider_tables(tablename="calendar",gtfs_data_path)
-  combine_provider_tables(tablename="trips",gtfs_data_path)
-  combine_provider_tables(tablename="agency",gtfs_data_path)
-  combine_provider_tables(tablename="stop_times",
-                                             gtfs_data_path,
-                                             col_types=
-                                               cols(
-                                                 trip_id = col_character(),
-                                                 arrival_time = col_character(),
-                                                 departure_time = col_character(),
-                                                 stop_id = col_integer(),
-                                                 stop_sequence = col_integer()))
-  
-  combine_provider_tables(tablename="shapes",
-                                         gtfs_data_path,
-                                         col_types=
-                                           cols(
-                                             trip_id = col_character(),
-                                             arrival_time = col_character(),
-                                             departure_time = col_character(),
-                                             stop_id = col_integer(),
-                                             stop_sequence = col_integer()))
-}
-
-load_merged_csvs <- function(gtfs_data_path) {
-  routes <- read_csv(paste0(gtfs_data_path,"routes.csv",collapse=""),col_names=TRUE)
-  stops <- read_csv(paste0(gtfs_data_path,"stops.csv",collapse=""),col_names=TRUE)
-  calendar <- read_csv(paste0(gtfs_data_path,"calendar.csv",collapse=""),col_names=TRUE)
-  trips <- read_csv(paste0(gtfs_data_path,"trips.csv",collapse=""),col_names=TRUE)
-  agency <- read_csv(paste0(gtfs_data_path,"agency.csv",collapse=""),col_names=TRUE)
-  stop_times <- read_csv(paste0(gtfs_data_path,"stop_times.csv",collapse=""),col_names=TRUE,
-                         col_types=
-                           cols(
-                             trip_id = col_character(),
-                             arrival_time = col_character(),
-                             departure_time = col_character(),
-                             stop_id = col_integer(),
-                             stop_sequence = col_integer()))
-  stop_times <- fix_stop_times(stop_times)
-}
-
 get_stops_by_route <- function(g) {
   df <- list(g$stops_df,g$stop_times_df,g$trips_df,g$calendar_df,g$routes_df)
-  Reduce(inner_join,df) %>%
-    select(agency_id, stop_id, trip_id, service_id,
-           monday, tuesday, wednesday, thursday, friday,
-           route_id, trip_headsign, direction_id,
-           arrival_time, stop_sequence,
-           route_type, stop_lat, stop_lon) %>%
-    arrange(agency_id, trip_id, service_id,
-            monday, tuesday, wednesday, thursday, friday,
-            route_id, trip_headsign, direction_id,
-            arrival_time, stop_sequence) -> df_sr
-  #clean up source data
-  rm(df)
-  df_sr$Route_Pattern_ID<-paste0(df_sr$agency_id,
-                                 "-",df_sr$route_id,"-",
-                                 df_sr$direction_id)
-  return(df_sr)
-}
-
-
-load_multiple_gtfs <- function(gtfs_data_path="~/Documents/MTC/_Section/Planning/Projects/rtd_2017/REGION/data_2017") {
-  if(!file.exists(paste0(gtfs_data_path,"/routes.txt"))){
-    print("loading from merged csvs")
-    load_merged_csvs(gtfs_data_path)
-    routes_joined <- reduce_to_route_stops(stops,stop_times,trips,calendar,routes,load_merged_csvs,gtfs_data_path) 
-  } else if (file.exists(paste0(gtfs_data_path,"/3D/routes.txt"))) {
-    print("loading from multiple providers")
-    combine_all_gtfs_tables(gtfs_data_path)
-    routes_joined <- reduce_to_route_stops(stops,stop_times,trips,calendar,routes,load_merged_csvs,gtfs_data_path) 
-  } else {
-    stop("routes.txt for 3d does not exist-have you downloaded and unzipped the source data? see readme for instructions")
-    }
-  return(routes_joined)
-}
-
-reduce_to_route_stops <- function(stops,stop_times,trips,calendar,routes,load_merged_csvs,gtfs_data_path) {
-  load_merged_csvs(gtfs_data_path)
-  debug()
-  df<- list(stops,stop_times,trips,calendar,routes)
   Reduce(inner_join,df) %>%
     select(agency_id, stop_id, trip_id, service_id,
            monday, tuesday, wednesday, thursday, friday,
@@ -314,6 +192,3 @@ fix_arrival_time <- function(df) {
   df
 }
 
-######################
-##End Common ETL Functions
-######################
