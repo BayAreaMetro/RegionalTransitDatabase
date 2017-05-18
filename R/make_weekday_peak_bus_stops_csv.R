@@ -2,12 +2,20 @@
 #SET THE PROJECT PATH BEFORE USE
 #######################
 
-PROJECT_PATH <- "C:/projects/RTD/RegionalTransitDatabase/"
-GTFS_PATH <- paste0(PROJECT_PATH,"data/05_2017_511_GTFS",collapse="")
-R_HELPER_FUNCTIONS_PATH <- paste0(PROJECT_PATH,"R/r511.R",collapse="")
+PROJECT_PATH <- getwd() #assumes your working directory is just the root of the RegionalTransitDatabase git folder
+GTFS_PATH <- paste0(PROJECT_PATH,"/data/05_2017_511_GTFS/",collapse="")
+R_HELPER_FUNCTIONS_PATH <- paste0(PROJECT_PATH,"/R/r511.R",collapse="")
 
 #This script builds a RTD dataset using 511 data from the API.
 #The data must first be downloaded as zip archives and extracted to the working directory.
+# install.packages("lubridate")
+# install.packages("readr")
+# install.packages("plyr")
+# install.packages("dplyr")
+# install.packages("DT")
+# install.packages("tidyr")
+# install.packages("stringr")
+
 library(lubridate)
 library(readr)
 library(plyr)
