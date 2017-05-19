@@ -6,11 +6,101 @@
 # library(tidyr)
 # library(stringr)
 
-add_operator_id_to_table <- function(some_path, col_names=TRUE, col_types=NULL) {
-  operator_df = read_csv(some_path, col_names, col_types)
-  operator_prefix <- strsplit(some_path, "/")[[1]][2]
-  operator_df["agency_id"] <- operator_prefix
-  return(operator_df)
+######
+##Calculate Frequent Bus Routes
+######
+#this is the main function and goal of the r scripts here
+#todo: 
+#document some of the Reduce calls
+#collapse the am and pm filtering to one function and call it
+
+get_peak_bus_route_stops <- function(gtfs_obj) {
+  df_sr <- get_stops_by_route(gtfs_obj)
+  df_sr <- fix_arrival_time(df_sr)
+  
+  #make booleans into nicer names
+  df_sr$direction_id[df_sr$direction_id == 0] <- "Outbound"
+  df_sr$direction_id[df_sr$direction_id == 1] <- "Inbound"
+  
+  #filter Stops to AM Peak Bus Routes
+  time_start <- paste(c(format(Sys.Date(), "%Y-%m-%d"),
+                        "06:00:00"),collapse=" ")
+  time_end <- paste(c(format(Sys.Date(), "%Y-%m-%d"),
+                      "09:59:00"),collapse=" ")
+  am_stops <- filter_by_time(df_sr,
+                             time_start,
+                             time_end)
+  
+  am_stops <- remove_duplicate_stops(am_stops) #multiple identical stop time at the same stop
+  am_routes <- get_bus_service(am_stops) 
+  am_routes["Peak_Period"] <-"AM Peak"
+  
+  ###########################################################################################
+  # Section 5. Create PM Peak Headways from Weekday Trips
+  time_start <- paste0(c(format(Sys.Date(), "%Y-%m-%d"),
+                         "15:00:00"),collapse=" ")
+  
+  time_end <- paste(c(format(Sys.Date(), "%Y-%m-%d"),
+                      "18:59:00"),collapse=" ")
+  pm_stops <- filter_by_time(df_sr,
+                             time_start,
+                             time_end)
+  pm_stops <- remove_duplicate_stops(pm_stops)
+  pm_routes <- get_bus_service(pm_stops)
+  pm_routes["Peak_Period"] <-"PM Peak"
+  
+  ###########################################################################################
+  # Section 6. Build Weekday High Frequency Bus Service Dataset
+  
+  df_rt_hf <- join_high_frequency_routes_to_stops(am_stops,pm_stops,am_routes,pm_routes)
+  
+  ###########################################################################################
+  # Section 7. Build Weekday High Frequency Bus Service Stops for Route Building using NA Tools
+  
+  #clear out arrival time--not clear its necessary below and not typed correctly
+  df_rt_hf$arrival_time <- NULL
+  
+  df<- list(df_sr,df_rt_hf)
+  
+  df_stp_rt_hf <- Reduce(inner_join,df) %>%
+    group_by(agency_id, route_id, direction_id, trip_id,Peak_Period, Route_Pattern_ID,
+             trip_headsign, stop_id, stop_sequence, Total_Trips, Headway, Peak_Period,
+             TPA_Criteria, stop_lon, stop_lat) %>%
+    select(agency_id, route_id, direction_id, trip_id, Route_Pattern_ID,
+           trip_headsign, stop_id, stop_sequence, Total_Trips,
+           Headway, Peak_Period, TPA_Criteria,
+           stop_lon, stop_lat) %>%
+    arrange(agency_id, route_id, direction_id,
+            trip_id, Peak_Period, stop_sequence)
+  
+  rm(df)
+  
+  #Select Distinct Records based upon Agency Route Direction values.  Removes stop ids from output.
+  df_stp_rt_hf <- group_by(df_stp_rt_hf,
+                           agency_id, route_id, direction_id, Route_Pattern_ID,trip_headsign,
+                           stop_id, stop_sequence, Total_Trips, Headway, Peak_Period,
+                           TPA_Criteria, stop_lon, stop_lat) %>%
+    distinct(agency_id, route_id, direction_id, Route_Pattern_ID,
+             trip_headsign, stop_id, stop_sequence, Total_Trips,
+             Headway, Peak_Period, TPA_Criteria, stop_lon, stop_lat)
+  
+  #Remove select cols.
+  df_stp_rt_hf <- df_stp_rt_hf[-c(1:13)]
+  return(df_stp_rt_hf)
+}
+
+######
+##Custom Time Format Functions
+######
+
+fix_arrival_time <- function(df) {
+  t1 <- df$arrival_time
+  if (!(typeof(t1) == "character")) {
+    stop("column not a character string--may already be fixed")
+  }
+  df$arrival_time <- sapply(t1,FUN=fix_hour)
+  df$arrival_time <- as.POSIXct(df$arrival_time, format= "%H:%M:%S")
+  df
 }
 
 format_new_hour_string <- function(x,hour_replacement) {
@@ -41,6 +131,10 @@ fix_hour <- function(x) {
   }
   x
 }
+
+######
+##Custom Bus Frequency Functions
+######
 
 filter_by_time <- function(rt_df, start_filter,end_filter) {
   subset(rt_df, rt_df$monday == 1
@@ -182,13 +276,4 @@ get_stops_by_route <- function(g) {
   return(df_sr)
 }
 
-fix_arrival_time <- function(df) {
-  t1 <- df$arrival_time
-  if (!(typeof(t1) == "character")) {
-    stop("column not a character string--may already be fixed")
-  }
-  df$arrival_time <- sapply(t1,FUN=fix_hour)
-  df$arrival_time <- as.POSIXct(df$arrival_time, format= "%H:%M:%S")
-  df
-}
 
