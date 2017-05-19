@@ -17,7 +17,6 @@
 get_peak_bus_route_stops <- function(gtfs_obj) {
   df_sr <- get_stops_by_route(gtfs_obj)
   df_sr <- fix_arrival_time(df_sr)
-  
   #make booleans into nicer names
   df_sr$direction_id[df_sr$direction_id == 0] <- "Outbound"
   df_sr$direction_id[df_sr$direction_id == 1] <- "Inbound"
