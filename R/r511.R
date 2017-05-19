@@ -32,7 +32,12 @@ get_peak_bus_route_stops <- function(gtfs_obj) {
   
   am_stops <- remove_duplicate_stops(am_stops) #multiple identical stop time at the same stop
   am_routes <- get_bus_service(am_stops) 
-  am_routes["Peak_Period"] <-"AM Peak"
+  if (!(is.data.frame(am_routes) && nrow(am_routes)==0)){
+    am_routes["Peak_Period"] <-"AM Peak"
+  } else 
+  {
+    am_routes$Peak_Period <-  am_routes$route_id
+  }
   
   ###########################################################################################
   # Section 5. Create PM Peak Headways from Weekday Trips
@@ -46,7 +51,12 @@ get_peak_bus_route_stops <- function(gtfs_obj) {
                              time_end)
   pm_stops <- remove_duplicate_stops(pm_stops)
   pm_routes <- get_bus_service(pm_stops)
-  pm_routes["Peak_Period"] <-"PM Peak"
+  if (!(is.data.frame(pm_routes) && nrow(pm_routes)==0)){
+    pm_routes["Peak_Period"] <-"PM Peak"
+  } else 
+  {
+    pm_routes$Peak_Period <-  pm_routes$route_id
+  }
   
   ###########################################################################################
   # Section 6. Build Weekday High Frequency Bus Service Dataset
@@ -201,8 +211,6 @@ get_bus_service <- function(df_in,max_hdwy=16) {
   #4F Select Distinct Records based upon Agency Route Direction values.  Removes stop ids from output.
   df_out <- select_distinct_on_agency_route_direction(df3)
 
-  #4G Add Peak_Period Column
-  df_out["Peak_Period"] <-"AM Peak"
 
   #4H Drop Duplicate Columns from DF
   df_out <- df_out[-c(7:9)]
@@ -214,10 +222,17 @@ join_high_frequency_routes_to_stops <- function(am_stops,pm_stops,am_routes,pm_r
   df1 <- rbind(am_routes,
                pm_routes)
 
-  # Add a ID to be used later in ESRI
-  df1$Route_Pattern_ID<-paste0(df1$agency_id,
-                               "-",df1$route_id,"-",
-                               df1$Peak_Period)
+  # This ID is used for grouping and headway counts 
+  #(same name as another id in here but dropped anyway)
+  #should probably replace at some point
+  if (!(is.data.frame(am_routes) && nrow(am_routes)==0)){
+    df1$Route_Pattern_ID<-paste0(df1$agency_id,
+                                 "-",df1$route_id,"-",
+                                 df1$Peak_Period)
+  } else 
+  {
+    df1$Route_Pattern_ID <-  df1$Peak_Period
+  }
 
   # Count number of routes that operate in both directions during peak periods.
   #TPA_Criteria = 2 or 3 then Route operates in both directions during peak periods
