@@ -26,13 +26,13 @@ for (txt in dir(pattern = ".zip$",full.names=TRUE,recursive=TRUE)){
     write.csv(df,file=peak_routes_filename, row.names=FALSE)
     },
     error=function(cond) {
-      message(paste("The following provided had an errors:", operator_prefix))
+      message(paste("The following provider had errors:", operator_prefix))
       message("Here's the original error message:")
       message(cond)
       return(cond)
     },
     warning=function(cond) {
-      message(paste("The following provided a warning:", operator_prefix))
+      message(paste("The following provider had a warning:", operator_prefix))
       message("Here's the original warning message:")
       message(cond)
       return(cond)
