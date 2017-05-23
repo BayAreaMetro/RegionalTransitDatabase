@@ -1,5 +1,5 @@
 #be sure to set the project path
-PROJECT_PATH <- "~/Documents/Projects/rtd"
+PROJECT_PATH <- "~/Documents/Projects/rtd1"
 
 GTFS_PATH <- paste0(PROJECT_PATH,"/data/05_2017_511_GTFS/",collapse="")
 R_HELPER_FUNCTIONS_PATH <- paste0(PROJECT_PATH,"/R/r511.R",collapse="")
@@ -34,8 +34,9 @@ am_stops <- filter_by_time(df_sr,
                            time_end)
 
 am_stops <- remove_duplicate_stops(am_stops) #multiple identical stop time at the same stop
+am_stops_dedup <- remove_duplicate_stops(am_stops)
 am_stops <- count_trips(am_stops)
-am_stops <- subset(am_stops, am_stops$Headways < 16)
+am_routes <- subset(am_stops, am_stops$Headways < 16)
 
 if (!(is.data.frame(am_routes) && nrow(am_routes)==0)){
   am_routes["Peak_Period"] <-"AM Peak"
@@ -70,7 +71,106 @@ if (!(is.data.frame(pm_routes) && nrow(pm_routes)==0)){
 ###########################################################################################
 # Section 6. Build Weekday High Frequency Bus Service Dataset
 
-df_rt_hf <- join_high_frequency_routes_to_stops(am_stops,pm_stops,am_routes,pm_routes)
+#df_rt_hf <- join_high_frequency_routes_to_stops(am_stops,pm_stops,am_routes,pm_routes)
+
+
+########
+#####
+####
+########
+#####
+####
+########
+#####
+####
+
+
+
+
+df1 <- rbind(am_routes,
+             pm_routes)
+
+# This ID is used for grouping and headway counts 
+#(same name as another id in here but dropped anyway)
+#should probably replace at some point
+if (!(is.data.frame(am_routes) && nrow(am_routes)==0)){
+  df1$Route_Pattern_ID<-paste0(df1$agency_id,
+                               "-",df1$route_id,"-",
+                               df1$Peak_Period)
+} else 
+{
+  df1$Route_Pattern_ID <-  df1$Peak_Period
+}
+
+# Count number of routes that operate in both directions during peak periods.
+#TPA_Criteria = 2 or 3 then Route operates in both directions during peak periods
+#TPA Criteria = 1 possible loop route or route only operates in ection during peak periods.
+
+#####seems like df2 below doesn't represent buses that go in both directions during peak periods
+##is this because of a change made to process individually or was it also tru in the large join version?
+
+df2 <- df1 %>%
+  group_by(agency_id, route_id, Peak_Period, Route_Pattern_ID) %>%
+  summarise(TPA_Criteria = n())
+
+# 6C. Join Total By Direction with Weekday High Frequency Bus Service tables to flag those routes that meet the criteria.
+df3 <- list(df1,df2)
+df4 <- Reduce(inner_join,df3) %>%
+  select(agency_id, route_id, direction_id, trip_headsign,Total_Trips, Headway, Peak_Period, TPA_Criteria) %>%
+  arrange(agency_id, route_id, direction_id, Peak_Period)
+
+# 6D. Update values in TPA Criteria field. 2,3 = Meets Criteria, 1 = Review for Acceptance
+df4$TPA_Criteria[df3$TPA_Criteria==3] <- "Meets TPA Criteria"
+df4$TPA_Criteria[df3$TPA_Criteria==2] <- "Meets TPA Criteria"
+df4$TPA_Criteria[df3$TPA_Criteria==1] <- "Does Not Meet TPA Criteria"
+# 6D-1. Update values in TPA Criteria field.  All Loops in AM/PM Peak periods that have 15 mins or better headways = Meets TPA Criteria
+df4$TPA_Criteria[grepl('loop', df3$trip_headsign, ignore.case = TRUE)] <- "Meets TPA Criteria"
+
+df5 <- rbind(am_stops,pm_stops)
+
+# 6G. Join Weekday_Peak_Bus_Routes with df3 to generate a stop schedule for all AM/PM Peak Period stops that have headways of 15 mins. or better.
+df6 <- list(df5,df4)
+df7 <- Reduce(inner_join,df6) %>%
+  select(agency_id, route_id, direction_id, trip_headsign, stop_id, stop_sequence, Total_Trips, Headway, Peak_Period, TPA_Criteria)
+
+
+
+
+
+########
+#####
+####
+########
+#####
+####
+########
+#####
+####
+########
+#####
+####
+########
+#####
+####
+########
+#####
+####
+########
+#####
+####
+########
+#####
+####
+########
+#####
+####
+
+
+
+
+
+
+
 
 ###########################################################################################
 # Section 7. Build Weekday High Frequency Bus Service Stops for Route Building using NA Tools
