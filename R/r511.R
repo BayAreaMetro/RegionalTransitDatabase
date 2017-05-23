@@ -14,6 +14,10 @@
 #document some of the Reduce calls
 #collapse the am and pm filtering to one function and call it
 
+#' Get a dataframe of stops and routes that are TPA eligible from a GTFSr object
+#' @param gtfs_obj A GTFS (gtfsr) list object with components agency_df, etc.
+#' @return a dataframe of stops for TPA eligible bus routes
+
 get_peak_bus_route_stops <- function(gtfs_obj) {
   df_sr <- get_stops_by_route(gtfs_obj)
   df_sr <- fix_arrival_time(df_sr)
@@ -102,6 +106,9 @@ get_peak_bus_route_stops <- function(gtfs_obj) {
 ##Custom Time Format Functions
 ######
 
+#' Make a dataframe GTFS arrival_time column into standard time variable
+#' @param dataframe containing a GTFS-style "arrival_time" column (time values at +24:00:00)
+#' @return dataframe containing a GTFS-style "arrival_time" column (no time values at +24:00:00)
 fix_arrival_time <- function(df) {
   t1 <- df$arrival_time
   if (!(typeof(t1) == "character")) {
@@ -112,18 +119,24 @@ fix_arrival_time <- function(df) {
   df
 }
 
+#' Format a time string in the expected format
+#' @param x a GTFS hour string with an hour greater than 24
+#' @param hour_replacement the hour to replace the >24 value with
+#' @return a string formatted hh:mm:ss 
 format_new_hour_string <- function(x,hour_replacement) {
   xl <- length(unlist(strsplit(x,":")))
   if (xl > 3){
     stop("unexpected time string")
   }
-  hour <- as.integer(unlist(strsplit(x,":"))[[1]])
   minute <- as.integer(unlist(strsplit(x,":"))[[2]])
   second <- as.integer(unlist(strsplit(x,":"))[[3]])
-  x <- paste(c(hour,minute,second),collapse=":")
+  x <- paste(c(hour_replacement,minute,second),collapse=":")
   return(x)
 }
 
+#' Make a dataframe GTFS arrival_time column into standard time variable
+#' @param dataframe containing a GTFS-style "arrival_time" column (time values at +24:00:00)
+#' @return dataframe containing a GTFS-style "arrival_time" column (all time values at +24:00:00 set below 24)
 fix_hour <- function(x) {
   # use:
   #   t1 <- stop_times$arrival_time
@@ -132,7 +145,7 @@ fix_hour <- function(x) {
     hour <- as.integer(unlist(strsplit(x,":"))[[1]])
     if(!is.na(hour) & hour > 23) {
       hour <- hour-24
-      x <- format_new_hour_string(x,hour)
+      x <- format_new_hour_string(x, hour)
       if (hour > 47){
         stop("hour is greater than 47 in stop times")
       }
@@ -145,6 +158,12 @@ fix_hour <- function(x) {
 ##Custom Bus Frequency Functions
 ######
 
+#' Filter a mega-GTFSr dataframe to rows/stops that occur on all weekdays, are buses, and
+#' have a stop_time between 2 time periods
+#' @param a dataframe made by joining all the GTFS tables together
+#' @param a start time filter
+#' @param an end time filter
+#' @return a mega-GTFSr dataframe filtered to rows of interest
 filter_by_time <- function(rt_df, start_filter,end_filter) {
   subset(rt_df, rt_df$monday == 1
          & rt_df$tuesday == 1
