@@ -18,89 +18,32 @@
 #' @param gtfs_obj A GTFS (gtfsr) list object with components agency_df, etc.
 #' @return a dataframe of stops for TPA eligible bus routes
 
-get_peak_bus_route_stops <- function(gtfs_obj) {
-  df_sr <- get_stops_by_route(gtfs_obj)
-  df_sr <- fix_arrival_time(df_sr)
-  #make booleans into nicer names
-  df_sr$direction_id[df_sr$direction_id == 0] <- "Outbound"
-  df_sr$direction_id[df_sr$direction_id == 1] <- "Inbound"
-  
-  #filter Stops to AM Peak Bus Routes
-  time_start <- paste(c(format(Sys.Date(), "%Y-%m-%d"),
-                        "06:00:00"),collapse=" ")
-  time_end <- paste(c(format(Sys.Date(), "%Y-%m-%d"),
-                      "09:59:00"),collapse=" ")
-  am_stops <- filter_by_time(df_sr,
-                             time_start,
-                             time_end)
-  
-  am_stops <- remove_duplicate_stops(am_stops) #multiple identical stop time at the same stop
-  am_routes <- get_bus_service(am_stops) 
-  if (!(is.data.frame(am_routes) && nrow(am_routes)==0)){
-    am_routes["Peak_Period"] <-"AM Peak"
-  } else 
-  {
-    am_routes$Peak_Period <-  am_routes$route_id
-  }
-  
-  ###########################################################################################
-  # Section 5. Create PM Peak Headways from Weekday Trips
-  time_start <- paste0(c(format(Sys.Date(), "%Y-%m-%d"),
-                         "15:00:00"),collapse=" ")
-  
-  time_end <- paste(c(format(Sys.Date(), "%Y-%m-%d"),
-                      "18:59:00"),collapse=" ")
-  pm_stops <- filter_by_time(df_sr,
-                             time_start,
-                             time_end)
-  pm_stops <- remove_duplicate_stops(pm_stops)
-  pm_routes <- get_bus_service(pm_stops)
-  if (!(is.data.frame(pm_routes) && nrow(pm_routes)==0)){
-    pm_routes["Peak_Period"] <-"PM Peak"
-  } else 
-  {
-    pm_routes$Peak_Period <-  pm_routes$route_id
-  }
-  
-  ###########################################################################################
-  # Section 6. Build Weekday High Frequency Bus Service Dataset
-  
-  df_rt_hf <- join_high_frequency_routes_to_stops(am_stops,pm_stops,am_routes,pm_routes)
-  
-  ###########################################################################################
-  # Section 7. Build Weekday High Frequency Bus Service Stops for Route Building using NA Tools
-  
-  #clear out arrival time--not clear its necessary below and not typed correctly
-  df_rt_hf$arrival_time <- NULL
-  
-  df<- list(df_sr,df_rt_hf)
-  
-  df_stp_rt_hf <- Reduce(inner_join,df) %>%
-    group_by(agency_id, route_id, direction_id, trip_id,Peak_Period, Route_Pattern_ID,
-             trip_headsign, stop_id, stop_sequence, Total_Trips, Headway, Peak_Period,
-             TPA_Criteria, stop_lon, stop_lat) %>%
-    select(agency_id, route_id, direction_id, trip_id, Route_Pattern_ID,
-           trip_headsign, stop_id, stop_sequence, Total_Trips,
-           Headway, Peak_Period, TPA_Criteria,
-           stop_lon, stop_lat) %>%
-    arrange(agency_id, route_id, direction_id,
-            trip_id, Peak_Period, stop_sequence)
-  
+# get_peak_bus_route_stops <- function(gtfs_obj) {
+# }
+
+#' Make a dataframe GTFS arrival_time column into standard time variable
+#' @param a GTFSr object for a given provider with routes, stops, stop_times, etc
+#' @return a mega-GTFSr data frame with stops, stop_times, trips, calendar, and routes all joined
+join_all_gtfs_tables <- function(g) {
+  df <- list(g$stops_df,g$stop_times_df,g$trips_df,g$calendar_df,g$routes_df)
+  Reduce(inner_join,df) %>%
+    select(agency_id, stop_id, trip_id, service_id,
+           monday, tuesday, wednesday, thursday, friday,
+           route_id, trip_headsign, direction_id,
+           arrival_time, stop_sequence,
+           route_type, stop_lat, stop_lon) %>%
+    arrange(agency_id, trip_id, service_id,
+            monday, tuesday, wednesday, thursday, friday,
+            route_id, trip_headsign, direction_id,
+            arrival_time, stop_sequence) -> df_sr
+  #clean up source data
   rm(df)
-  
-  #Select Distinct Records based upon Agency Route Direction values.  Removes stop ids from output.
-  df_stp_rt_hf <- group_by(df_stp_rt_hf,
-                           agency_id, route_id, direction_id, Route_Pattern_ID,trip_headsign,
-                           stop_id, stop_sequence, Total_Trips, Headway, Peak_Period,
-                           TPA_Criteria, stop_lon, stop_lat) %>%
-    distinct(agency_id, route_id, direction_id, Route_Pattern_ID,
-             trip_headsign, stop_id, stop_sequence, Total_Trips,
-             Headway, Peak_Period, TPA_Criteria, stop_lon, stop_lat)
-  
-  #Remove select cols.
-  df_stp_rt_hf <- df_stp_rt_hf[-c(1:13)]
-  return(df_stp_rt_hf)
+  df_sr$Route_Pattern_ID<-paste0(df_sr$agency_id,
+                                 "-",df_sr$route_id,"-",
+                                 df_sr$direction_id)
+  return(df_sr)
 }
+
 
 ######
 ##Custom Time Format Functions
@@ -109,7 +52,7 @@ get_peak_bus_route_stops <- function(gtfs_obj) {
 #' Make a dataframe GTFS arrival_time column into standard time variable
 #' @param dataframe containing a GTFS-style "arrival_time" column (time values at +24:00:00)
 #' @return dataframe containing a GTFS-style "arrival_time" column (no time values at +24:00:00)
-fix_arrival_time <- function(df) {
+make_arrival_hour_less_than_24 <- function(df) {
   t1 <- df$arrival_time
   if (!(typeof(t1) == "character")) {
     stop("column not a character string--may already be fixed")
@@ -161,21 +104,28 @@ fix_hour <- function(x) {
 #' Filter a mega-GTFSr dataframe to rows/stops that occur on all weekdays, are buses, and
 #' have a stop_time between 2 time periods
 #' @param a dataframe made by joining all the GTFS tables together
-#' @param a start time filter
-#' @param an end time filter
+#' @param a start time filter hh:mm:ss
+#' @param an end time filter hh:mm:ss
 #' @return a mega-GTFSr dataframe filtered to rows of interest
 filter_by_time <- function(rt_df, start_filter,end_filter) {
-  subset(rt_df, rt_df$monday == 1
-         & rt_df$tuesday == 1
-         & rt_df$wednesday == 1
-         & rt_df$thursday == 1
-         & rt_df$friday == 1
-         & rt_df$route_type == 3
-         & rt_df$arrival_time >start_filter
-         & rt_df$arrival_time < end_filter)-> rt_df_out
+  time_start <- paste(c(format(Sys.Date(), "%Y-%m-%d"),
+                        start_filter),collapse=" ")
+  time_end <- paste(c(format(Sys.Date(), "%Y-%m-%d"),
+                      end_filter),collapse=" ")
+  rt_df_out <- subset(rt_df, rt_df$monday == 1
+                           & rt_df$tuesday == 1
+                           & rt_df$wednesday == 1
+                           & rt_df$thursday == 1
+                           & rt_df$friday == 1
+                           & rt_df$route_type == 3
+                           & rt_df$arrival_time >time_start
+                           & rt_df$arrival_time < time_end)
   return(rt_df_out)
 }
 
+#' for a mega-GTFSr dataframe, remove rows with duplicate stop times 
+#' @param a dataframe of stops with a stop_times column 
+#' @return a dataframe of stops with a stop_times column in which there are no duplicate stop times for a given stop
 remove_duplicate_stops <- function(rt_df){
   rt_df %>%
     distinct(agency_id, route_id, direction_id,
@@ -185,20 +135,25 @@ remove_duplicate_stops <- function(rt_df){
   return(rt_df_out)
 }
 
+#' for a mega-GTFSr dataframe, count the number of trips a bus takes through a given stop within a given time period
+#' @param a mega-GTFSr dataframe
+#' @return a dataframe of stops with a "Trips" variable representing the count trips taken through each stop for a route within a given time frame
 count_trips<- function(rt_df) {
-  rt_df %>%
+  rt_df_out <- rt_df %>%
     group_by(agency_id,
              route_id,
              direction_id,
              trip_headsign,
              stop_id) %>%
     count(stop_sequence) %>%
-    mutate(Headways = round(240/n,0)) ->
-    rt_df_out
+    mutate(Headways = round(240/n,0))
   colnames(rt_df_out)[colnames(rt_df_out)=="n"] <- "Trips"
   return(rt_df_out)
 }
 
+#' for a mega-GTFSr dataframe, reduce it to just a listing of routes
+#' @param a mega-GTFSr dataframe
+#' @return a dataframe of routes  
 get_routes <- function(rt_df) {
   group_by(rt_df,
            agency_id,
@@ -217,6 +172,12 @@ get_routes <- function(rt_df) {
   return(rt_df_out)
 }
 
+#' 
+#' @param a mega-GTFSr dataframe filtered to AM peak commute period stops
+#' @param a mega-GTFSr dataframe filtered to PM peak commute period stops
+#' @param a mega-GTFSr get_routes reduced dataframe filtered to AM peak commute period stops
+#' @param a mega-GTFSr get_routes reduced dataframe filtered to PM peak commute period stops
+#' @return a dataframe of stops/routes flagged as TPA eligible or not
 join_high_frequency_routes_to_stops <- function(am_stops,pm_stops,am_routes,pm_routes){
   # Combine Weekday High Frequency Bus Service Data Frames for AM/PM Peak Periods
   df1 <- rbind(am_routes,
@@ -265,24 +226,5 @@ join_high_frequency_routes_to_stops <- function(am_stops,pm_stops,am_routes,pm_r
   return(df7)
 }
 
-get_stops_by_route <- function(g) {
-  df <- list(g$stops_df,g$stop_times_df,g$trips_df,g$calendar_df,g$routes_df)
-  Reduce(inner_join,df) %>%
-    select(agency_id, stop_id, trip_id, service_id,
-           monday, tuesday, wednesday, thursday, friday,
-           route_id, trip_headsign, direction_id,
-           arrival_time, stop_sequence,
-           route_type, stop_lat, stop_lon) %>%
-    arrange(agency_id, trip_id, service_id,
-            monday, tuesday, wednesday, thursday, friday,
-            route_id, trip_headsign, direction_id,
-            arrival_time, stop_sequence) -> df_sr
-  #clean up source data
-  rm(df)
-  df_sr$Route_Pattern_ID<-paste0(df_sr$agency_id,
-                                 "-",df_sr$route_id,"-",
-                                 df_sr$direction_id)
-  return(df_sr)
-}
 
 
