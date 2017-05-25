@@ -1,11 +1,3 @@
-# library(lubridate)
-# library(readr)
-# library(plyr)
-# library(dplyr)
-# library(DT)
-# library(tidyr)
-# library(stringr)
-
 ######
 ##Calculate Frequent Bus Routes
 ######
@@ -103,6 +95,35 @@ fix_hour <- function(x) {
 
 #' Filter a mega-GTFSr dataframe to rows/stops that occur on all weekdays, are buses, and
 #' have a stop_time between 2 time periods
+#' @param a mega-GTFSr dataframe made with the join_all_gtfs_tables() function
+#' @param period - "AM" or "PM"
+#' @return a mega-GTFSr dataframe filtered to TPA peak periods and flagged as AM or PM peak
+flag_and_filter_peak_periods_by_time <- function(mega_df, period) {
+  if (period=="AM"){
+    time_start <- "06:00:00"
+    time_end <- "09:59:00"
+  } else {
+    time_start <- "15:00:00"
+    time_end <- "18:59:00"
+  }
+  
+  mega_df <- filter_by_time(mega_df,
+                                  time_start,
+                                  time_end)
+  
+  if (!(is.data.frame(mega_df) && nrow(mega_df)==0) && period=="AM"){
+    mega_df["Peak_Period"] <-"AM Peak"
+  } else if (!(is.data.frame(mega_df) && nrow(mega_df)==0) && period=="PM" ) {
+    mega_df["Peak_Period"] <-"PM Peak" 
+  } else
+  {
+  mega_df$Peak_Period <-  mega_df$route_id
+  }
+  return(mega_df)
+}
+
+#' Filter a mega-GTFSr dataframe to rows/stops that occur on all weekdays, are buses, and
+#' have a stop_time between 2 time periods
 #' @param a dataframe made by joining all the GTFS tables together
 #' @param a start time filter hh:mm:ss
 #' @param an end time filter hh:mm:ss
@@ -129,7 +150,7 @@ filter_by_time <- function(rt_df, start_filter,end_filter) {
 remove_duplicate_stops <- function(rt_df){
   rt_df %>%
     distinct(agency_id, route_id, direction_id,
-             trip_headsign, stop_id, stop_sequence, arrival_time) %>%
+             trip_headsign, stop_id, stop_sequence, arrival_time, Peak_Period) %>%
     arrange(agency_id, route_id, direction_id,
             arrival_time,stop_sequence)->rt_df_out
   return(rt_df_out)
@@ -144,7 +165,8 @@ count_trips<- function(rt_df) {
              route_id,
              direction_id,
              trip_headsign,
-             stop_id) %>%
+             stop_id,
+             Peak_Period) %>%
     count(stop_sequence) %>%
     mutate(Headways = round(240/n,0))
   colnames(rt_df_out)[colnames(rt_df_out)=="n"] <- "Trips"
@@ -159,7 +181,8 @@ get_routes <- function(rt_df) {
            agency_id,
            route_id,
            direction_id,
-           trip_headsign) %>%
+           trip_headsign,
+           Peak_Period) %>%
     mutate(Total_Trips = round(mean(Trips),0),
            Headway = round(mean(Headways),0)) %>%
     distinct(agency_id,
@@ -169,7 +192,6 @@ get_routes <- function(rt_df) {
              Total_Trips,
              Headway) ->
     rt_df_out
-  return(rt_df_out)
 }
 
 #' 
@@ -227,4 +249,38 @@ join_high_frequency_routes_to_stops <- function(am_stops,pm_stops,am_routes,pm_r
 }
 
 
+#' 
+#' @param a mega-GTFSr dataframe 
+#' @param a mega-GTFSr get_routes reduced dataframe
+#' @return a dataframe of stops/routes flagged as TPA eligible, with some of the variables dropped from the stops table above joined back on the table
+join_mega_and_hf_routes <- function(df_sr,df_rt_hf){
+  df<- list(df_sr,df_rt_hf)
+  
+  df_stp_rt_hf <- Reduce(inner_join,df) %>%
+    group_by(agency_id, route_id, direction_id, trip_id,Peak_Period, Route_Pattern_ID,
+             trip_headsign, stop_id, stop_sequence, Total_Trips, Headway, Peak_Period,
+             TPA_Criteria, stop_lon, stop_lat) %>%
+    select(agency_id, route_id, direction_id, trip_id, Route_Pattern_ID,
+           trip_headsign, stop_id, stop_sequence, Total_Trips,
+           Headway, Peak_Period, TPA_Criteria,
+           stop_lon, stop_lat) %>%
+    arrange(agency_id, route_id, direction_id,
+            trip_id, Peak_Period, stop_sequence)
+  
+  rm(df)
+  return(df_stp_rt_hf)
+}
 
+#` Select Distinct Records based upon Agency Route Direction values.  Removes stop ids from output.
+#' @param a dataframe output by join_mega_and_hf_routes()
+#' @return a deduplicated version of the input dataframe
+deduplicate_final_table <- function(df_stp_rt_hf) {
+  df_stp_rt_hf <- group_by(df_stp_rt_hf,
+                           agency_id, route_id, direction_id, Route_Pattern_ID,trip_headsign,
+                           stop_id, stop_sequence, Total_Trips, Headway, Peak_Period,
+                           TPA_Criteria, stop_lon, stop_lat) %>%
+    distinct(agency_id, route_id, direction_id, Route_Pattern_ID,
+             trip_headsign, stop_id, stop_sequence, Total_Trips,
+             Headway, Peak_Period, TPA_Criteria, stop_lon, stop_lat)
+  return(df_stp_rt_hf)
+}
