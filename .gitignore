@@ -2,3 +2,4 @@ data/Archive/*
 data/RTD_2016.gdb/*
 credentials.py
 esri_rtd17/
+.Rproj.user
