@@ -7,7 +7,7 @@ The expected output of these scripts is a set (CSV, DBF) of bus stops that are l
 
 The bus stops are then passed to a python script that determines the shortest route between them using ArcGIS Network Analyst on a TomTom Street Network. Please see the Python directory for more details on route identification.  
 
-We have an outstanding task to prune some of these scripts, but they are still currently under review so all are availble for the moment.  
+We have an outstanding task to prune some of these scripts, but they are still currently under review so all are available for the moment.  
 
 ### File List  
 
