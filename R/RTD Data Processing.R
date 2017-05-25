@@ -1,21 +1,13 @@
 #This script builds a RTD dataset using 511 data from the API. 
 #The data must first be downloaded as zip archives and extracted to the working directory.
-library(lubridate)
 library(readr)
-library(plyr)
 library(dplyr)
-library(DT)
-library(tidyr)
-library(stringr)
 ###########################################################################################
 # Section 1. Functions
 
-#Add Agency_ID for Route.  Author: Tom Buckley
 build_table <- function(some_path, col_names=TRUE, col_types=NULL) {
   operator_df = read_csv(some_path, col_names, col_types)
   operator_prefix <- strsplit(some_path, "/")[[1]][2]
-  x <- vector(mode="character", length=nrow(operator_df))
-  x[1:length(x)] = operator_prefix
   operator_df["agency_id"] <- operator_prefix
   return(operator_df)
 }
@@ -30,7 +22,7 @@ options(stringsAsFactors = FALSE)
 #Data can be downloaded from this location: https://mtcdrive.box.com/s/pkw8e0ng3n02b47mufaefqz5749cv5nm
 
 # Set workspace where gtfs datasets are stored.  These datasets shoud have the txt file extension.
-setwd("~/Documents/MTC/_Section/Planning/Projects/rtd_2017/REGION/data_2017")
+setwd("~/Documents/Projects/rtd/data/05_2017_511_GTFS")
 
 ## 2A. Bind all operator tables together. Append Agency_ID column to each GTFS Table,
 routes = NULL
@@ -130,8 +122,8 @@ subset(rtes, rtes$monday == 1
        & rtes$thursday == 1
        & rtes$friday == 1
        & rtes$route_type == 3
-       & rtes$arrival_time > "2017-05-12 06:00:00" 
-       & rtes$arrival_time < "2017-05-12 09:59:00")-> AM_Peak_Bus_Routes
+       & rtes$arrival_time > "2017-05-24 06:00:00" 
+       & rtes$arrival_time < "2017-05-24 09:59:00")-> AM_Peak_Bus_Routes
 
 # 4B. Remove any duplicates due to multiple entries for the same stop at the same time period.
 AM_Peak_Bus_Routes %>%
@@ -144,7 +136,7 @@ AM_Peak_Bus_Routes %>%
   count(stop_sequence) %>% mutate(Headways = round(240/n,0)) -> am_peak_hdway
 
 # 4D. Rename count col. (n) to Trips
-names(am_peak_hdway)[6]<-"Trips"
+colnames(am_peak_hdway)[colnames(am_peak_hdway)=="n"] <- "Trips"
 
 # 4E. Select High Frequency Bus Service Routes (15 min or better headways)
 subset(am_peak_hdway, am_peak_hdway$Headways <16) -> am_peak_hdway_hfbus
@@ -175,8 +167,8 @@ subset(rtes, rtes$monday == 1
        & rtes$thursday == 1
        & rtes$friday == 1
        & rtes$route_type == 3
-       & rtes$arrival_time > "2017-05-12 15:00:00" 
-       & rtes$arrival_time < "2017-05-12 18:59:00")-> PM_Peak_Bus_Routes
+       & rtes$arrival_time > "2017-05-24 15:00:00" 
+       & rtes$arrival_time < "2017-05-24 18:59:00")-> PM_Peak_Bus_Routes
 
 # 5B. Remove any duplicates due to multiple entries for the same stop at the same time period.
 PM_Peak_Bus_Routes %>%
