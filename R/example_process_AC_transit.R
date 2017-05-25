@@ -30,14 +30,14 @@ df_sr <- make_arrival_hour_less_than_24(df_sr)
 # Section 5. Create Peak Headway tables for weekday trips
 
 am_stops <- flag_and_filter_peak_periods_by_time(df_sr,"AM")
-am_stops <- remove_duplicate_stops(am_stops) #todo: see issue 20
+am_stops <- remove_duplicate_stops(am_stops) #todo: see https://github.com/MetropolitanTransportationCommission/RegionalTransitDatabase/issues/31
 am_stops <- count_trips(am_stops)
 am_stops_hdwy <- subset(am_stops,
                         am_stops$Headways < 16)
 am_routes <- get_routes(am_stops_hdwy)
 
 pm_stops <- flag_and_filter_peak_periods_by_time(df_sr,"PM")
-pm_stops <- remove_duplicate_stops(pm_stops) #todo: see issue 20
+pm_stops <- remove_duplicate_stops(pm_stops) #todo: see https://github.com/MetropolitanTransportationCommission/RegionalTransitDatabase/issues/31
 pm_stops <- count_trips(pm_stops)
 pm_stops_hdwy <- subset(pm_stops,
                         pm_stops$Headways < 16)

@@ -30,7 +30,7 @@ Calculate frequency of service for stops and routes.
 A pseudo-shell/bat script with links reflecting the process thus far:   
 
 -  [get_and_format_511_gtfs_data](https://github.com/MetropolitanTransportationCommission/RegionalTransitDatabase/blob/master/python/get_and_format_511_for_sql.py)     
--  [calculate route frequencies for various times of day and types of transit, ad-hoc fixes to data where necessary](https://github.com/MetropolitanTransportationCommission/RegionalTransitDatabase/blob/6afc5c9fff45fc1df07b1176b961e5c92e10f696/R/make_weekday_peak_bus_stops_csv.R)
+-  [calculate route frequencies for various times of day and types of transit, ad-hoc fixes to data where necessary](https://github.com/MetropolitanTransportationCommission/RegionalTransitDatabase/blob/f40857ee65e2aa833a6a4a63ddbe52ce4fe20d0c/R/RTD%20Data%20Processing.R)
 -  [Build the Route Lines: Take the points for each route from previous step and then get route geometries](https://github.com/MetropolitanTransportationCommission/RegionalTransitDatabase/blob/a66673c376f9cb5468b39424f9439af18587c63b/python/network_analysis.py)   
 
 ##### To Calculate Stop Headways(Tabled momentarily):   
