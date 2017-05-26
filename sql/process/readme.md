@@ -35,4 +35,5 @@ Tables below are followed by their SQL file prefix. e.g. `s1_*filename*`
 -  `rtd_route_stop_all_other_modes`?: non-bus stops that are eventually added into `stops_tpa_staging` in order to calculate their TPA eligibility.  
 -  `TPA_Future_Transit_Stops`:  we don't have this table in the db yet, but it represents future or planned stops, which should eventually be included as part of the eligibility calculation below.  
 
-
+##### Route Build and Correction Steps
+- [https://github.com/MetropolitanTransportationCommission/RegionalTransitDatabase/blob/master/sql/process/PeakPeriod_Routes.sql]
