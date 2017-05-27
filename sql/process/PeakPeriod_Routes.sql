@@ -71,3 +71,22 @@ FROM            STOPS AS a INNER JOIN
 --Adding field "Distance".
 --22069 features located out of 22073. (Need to determine which stops are not located correctly)
 --Succeeded at Fri May 26 13:27:05 2017 (Elapsed Time: 5 minutes 26 seconds)
+--Qry Checks:
+SELECT        st.agency_id, s.stop_id, tr.route_id, rte.route_short_name, tr.direction_id, st.stop_sequence, st.arrival_time, st.departure_time, st.trip_id, tr.trip_headsign, rte.route_type, s.SourceID, s.SourceOID, s.SideOfEdge, 
+                         s.SnapX, s.SnapY, s.Distance, s.Shape
+FROM            STOPS_FCV2 AS s RIGHT OUTER JOIN
+                         STOP_TIMES AS st ON s.agency_id = st.agency_id AND s.stop_id = st.stop_id LEFT OUTER JOIN
+                         TRIPS AS tr INNER JOIN
+                         ROUTES AS rte ON tr.route_id = rte.route_id ON st.trip_id = tr.trip_id
+WHERE        (rte.route_type = 3) and st.agency_id = 'region'
+ORDER BY st.agency_id, tr.route_id, rte.route_short_name, tr.direction_id, st.stop_sequence, st.arrival_time, tr.trip_headsign
+
+
+
+
+
+
+
+select distinct agency_id from STOP_TIMES
+select distinct agency_id from Routes
+select distinct agency_id from AGENCY
