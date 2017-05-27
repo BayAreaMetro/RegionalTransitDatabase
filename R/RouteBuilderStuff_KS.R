@@ -11,7 +11,119 @@ library(lubridate)
 library(foreign)
 # This makes reading data in from text files much more logical.
 options(stringsAsFactors = FALSE)
-setwd("~/Documents/GIS Data/Transit/RTD_2017/Arc/Transit Analysis/gtfs_data")
+setwd("~/Documents/GIS Data/Transit/RTD/data")
+# Function
+
+build_table <- function(some_path, col_names=TRUE, col_types=NULL) {
+  operator_df = read_csv(some_path, col_names, col_types)
+  operator_prefix <- strsplit(some_path, "/")[[1]][2]
+  operator_df["agency_id"] <- operator_prefix
+  return(operator_df)
+}
+stop_times = NULL
+for (txt in dir(pattern = "stop_times.txt$",full.names=TRUE,recursive=TRUE)){
+  
+  stop_times = rbind(stop_times, build_table(txt, col_types= 
+                                               cols(
+                                                 trip_id = col_character(),
+                                                 arrival_time = col_character(),
+                                                 departure_time = col_character(),
+                                                 stop_id = col_character(),
+                                                 stop_sequence = col_integer())))
+}
+write.csv(stop_times,file="stop_times.txt", row.names=FALSE)
+
+#Add other build functions for the other tables here
+## 2A. Bind all operator tables together. Append Agency_ID column to each GTFS Table,
+routes = NULL
+for (txt in dir(pattern = "routes.txt$",full.names=TRUE,recursive=TRUE)){
+  routes = rbind(routes, build_table(txt, col_types = cols(
+    route_id = col_character(),
+    agency_id = col_character(),
+    route_short_name = col_character(),
+    route_long_name = col_character(),
+    route_type = col_integer(),
+    route_color = col_character(),
+    route_text_color = col_character()
+  )))
+}
+#write.csv(routes, file="routes.csv", row.names=FALSE)
+
+stops = NULL
+for (txt in dir(pattern = "stops.txt$",full.names=TRUE,recursive=TRUE)){
+  stops = rbind(stops, build_table(txt, col_types = 
+                                     cols(
+                                       stop_id = col_character(),
+                                       stop_name = col_character(),
+                                       stop_lat = col_double(),
+                                       stop_lon = col_double(),
+                                       zone_id = col_character(),
+                                       agency_id = col_character()
+                                     )))
+}
+#write.csv(stops, file="stops.csv", row.names=FALSE)
+#rm(stops) # drop large dataframe
+trips = NULL
+for (txt in dir(pattern = "trips.txt$",full.names=TRUE,recursive=TRUE)){
+  trips = rbind(trips, build_table(txt, col_types = 
+                                     cols(
+                                       route_id = col_character(),
+                                       service_id = col_integer(),
+                                       trip_id = col_character(),
+                                       trip_headsign = col_character(),
+                                       direction_id = col_integer(),
+                                       block_id = col_integer(),
+                                       shape_id = col_character(),
+                                       trip_short_name = col_character(),
+                                       agency_id = col_character()
+                                     )))
+}
+#write.csv(trips, file="trips.csv", row.names=FALSE)
+calendar = NULL
+for (txt in dir(pattern = "calendar.txt$",full.names=TRUE,recursive=TRUE)){
+  calendar = rbind(calendar, build_table(txt, col_types = 
+                                           cols(
+                                             service_id = col_integer(),
+                                             monday = col_integer(),
+                                             tuesday = col_integer(),
+                                             wednesday = col_integer(),
+                                             thursday = col_integer(),
+                                             friday = col_integer(),
+                                             saturday = col_integer(),
+                                             sunday = col_integer(),
+                                             start_date = col_integer(),
+                                             end_date = col_integer(),
+                                             agency_id = col_character()
+                                           )))
+}
+#write.csv(calendar, file="calendar.csv", row.names=FALSE)
+
+agency = NULL
+for (txt in dir(pattern = "agency.txt$",full.names=TRUE,recursive=TRUE)){
+  agency = rbind(agency, build_table(txt, col_types = 
+                                       cols(
+                                         agency_id = col_character(),
+                                         agency_name = col_character(),
+                                         agency_url = col_character(),
+                                         agency_timezone = col_character(),
+                                         agency_lang = col_character(),
+                                         agency_phone = col_double()
+                                       )))
+}
+#write.csv(agency, file="agency.csv", row.names=FALSE)
+
+shapes = NULL
+for (txt in dir(pattern = "shapes.txt$",full.names=TRUE,recursive=TRUE)){
+  shapes = rbind(shapes, build_table(txt, col_types =
+                                       cols(
+                                         shape_id = col_character(),
+                                         shape_pt_lon = col_double(),
+                                         shape_pt_lat = col_double(),
+                                         shape_pt_sequence = col_integer(),
+                                         shape_dist_traveled = col_double())))
+}
+#write.csv(shapes, file="shapes.csv", row.names=FALSE)
+rm(txt)
 
 #Fix bad times in the arrival and departure time fields
 stop_times_fix <- read_csv("stop_times.txt", col_types =cols(
