@@ -1,5 +1,5 @@
 #be sure to set the project path
-PROJECT_PATH <- "~/Documents/Projects/rtd"
+PROJECT_PATH <- "C:/projects/RTD/RegionalTransitDatabase"
 
 GTFS_PATH <- paste0(PROJECT_PATH,"/data/05_2017_511_GTFS/",collapse="")
 R_HELPER_FUNCTIONS_PATH <- paste0(PROJECT_PATH,"/R/r511.R",collapse="")
@@ -58,3 +58,22 @@ df_stp_rt_hf <- deduplicate_final_table(df_stp_rt_hf)
 #Remove select cols.
 df_stp_rt_hf <- df_stp_rt_hf[-c(1:13)]
 
+##############
+#get route geometries and write to disk
+###############
+
+#hacky source of function to get routes/geoms
+STPLANR_GTFS2SLDF <- paste0(PROJECT_PATH,"/R/stplanr_gtfs.R",collapse="")
+source(STPLANR_GTFS2SLDF)
+
+library(dplyr) #required by gtfs2sldf
+setwd(GTFS_PATH)
+gtfs_geoms <- gtfs2sldf("AC.zip")
+
+#subset to only HF routes
+#gtfs_geoms[(gtfs_geoms %in% am_routes$route_id)]
+
+library(rgdal)
+# writeOGR(yrtgtfs,"AC_geoms.shp",driver="ESRI Shapefile",layer = "ac")
+# writeOGR(yrtgtfs,"AC_geoms.gpkg",driver="GPKG",layer = "ac")
+writeOGR(yrtgtfs,"AC_geoms.csv",driver="CSV",layer = "ac",dataset_options = c("GEOMETRY=AS_WKT"))
