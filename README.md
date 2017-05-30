@@ -23,7 +23,7 @@ Calculate frequency of service for stops and routes.
 
 ### Methodology   
 
-![rtd_process_outline.jpg](images/rtd_process_outline.jpg?raw=true)  
+![rtd_process_outline.JPG](images/rtd_process_outline.JPG?raw=true)  
 
 #### [2016](https://metrotrans-my.sharepoint.com/personal/ksmith_mtc_ca_gov/_layouts/15/WopiFrame.aspx?sourcedoc=%7B2FB81C2E-8CF6-4BA4-8994-6B36F7E1B647%7D&file=511%20Data%20API%20Documentation.docx&action=default)
 
