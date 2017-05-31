@@ -18,7 +18,7 @@ setwd(GTFS_PATH)
 ################################################
 # Section 3. Read a single provider set using GTFSr
 
-gtfs_obj <- import_gtfs("AC.zip", local=TRUE)
+gtfs_obj <- import_gtfs("SC.zip", local=TRUE)
 
 ###############################################
 # Section 4. Join all the GTFS provider tables into 1 table based around stops
@@ -62,18 +62,12 @@ df_stp_rt_hf <- df_stp_rt_hf[-c(1:13)]
 #get route geometries and write to disk
 ###############
 
-#hacky source of function to get routes/geoms
-STPLANR_GTFS2SLDF <- paste0(PROJECT_PATH,"/R/stplanr_gtfs.R",collapse="")
-source(STPLANR_GTFS2SLDF)
-
-library(dplyr) #required by gtfs2sldf
-setwd(GTFS_PATH)
-gtfs_geoms <- gtfs2sldf("AC.zip")
+df_sp <- get_routes_sldf(gtfs_obj,names(table(df_stp_rt_hf$route_id)),NULL,NULL)
 
 #subset to only HF routes
 #gtfs_geoms[(gtfs_geoms %in% am_routes$route_id)]
 
 library(rgdal)
-# writeOGR(yrtgtfs,"AC_geoms.shp",driver="ESRI Shapefile",layer = "ac")
-# writeOGR(yrtgtfs,"AC_geoms.gpkg",driver="GPKG",layer = "ac")
-writeOGR(yrtgtfs,"AC_geoms.csv",driver="CSV",layer = "ac",dataset_options = c("GEOMETRY=AS_WKT"))
+writeOGR(df_sp,"SC_geoms3.shp",driver="ESRI Shapefile",layer = "sc")
+writeOGR(df_sp,"SC_geoms3.gpkg",driver="GPKG",layer = "sc")
+writeOGR(df_sp,"SC_geoms3.csv",driver="CSV",layer = "sc",dataset_options = c("GEOMETRY=AS_WKT"))
