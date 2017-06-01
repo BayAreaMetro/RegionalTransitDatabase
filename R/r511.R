@@ -54,9 +54,9 @@ format_new_hour_string <- function(x,hour_replacement) {
   return(x)
 }
 
-#' Make a dataframe GTFS arrival_time column into standard time variable
-#' @param dataframe containing a GTFS-style "arrival_time" column (time values at +24:00:00)
-#' @return dataframe containing a GTFS-style "arrival_time" column (all time values at +24:00:00 set below 24)
+#' Format GTFS Time strings as standard time string
+#' @param a GTFS Time string
+#' @return Time string with no hours greater than 24
 fix_hour <- function(x) {
   # use:
   #   t1 <- stop_times$arrival_time
