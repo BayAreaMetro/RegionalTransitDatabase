@@ -1,10 +1,3 @@
-#' Get a dataframe of stops and routes that are TPA eligible from a GTFSr object
-#' @param gtfs_obj A GTFS (gtfsr) list object with components agency_df, etc.
-#' @return a dataframe of stops for TPA eligible bus routes
-
-# get_peak_bus_route_stops <- function(gtfs_obj) {
-# }
-
 #' Make a dataframe GTFS tables all joined together for route frequency calculations
 #' @param a GTFSr object for a given provider with routes, stops, stop_times, etc
 #' @return a mega-GTFSr data frame with stops, stop_times, trips, calendar, and routes all joined
