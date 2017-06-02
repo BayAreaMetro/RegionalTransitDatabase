@@ -76,8 +76,10 @@ for (provider in providers) {
   #gtfs_geoms[(gtfs_geoms %in% am_routes$route_id)]
   
   if (dim(am_routes)[1] > 0 & dim(pm_routes)[1] > 0) {
-    l2 <- get_hf_geoms(am_routes,pm_routes,gtfs_obj)
-    l3 <- route_id_indexed_sldf(l2)
+    df1 <- rbind(am_routes,
+                 pm_routes)
+    l2 <- get_hf_geoms(df1,gtfs_obj)
+    l3 <- route_id_indexed_sldf(l2,df1)
     l_p_hf[provider] <- l3
   } else
   {
@@ -96,21 +98,5 @@ for (s in names(l_p_hf[2:length(l_p_hf)])) {
 }
 
 writeOGR(spdfout,"hf_bus_routes.gpkg",driver="GPKG",layer = "hfbus_routes", overwrite_layer = TRUE)
-
-# library(rgdal)
-# writeOGR(l2$sldf,paste0(provider,"_shapes.gpkg",collapse=""),driver="GPKG",layer = provider, overwrite_layer = TRUE)
-# library(foreign)
-# df <- as.data.frame(l2$df)
-# write.dbf(df, file=paste0(provider,"_shapes_to_route_id.dbf",collapse=""), factor2char = TRUE, max_nchar = 254)
-# rm(df)
-
-
-#sketch for getting the other data on the spatial dataframe:
-#join shapes_routes_df on shape_id
-#join am_routes and pm_routes to the output of that on route_id
-#one way to do this: make a list of all of the above
-#reduce to get output of a table
-#then relate spatial dataframe back to the table somehow
-
 
 

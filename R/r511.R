@@ -294,11 +294,8 @@ deduplicate_final_table <- function(df_stp_rt_hf) {
 #' @param pm_routes is a dataframe of high frequency routes for the pm period
 #' @param gtfs_obj is a gtfsr list of gtfs dataframes
 #' @return a list including:spatial data frame for tpa eligible routes, and an accompanying table to map them to routes
-get_hf_geoms <- function(am_routes,pm_routes,gtfs_obj) {
-  df1 <- rbind(am_routes,
-               pm_routes)
-  
-  #am peak and pm peak headways and counts should be on 
+get_hf_geoms <- function(df1,gtfs_obj) {
+    #am peak and pm peak headways and counts should be on 
   g1 <- group_by(df1,route_id)
   df2 <- distinct(g1,direction_id,trip_headsign)
   
@@ -340,6 +337,7 @@ get_hf_geoms <- function(am_routes,pm_routes,gtfs_obj) {
   l1 <- list()
   l1$sldf <- df_sp$gtfslines
   l1$df <- df4
+  l1$df_s <- df1
   return(l1)
 }
 
@@ -362,25 +360,28 @@ get_single_route_geom <- function(x,hf_l) {
   return(l2)
 }
 
-#' make high frequency routes df into just routes and directions df, for use in construction geoms by route and direction sldf
-#' @param a list output by get_hf_geoms 
-#' @return a dataframe of routes by direction
-get_routes_and_directions_df <- function(hf_l) {
-  hf_l$df <- hf_l$df[ , !duplicated(colnames(hf_l$df))] #move this into get_hf_geoms
-  g1 <- group_by(hf_l$df, route_id, direction_id)
-  df2 <- as.data.frame(distinct(g1))
-  row.names(df2) <- paste(df2$route_id,df2$direction_id,sep="-")
-  return(df2)
-}
+
 
 #' make high frequency routes spatial df
 #' @param a list output by get_hf_geoms 
 #' @return a dataframe of routes by direction with geometries from source gtfs
-route_id_indexed_sldf <- function(l2) {
-  df1 <- get_routes_and_directions_df(l2)
+route_id_indexed_sldf <- function(l2, dfx) {
+  df1 <- get_route_stats(l2$df_s)
   w1 <- apply(df1,1,get_single_route_geom,l2)
   w2 <- SpatialLines(w1)
   Sldf <- SpatialLinesDataFrame(w2,data=df1)
 }
 
+#' make high frequency routes df into just routes and directions df, for use in construction geoms by route and direction sldf
+#' @param a dataframe made of am_routes and pm_routes
+#' @return a dataframe of routes by direction with headway stats for peak periods
+get_route_stats <- function(df1) {
+  df2 <- dcast(df1,route_id+direction_id~Peak_Period, value.var="Headway")
+  names(df2)[3:4] <- c("am_headway","pm_headway")
+  df3 <- dcast(df1,route_id+direction_id~Peak_Period, value.var="Total_Trips")
+  names(df3)[3:4] <- c("am_trips","pm_trips")
+  df4 <- inner_join(df2,df3)
+  row.names(df4) <- paste(df2$route_id,df2$direction_id,sep="-")
+  return(df4)
+}
 
