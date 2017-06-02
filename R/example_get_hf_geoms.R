@@ -15,12 +15,17 @@ library(dplyr)
 
 setwd(GTFS_PATH)
 
+library(rjson)
+json_file <- paste0(PROJECT_PATH,"/data/orgs.json",collapse="")
+providers <- fromJSON(paste(readLines(json_file), collapse=""))
+
+l_p_hf <- list()
+l_p_hf_errors <- list()
+
 ################################################
 # Section 3. Read a single provider set using GTFSr
 
-providers <- c("SM","EM","MS","SF","AC","SC")
-
-for (provider in providers[2:6]) {
+for (provider in providers) {
   zip_path <- paste0(provider,".zip",collapse="")
   gtfs_obj <- import_gtfs(zip_path, local=TRUE)
   
@@ -70,17 +75,34 @@ for (provider in providers[2:6]) {
   #subset to only HF routes
   #gtfs_geoms[(gtfs_geoms %in% am_routes$route_id)]
   
-  l2 <- get_hf_geoms(am_routes,pm_routes,gtfs_obj)
-  sldf_rt_id <- route_id_indexed_sldf(l2)
-  writeOGR(sldf_rt_id ,paste0(provider,"_shapes_route_indexed.gpkg",collapse=""),driver="GPKG",layer = provider, overwrite_layer = TRUE)
-  library(rgdal)
-  writeOGR(l2$sldf,paste0(provider,"_shapes.gpkg",collapse=""),driver="GPKG",layer = provider, overwrite_layer = TRUE)
-  library(foreign)
-  df <- as.data.frame(l2$df)
-  write.dbf(df, file=paste0(provider,"_shapes_to_route_id.dbf",collapse=""), factor2char = TRUE, max_nchar = 254)
-  rm(df)
+  if (dim(am_routes)[1] > 0 & dim(pm_routes)[1] > 0) {
+    l2 <- get_hf_geoms(am_routes,pm_routes,gtfs_obj)
+    l3 <- route_id_indexed_sldf(l2)
+    l_p_hf[provider] <- l3
+  } else
+  {
+    l_p_hf_errors[provider] <- df_sr
+  }
   #writeOGR(df_sp$gtfslines,"Sf_geoms3.csv",driver="CSV",layer = "sf",dataset_options = c("GEOMETRY=AS_WKT"))
 }
+
+#bind all the results together and add an agency_id name
+spdfout <- l_p_hf[[1]]
+spdfout$agency <- names(l_p_hf[1])
+for (s in names(l_p_hf[2:length(l_p_hf)])) {
+  tsdf <- l_p_hf[[s]]
+  tsdf$agency <- s
+  spdfout <- rbind(spdfout,tsdf)
+}
+
+writeOGR(spdfout,"hf_bus_routes.gpkg",driver="GPKG",layer = "hfbus_routes", overwrite_layer = TRUE)
+
+# library(rgdal)
+# writeOGR(l2$sldf,paste0(provider,"_shapes.gpkg",collapse=""),driver="GPKG",layer = provider, overwrite_layer = TRUE)
+# library(foreign)
+# df <- as.data.frame(l2$df)
+# write.dbf(df, file=paste0(provider,"_shapes_to_route_id.dbf",collapse=""), factor2char = TRUE, max_nchar = 254)
+# rm(df)
 
 
 #sketch for getting the other data on the spatial dataframe:
