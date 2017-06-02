@@ -284,3 +284,59 @@ deduplicate_final_table <- function(df_stp_rt_hf) {
              Headway, Peak_Period, TPA_Criteria, stop_lon, stop_lat)
   return(df_stp_rt_hf)
 }
+
+
+#' Return a spatial dataframe with the geometries of high frequency routes
+#' @param am_routes is a dataframe of high frequency routes for the am period
+#' @param pm_routes is a dataframe of high frequency routes for the pm period
+#' @param gtfs_obj is a gtfsr list of gtfs dataframes
+#' @return a list including:spatial data frame for tpa eligible routes, and an accompanying table to map them to routes
+get_hf_geoms <- function(am_routes,pm_routes,gtfs_obj) {
+  df1 <- rbind(am_routes,
+               pm_routes)
+  
+  #am peak and pm peak headways and counts should be on 
+  g1 <- group_by(df1,route_id)
+  df2 <- distinct(g1,direction_id,trip_headsign)
+  
+  #attempt at subsetting service by a single date
+  ###########
+  gtfs_obj$calendar_df$start_date <- as.Date(gtfs_obj$calendar_df$start_date, format= "%Y%m%d")
+  gtfs_obj$calendar_df$end_date <- as.Date(gtfs_obj$calendar_df$end_date, format= "%Y%m%d")
+  
+  chosen_date <- "2017-04-01"
+  date_subset <- gtfs_obj$calendar_df$start_date < as.Date(chosen_date) & 
+    gtfs_obj$calendar_df$end_date > as.Date(chosen_date)
+  
+  weekday_subset <- gtfs_obj$calendar_df$monday==1 & 
+    gtfs_obj$calendar_df$tuesday==1 & 
+    gtfs_obj$calendar_df$wednesday==1 & 
+    gtfs_obj$calendar_df$thursday==1 & 
+    gtfs_obj$calendar_df$friday==1
+  
+  chosen_services <- gtfs_obj$calendar_df[weekday_subset,c("service_id")]
+  #there are still multiple services for this subset...
+  #but this should reduce some duplicates anyway
+  ######
+  
+  df_sp <- get_routes_sldf(gtfs_obj,names(table(df_stp_rt_hf$route_id)),NULL,NULL)
+  
+  l1 <- list(df2,df_sp$shapes_routes_df,chosen_services)
+  df3 <- Reduce(inner_join,l1)
+  rm(l1)
+  #reducing drops headway and total trips
+  #in order to keep these, 
+  #might make more sense to join geometries to am/pm and direction
+  
+  g1 <- group_by(df3, shape_id)
+  df4 <- distinct(g1, route_id, shape_id, service_id, direction_id)
+  #would prefer to have inbound and outbound ID on here, but not sure where they went--service will have to do
+  
+  #fix column name
+  names(df_sp$gtfslines) <- c("shape_id")
+  l1 <- list()
+  l1$sldf <- df_sp$gtfslines
+  l1$df <- df4
+  return(l1)
+}
+
