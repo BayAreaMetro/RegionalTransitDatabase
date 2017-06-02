@@ -285,6 +285,9 @@ deduplicate_final_table <- function(df_stp_rt_hf) {
   return(df_stp_rt_hf)
 }
 
+##################
+#geospatial work
+###############
 
 #' Return a spatial dataframe with the geometries of high frequency routes
 #' @param am_routes is a dataframe of high frequency routes for the am period
@@ -339,4 +342,45 @@ get_hf_geoms <- function(am_routes,pm_routes,gtfs_obj) {
   l1$df <- df4
   return(l1)
 }
+
+
+#' Return the geometries for a route as single line
+#' @param a route_id
+#' @param a list output by get_hf_geoms 
+#' @return linestring with an id
+get_single_route_geom <- function(x,hf_l) {
+  r_id <- x["route_id"]
+  d_id <- x["direction_id"]
+  rd_id <- paste(r_id,d_id,sep="-")
+  t1 <- as.data.frame(hf_l$df[hf_l$df$route_id == r_id & hf_l$df$direction_id == d_id,"shape_id"])
+  dfsp1 <- hf_l$sldf[hf_l$sldf$shape_id %in% t1[,1],]
+  g1 <- geometry(dfsp1)
+  g2 <- gLineMerge(g1,byid=FALSE,id=rd_id)
+  if(length(g2)>1){stop("more than 1 sp Line after merge of gtfs shapes for route")}
+  l1 <- Line(coordinates(g2))
+  l2 <- Lines(list(l1),ID=rd_id)
+  return(l2)
+}
+
+#' make high frequency routes df into just routes and directions df, for use in construction geoms by route and direction sldf
+#' @param a list output by get_hf_geoms 
+#' @return a dataframe of routes by direction
+get_routes_and_directions_df <- function(hf_l) {
+  hf_l$df <- hf_l$df[ , !duplicated(colnames(hf_l$df))] #move this into get_hf_geoms
+  g1 <- group_by(hf_l$df, route_id, direction_id)
+  df2 <- as.data.frame(distinct(g1))
+  row.names(df2) <- paste(df2$route_id,df2$direction_id,sep="-")
+  return(df2)
+}
+
+#' make high frequency routes spatial df
+#' @param a list output by get_hf_geoms 
+#' @return a dataframe of routes by direction with geometries from source gtfs
+route_id_indexed_sldf <- function(l2) {
+  df1 <- get_routes_and_directions_df(l2)
+  w1 <- apply(df1,1,get_single_route_geom,l2)
+  w2 <- SpatialLines(w1)
+  Sldf <- SpatialLinesDataFrame(w2,data=df1)
+}
+
 
