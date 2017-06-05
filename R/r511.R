@@ -376,7 +376,7 @@ route_id_indexed_sldf <- function(l2, dfx) {
 #' @param a dataframe made of am_routes and pm_routes
 #' @return a dataframe of routes by direction with headway stats for peak periods
 get_route_stats <- function(df1) {
-  df2 <- dcast(df1,route_id+direction_id~Peak_Period, value.var="Headway")
+  df2 <- dcast(df1,route_id+direction_id~Peak_Period, value.var="Headway", fun.aggregate=mean)
   names(df2)[3:4] <- c("am_headway","pm_headway")
   df3 <- dcast(df1,route_id+direction_id~Peak_Period, value.var="Total_Trips")
   names(df3)[3:4] <- c("am_trips","pm_trips")
