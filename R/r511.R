@@ -36,6 +36,14 @@ join_all_gtfs_tables <- function(g) {
   return(df_sr)
 }
 
+#' get a Route Pattern ID
+#' @param dataframe
+#' @returns a vector which combines the agency id, route id, and direction id in a string 
+get_route_pattern_id <- function(df) {
+  df$Route_Pattern_ID<-paste0(df$agency_id,
+                                 "-",df$route_id,"-",
+                                 df$direction_id)
+}
 
 ######
 ##Custom Time Format Functions

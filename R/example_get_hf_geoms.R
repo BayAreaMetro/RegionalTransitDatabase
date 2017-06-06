@@ -4,11 +4,12 @@ PROJECT_PATH <- "C:/projects/RTD/RegionalTransitDatabase"
 GTFS_PATH <- paste0(PROJECT_PATH,"/data/05_2017_511_GTFS/",collapse="")
 R_HELPER_FUNCTIONS_PATH <- paste0(PROJECT_PATH,"/R/r511.R",collapse="")
 source(R_HELPER_FUNCTIONS_PATH)
+CREDENTIALS_PATH <- paste0(PROJECT_PATH,"credentials.R",collapse="") 
 
 # if (!require(devtools)) {
 #   install.packages('devtools')
 # }
-# devtools::install_github('ropensci/gtfsr')
+# devtools::install_github('MetropolitanTransportationCommission/gtfsr')
 
 #library(gtfsr)
 library(dplyr)
@@ -79,8 +80,8 @@ for (provider in providers) {
     df1 <- rbind(am_routes,
                  pm_routes)
     l2 <- get_hf_geoms(df1,gtfs_obj)
-    l3 <- route_id_indexed_sldf(l2,df1)
-    l_p_hf[provider] <- l3
+    hf_gm_df_ri <- route_id_indexed_sldf(l2,df1)
+    l_p_hf[provider] <- hf_gm_df_ri
   } else
   {
     l_p_hf_errors[provider] <- df_sr
@@ -97,6 +98,10 @@ for (s in names(l_p_hf[2:length(l_p_hf)])) {
   spdfout <- rbind(spdfout,tsdf)
 }
 
-writeOGR(spdfout,"hf_bus_routes.gpkg",driver="GPKG",layer = "hfbus_routes", overwrite_layer = TRUE)
+
+
+proj4string(spdfout) <- CRS("+proj=longlat +datum=WGS84")
+
+writeOGR(spdfout,"hf_bus_routes_final.gpkg",driver="GPKG",layer = "hfbus_routes", overwrite_layer = TRUE)
 
 
