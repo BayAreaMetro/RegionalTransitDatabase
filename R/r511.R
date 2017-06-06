@@ -386,7 +386,7 @@ route_id_indexed_sldf <- function(l2, dfx) {
 get_route_stats <- function(df1) {
   df2 <- dcast(df1,route_id+direction_id~Peak_Period, value.var="Headway", fun.aggregate=mean)
   names(df2)[3:4] <- c("am_headway","pm_headway")
-  df3 <- dcast(df1,route_id+direction_id~Peak_Period, value.var="Total_Trips")
+  df3 <- dcast(df1,route_id+direction_id~Peak_Period, value.var="Total_Trips", fun.aggregate=mean)
   names(df3)[3:4] <- c("am_trips","pm_trips")
   df4 <- inner_join(df2,df3)
   row.names(df4) <- paste(df2$route_id,df2$direction_id,sep="-")
