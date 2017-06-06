@@ -1,19 +1,4 @@
-######
-##Calculate Frequent Bus Routes
-######
-#this is the main function and goal of the r scripts here
-#todo: 
-#document some of the Reduce calls
-#collapse the am and pm filtering to one function and call it
-
-#' Get a dataframe of stops and routes that are TPA eligible from a GTFSr object
-#' @param gtfs_obj A GTFS (gtfsr) list object with components agency_df, etc.
-#' @return a dataframe of stops for TPA eligible bus routes
-
-# get_peak_bus_route_stops <- function(gtfs_obj) {
-# }
-
-#' Make a dataframe GTFS arrival_time column into standard time variable
+#' Make a dataframe GTFS tables all joined together for route frequency calculations
 #' @param a GTFSr object for a given provider with routes, stops, stop_times, etc
 #' @return a mega-GTFSr data frame with stops, stop_times, trips, calendar, and routes all joined
 join_all_gtfs_tables <- function(g) {
@@ -34,15 +19,6 @@ join_all_gtfs_tables <- function(g) {
                                  "-",df_sr$route_id,"-",
                                  df_sr$direction_id)
   return(df_sr)
-}
-
-#' get a Route Pattern ID
-#' @param dataframe
-#' @returns a vector which combines the agency id, route id, and direction id in a string 
-get_route_pattern_id <- function(df) {
-  df$Route_Pattern_ID<-paste0(df$agency_id,
-                                 "-",df$route_id,"-",
-                                 df$direction_id)
 }
 
 ######
@@ -77,9 +53,9 @@ format_new_hour_string <- function(x,hour_replacement) {
   return(x)
 }
 
-#' Make a dataframe GTFS arrival_time column into standard time variable
-#' @param dataframe containing a GTFS-style "arrival_time" column (time values at +24:00:00)
-#' @return dataframe containing a GTFS-style "arrival_time" column (all time values at +24:00:00 set below 24)
+#' Format GTFS Time strings as standard time string
+#' @param a GTFS Time string
+#' @return Time string with no hours greater than 24
 fix_hour <- function(x) {
   # use:
   #   t1 <- stop_times$arrival_time
@@ -393,3 +369,11 @@ get_route_stats <- function(df1) {
   return(df4)
 }
 
+#' get a Route Pattern ID
+#' @param dataframe
+#' @returns a vector which combines the agency id, route id, and direction id in a string 
+get_route_pattern_id <- function(df) {
+  df$Route_Pattern_ID<-paste0(df$agency_id,
+                                 "-",df$route_id,"-",
+                                 df$direction_id)
+}
