@@ -102,6 +102,7 @@ for (s in names(l_p_hf[2:length(l_p_hf)])) {
 
 proj4string(spdfout) <- CRS("+proj=longlat +datum=WGS84")
 
-writeOGR(spdfout,"hf_bus_routes_final.gpkg",driver="GPKG",layer = "hfbus_routes", overwrite_layer = TRUE)
-
+writeOGR(spdfout,"hf_bus_routes.gpkg",driver="GPKG",layer = "hfbus_routes", overwrite_layer = TRUE)
+spdfout_26910 <- spTransform(spdfout, CRS("+init=epsg:26910"))
+writeOGR(spdfout_26910,"hf_bus_routes_26910.gpkg",driver="GPKG",layer = "hfbus_routes_26910", overwrite_layer = TRUE)
 
