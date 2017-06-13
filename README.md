@@ -23,6 +23,8 @@ Run these scripts to output the feature class linked below to your local machine
 
 -  [get_and_format_511_gtfs_data](https://github.com/MetropolitanTransportationCommission/RegionalTransitDatabase/blob/master/python/get_and_format_511_for_sql.py)     
 -  [calculate route frequencies for various times of day and types of transit, get route geometries](https://github.com/MetropolitanTransportationCommission/RegionalTransitDatabase/blob/1ac4cfa454c2b57bb62e6f55115477f8dc5749ec/R/examples/example_get_hf_geoms.R)
+-  [calculate route frequencies for various times of day and types of transit, get route geometries]
+-  [make polygons from tpa eligible transit stops and routes](https://github.com/MetropolitanTransportationCommission/RegionalTransitDatabase/blob/a7cf88601fc73c0eca69aa6b24f2be1a9be3f04a/python/make_tpa_polygons.py)
 
 ### Outcomes   
 

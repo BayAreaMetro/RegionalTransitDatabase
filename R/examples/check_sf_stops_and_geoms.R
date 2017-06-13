@@ -26,7 +26,7 @@ l_p_hf_errors <- list()
 ################################################
 # Section 3. Read a single provider set using GTFSr
 
-for (provider in providers) {
+for (provider in c("SF")) {
   zip_path <- paste0(provider,".zip",collapse="")
   gtfs_obj <- import_gtfs(zip_path, local=TRUE)
   
@@ -37,7 +37,7 @@ for (provider in providers) {
   df_sr <- make_arrival_hour_less_than_24(df_sr)
   
   ###########################################################################################
-  # Section 5. Create Peak Headway tables for weekday trips
+  # Section 5. Create Peak Headway tables for weekday trips 
   
   am_stops <- flag_and_filter_peak_periods_by_time(df_sr,"AM")
   am_stops <- remove_duplicate_stops(am_stops) #todo: see https://github.com/MetropolitanTransportationCommission/RegionalTransitDatabase/issues/31
@@ -57,33 +57,30 @@ for (provider in providers) {
   # Section 6. Join the calculated am and pm peak routes (tpa eligible) back to stop tables
   
   df_rt_hf <- join_high_frequency_routes_to_stops(am_stops,pm_stops,am_routes,pm_routes)
-  
-  ###########################################################################################
-  # Section 7. Join original stops mega-GTFSr data frame to Selected Routes for export to solve routes in Network Analyst
-  
+  # 
+  # ###########################################################################################
+  # # Section 7. Join original stops mega-GTFSr data frame to Selected Routes for export to solve routes in Network Analyst
+  # 
   df_stp_rt_hf <- join_mega_and_hf_routes(df_sr, df_rt_hf)
-  
+
   df_stp_rt_hf <- deduplicate_final_table(df_stp_rt_hf)
-  
+
   #Remove select cols.
   df_stp_rt_hf <- df_stp_rt_hf[-c(1:13)]
-  
+  # 
   ##############
   #get route geometries and write to disk
   ###############
   
-  
-  #subset to only HF routes
-  #gtfs_geoms[(gtfs_geoms %in% am_routes$route_id)]
-  
   if (dim(am_routes)[1] > 0 & dim(pm_routes)[1] > 0) {
     df1 <- rbind(am_routes,
                  pm_routes)
-    l2 <- get_hf_geoms(df1,gtfs_obj)
+    l2 <- get_hf_geoms(df1,gtfs_obj,df_stp_rt_hf)
     
     library(rgeos)
     library(reshape2)
     hf_gm_df_ri <- route_id_indexed_sldf(l2,df1)
+    
     l_p_hf[provider] <- hf_gm_df_ri
   } else
   {
@@ -95,16 +92,16 @@ for (provider in providers) {
 #bind all the results together and add an agency_id name
 spdfout <- l_p_hf[[1]]
 spdfout$agency <- names(l_p_hf[1])
-for (s in names(l_p_hf[2:length(l_p_hf)])) {
-  tsdf <- l_p_hf[[s]]
-  tsdf$agency <- s
-  spdfout <- rbind(spdfout,tsdf)
-}
 
+dfx <- as.data.frame(df_stp_rt_hf)
+coordinates(dfx) = ~stop_lon + stop_lat
 
 library(rgdal)
+proj4string(dfx) <- CRS("+proj=longlat +datum=WGS84")
+writeOGR(dfx,"sf_stops3.gpkg",driver="GPKG",layer = "sf_stops", overwrite_layer = TRUE)
 proj4string(spdfout) <- CRS("+proj=longlat +datum=WGS84")
-writeOGR(spdfout,"hf_bus_routes.gpkg",driver="GPKG",layer = "hfbus_routes", overwrite_layer = TRUE)
+writeOGR(spdfout,"sf_routes3.gpkg",driver="GPKG",layer = "sf_routes", overwrite_layer = TRUE)
+
 spdfout_26910 <- spTransform(spdfout, CRS("+init=epsg:26910"))
 writeOGR(spdfout_26910,"hf_bus_routes_26910.gpkg",driver="GPKG",layer = "hfbus_routes_26910", overwrite_layer = TRUE)
 

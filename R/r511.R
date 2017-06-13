@@ -278,7 +278,7 @@ deduplicate_final_table <- function(df_stp_rt_hf) {
 #' @param pm_routes is a dataframe of high frequency routes for the pm period
 #' @param gtfs_obj is a gtfsr list of gtfs dataframes
 #' @return a list including:spatial data frame for tpa eligible routes, and an accompanying table to map them to routes
-get_hf_geoms <- function(df1,gtfs_obj) {
+get_hf_geoms <- function(df1,gtfs_obj,hf_stops) {
     #am peak and pm peak headways and counts should be on 
   g1 <- group_by(df1,route_id)
   df2 <- distinct(g1,direction_id,trip_headsign)
@@ -287,10 +287,6 @@ get_hf_geoms <- function(df1,gtfs_obj) {
   ###########
   gtfs_obj$calendar_df$start_date <- as.Date(gtfs_obj$calendar_df$start_date, format= "%Y%m%d")
   gtfs_obj$calendar_df$end_date <- as.Date(gtfs_obj$calendar_df$end_date, format= "%Y%m%d")
-  
-  chosen_date <- "2017-04-01"
-  date_subset <- gtfs_obj$calendar_df$start_date < as.Date(chosen_date) & 
-    gtfs_obj$calendar_df$end_date > as.Date(chosen_date)
   
   weekday_subset <- gtfs_obj$calendar_df$monday==1 & 
     gtfs_obj$calendar_df$tuesday==1 & 
@@ -303,7 +299,7 @@ get_hf_geoms <- function(df1,gtfs_obj) {
   #but this should reduce some duplicates anyway
   ######
   
-  df_sp <- get_routes_sldf(gtfs_obj,names(table(df_stp_rt_hf$route_id)),NULL,NULL)
+  df_sp <- get_routes_sldf(gtfs_obj,names(table(hf_stops$route_id)),NULL,NULL)
   
   l1 <- list(df2,df_sp$shapes_routes_df,chosen_services)
   df3 <- Reduce(inner_join,l1)
