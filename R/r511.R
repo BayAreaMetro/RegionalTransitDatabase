@@ -274,20 +274,10 @@ deduplicate_final_table <- function(df_stp_rt_hf) {
 ###############
 
 #' Return a spatial dataframe with the geometries of high frequency routes
-#' @param am_routes is a dataframe of high frequency routes for the am period
-#' @param pm_routes is a dataframe of high frequency routes for the pm period
+#' @param l1 is a list of route names
 #' @param gtfs_obj is a gtfsr list of gtfs dataframes
-#' @return a list including:spatial data frame for tpa eligible routes, and an accompanying table to map them to routes
-get_hf_geoms <- function(df1,gtfs_obj,hf_stops) {
-    #am peak and pm peak headways and counts should be on 
-  g1 <- group_by(df1,route_id)
-  df2 <- distinct(g1,direction_id,trip_headsign)
-  
-  #attempt at subsetting service by a single date
-  ###########
-  gtfs_obj$calendar_df$start_date <- as.Date(gtfs_obj$calendar_df$start_date, format= "%Y%m%d")
-  gtfs_obj$calendar_df$end_date <- as.Date(gtfs_obj$calendar_df$end_date, format= "%Y%m%d")
-  
+#' @return a spatial data frame for tpa eligible routes
+get_weekday_geoms <- function(l1,gtfs_obj) {
   weekday_subset <- gtfs_obj$calendar_df$monday==1 & 
     gtfs_obj$calendar_df$tuesday==1 & 
     gtfs_obj$calendar_df$wednesday==1 & 
@@ -295,41 +285,34 @@ get_hf_geoms <- function(df1,gtfs_obj,hf_stops) {
     gtfs_obj$calendar_df$friday==1
   
   chosen_services <- gtfs_obj$calendar_df[weekday_subset,c("service_id")]
+  l2 <- get_routes_sldf(gtfs_obj,l1,NULL,NULL)
+
+  names(l2$gtfslines) <- c("shape_id")
+  
+  weekday_subset <- gtfs_obj$calendar_df$monday==1 & 
+    gtfs_obj$calendar_df$tuesday==1 & 
+    gtfs_obj$calendar_df$wednesday==1 & 
+    gtfs_obj$calendar_df$thursday==1 & 
+    gtfs_obj$calendar_df$friday==1
+  
+  chosen_services <- gtfs_obj$calendar_df[weekday_subset,]$service_id
   #there are still multiple services for this subset...
   #but this should reduce some duplicates anyway
   ######
   
-  df_sp <- get_routes_sldf(gtfs_obj,names(table(hf_stops$route_id)),NULL,NULL)
-  
-  l1 <- list(df2,df_sp$shapes_routes_df,chosen_services)
-  df3 <- Reduce(inner_join,l1)
-  rm(l1)
-  #reducing drops headway and total trips
-  #in order to keep these, 
-  #might make more sense to join geometries to am/pm and direction
-  
-  g1 <- group_by(df3, shape_id)
-  df4 <- distinct(g1, route_id, shape_id, service_id, direction_id)
-  #would prefer to have inbound and outbound ID on here, but not sure where they went--service will have to do
-  
-  #fix column name
-  names(df_sp$gtfslines) <- c("shape_id")
-  l1 <- list()
-  l1$sldf <- df_sp$gtfslines
-  l1$df <- df4
-  l1$df_s <- df1
-  return(l1)
+  df1 <- l2$shapes_routes_df
+  weekday_service_shapes <- df1[df1$service_id==chosen_services,]$shape_id
+  lines_df <- l2$gtfslines
+  df2 <- lines_df[lines_df$shape_id %in% weekday_service_shapes,]
+  return(df2)
 }
 
 
 #' Return the geometries for a route as single line
 #' @param a route_id
 #' @param a list output by get_hf_geoms 
-#' @return linestring with an id
-get_single_route_geom <- function(x,hf_l) {
-  r_id <- x["route_id"]
-  d_id <- x["direction_id"]
-  rd_id <- paste(r_id,d_id,sep="-")
+#' @return linestring with a route id
+get_single_route_geom <- function(r_id,hf_l) {
   t1 <- as.data.frame(hf_l$df[hf_l$df$route_id == r_id & hf_l$df$direction_id == d_id,"shape_id"])
   dfsp1 <- hf_l$sldf[hf_l$sldf$shape_id %in% t1[,1],]
   g1 <- geometry(dfsp1)
@@ -343,11 +326,11 @@ get_single_route_geom <- function(x,hf_l) {
 
 
 #' make high frequency routes spatial df
-#' @param a list output by get_hf_geoms 
-#' @return a dataframe of routes by direction with geometries from source gtfs
-route_id_indexed_sldf <- function(l2, dfx) {
-  df1 <- get_route_stats(l2$df_s)
-  w1 <- apply(df1,1,get_single_route_geom,l2)
+#' @param df a list of routes
+#' @param gtfs_obj a gtfs list fromas read by the gtfsr package
+#' @return a spatial dataframe with indexed by the routes
+route_id_indexed_sldf <- function(df_rts, gtfs_obj) {
+  w1 <- apply(df_rts,1,get_single_route_geom)
   w2 <- SpatialLines(w1)
   Sldf <- SpatialLinesDataFrame(w2,data=df1)
 }
