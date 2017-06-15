@@ -41,7 +41,7 @@ for (provider in c("SF")) {
   
   am_stops <- flag_and_filter_peak_periods_by_time(df_sr,"AM")
   am_stops <- remove_duplicate_stops(am_stops) #todo: see https://github.com/MetropolitanTransportationCommission/RegionalTransitDatabase/issues/31
-  am_stops <- count_trips(am_stops)
+  am_stops <- count_trips(am_stops) 
   am_stops_hdwy <- subset(am_stops,
                           am_stops$Headways < 16)
   am_routes <- get_routes(am_stops_hdwy)
@@ -104,4 +104,6 @@ writeOGR(spdfout,"sf_routes3.gpkg",driver="GPKG",layer = "sf_routes", overwrite_
 
 spdfout_26910 <- spTransform(spdfout, CRS("+init=epsg:26910"))
 writeOGR(spdfout_26910,"hf_bus_routes_26910.gpkg",driver="GPKG",layer = "hfbus_routes_26910", overwrite_layer = TRUE)
+
+
 

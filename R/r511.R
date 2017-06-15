@@ -274,45 +274,60 @@ deduplicate_final_table <- function(df_stp_rt_hf) {
 ###############
 
 #' Return a spatial dataframe with the geometries of high frequency routes
-#' @param l1 is a list of route names
+#' @param l1 is a route name
 #' @param gtfs_obj is a gtfsr list of gtfs dataframes
-#' @return a spatial data frame for tpa eligible routes
-get_weekday_geoms <- function(l1,gtfs_obj) {
-  weekday_subset <- gtfs_obj$calendar_df$monday==1 & 
-    gtfs_obj$calendar_df$tuesday==1 & 
-    gtfs_obj$calendar_df$wednesday==1 & 
-    gtfs_obj$calendar_df$thursday==1 & 
-    gtfs_obj$calendar_df$friday==1
-  
-  chosen_services <- gtfs_obj$calendar_df[weekday_subset,c("service_id")]
-  l2 <- get_routes_sldf(gtfs_obj,l1,NULL,NULL)
-
-  names(l2$gtfslines) <- c("shape_id")
-  
-  weekday_subset <- gtfs_obj$calendar_df$monday==1 & 
-    gtfs_obj$calendar_df$tuesday==1 & 
-    gtfs_obj$calendar_df$wednesday==1 & 
-    gtfs_obj$calendar_df$thursday==1 & 
-    gtfs_obj$calendar_df$friday==1
-  
-  chosen_services <- gtfs_obj$calendar_df[weekday_subset,]$service_id
-  #there are still multiple services for this subset...
-  #but this should reduce some duplicates anyway
-  ######
-  
-  df1 <- l2$shapes_routes_df
-  weekday_service_shapes <- df1[df1$service_id==chosen_services,]$shape_id
-  lines_df <- l2$gtfslines
-  df2 <- lines_df[lines_df$shape_id %in% weekday_service_shapes,]
-  return(df2)
+#' @return routes geometries as polygons, for weekend service
+get_geoms <- function(route_id,gtfs_obj,weekday=TRUE,set_buffer=402.336) {
+  out <- tryCatch({
+    #get the spatial dataframe list from gtfsr
+    l2 <- get_routes_sldf(gtfs_obj,route_id,NULL,NULL)
+    names(l2$gtfslines) <- c("shape_id")
+    
+    #subset the sldf from gtfsr for weekday only
+    if(weekday==FALSE) stop("we only handle weekdays")
+    weekday_subset <- gtfs_obj$calendar_df$monday==1 & 
+      gtfs_obj$calendar_df$tuesday==1 & 
+      gtfs_obj$calendar_df$wednesday==1 & 
+      gtfs_obj$calendar_df$thursday==1 & 
+      gtfs_obj$calendar_df$friday==1
+    chosen_services <- gtfs_obj$calendar_df[weekday_subset,c("service_id")]
+    df1 <- l2$shapes_routes_df
+    weekday_service_shapes <- df1[df1$service_id %in% chosen_services$service_id,]$shape_id
+    lines_df <- l2$gtfslines
+    df2 <- lines_df[lines_df$shape_id %in% weekday_service_shapes,]
+      
+    #collapse to the filtered sldf list to 1 sp Polygons class per route
+    #needed to use polygons since these aren't proper Lines (connected at endpoints)
+    g1 <- geometry(df2)
+    g1 <- spTransform(g1, CRS("+init=epsg:26910"))
+    g1 <- gBuffer(g1,width=set_buffer)
+    g2 <- gUnaryUnion(g1,id=route_id)
+    return(g2)
+    }, 
+  error = function(e) {NULL})
+  return(out)
 }
 
+
+
+#' Return the geometries for a route and direction as single line
+#' @param a route_id
+#' @param a list output by get_hf_geoms 
+#' @return linestring with an id
+get_geoms_for_route <- function(r_id,sldf_list) {
+  t1 <- as.data.frame(sldf_list$shapes_routes_df[sldf_list$shapes_routes_df$route_id == r_id,"shape_id"])
+  dfsp1 <- sldf_list$sldf[sldf_list$sldf$shape_id %in% t1[,1],]
+  return(l2)
+}
 
 #' Return the geometries for a route as single line
 #' @param a route_id
 #' @param a list output by get_hf_geoms 
-#' @return linestring with a route id
-get_single_route_geom <- function(r_id,hf_l) {
+#' @return linestring with an id
+get_single_route_geom <- function(x,hf_l) {
+  r_id <- x["route_id"]
+  d_id <- x["direction_id"]
+  rd_id <- paste(r_id,d_id,sep="-")
   t1 <- as.data.frame(hf_l$df[hf_l$df$route_id == r_id & hf_l$df$direction_id == d_id,"shape_id"])
   dfsp1 <- hf_l$sldf[hf_l$sldf$shape_id %in% t1[,1],]
   g1 <- geometry(dfsp1)
@@ -323,6 +338,20 @@ get_single_route_geom <- function(r_id,hf_l) {
   return(l2)
 }
 
+#' Return the geometries for a route as single line
+#' @param a route_id
+#' @param a gtfsr
+#' @return linestring with an id
+get_geoms_by_route <- function(r_id,sldf_list) {
+  t1 <- as.data.frame(hf_l$df[hf_l$df$route_id == r_id & hf_l$df$direction_id == d_id,"shape_id"])
+  dfsp1 <- hf_l$sldf[hf_l$sldf$shape_id %in% t1[,1],]
+  g1 <- geometry(dfsp1)
+  g2 <- gLineMerge(g1,byid=FALSE,id=rd_id)
+  if(length(g2)>1){stop("more than 1 sp Line after merge of gtfs shapes for route")}
+  l1 <- Line(coordinates(g2))
+  l2 <- Lines(list(l1),ID=rd_id)
+  return(l2)
+}
 
 
 #' make high frequency routes spatial df
@@ -348,6 +377,15 @@ get_route_stats <- function(df1) {
   return(df4)
 }
 
+get_route_stats_no_direction <- function(df1) {
+  df2 <- dcast(df1,route_id~Peak_Period, value.var="Headway", fun.aggregate=mean)
+  names(df2)[2:3] <- c("avg_am_headway","avg_pm_headway")
+  df3 <- dcast(df1,route_id~Peak_Period, value.var="Total_Trips", fun.aggregate=mean)
+  names(df3)[2:3] <- c("avg_am_trips","avg_pm_trips")
+  df4 <- inner_join(df2,df3,by=c("route_id"))
+  return(df4)
+}
+
 #' get a Route Pattern ID
 #' @param dataframe
 #' @returns a vector which combines the agency id, route id, and direction id in a string 
@@ -355,4 +393,31 @@ get_route_pattern_id <- function(df) {
   df$Route_Pattern_ID<-paste0(df$agency_id,
                                  "-",df$route_id,"-",
                                  df$direction_id)
+}
+
+#' string match check for loop routes
+#' @param headsign vector
+#' @return boolean/logical vector indicating whether its a loop
+is_loop_route <- function(headsign){
+  grepl('loop', headsign, ignore.case = TRUE)
+}
+
+#' check for bidirectional routes
+#' @param dataframe with route_id and direction_id columns
+#' @return boolean/logical vector indicating whether the loop goes in both directions
+is_in_both_directions <- function(df_rt_dr){
+  g1 <- group_by(df_rt_dr,route_id)
+  s1 <- summarise(g1, both=both_directions_bool_check(direction_id))
+  s2 <- df_rt_dr$route_id %in% s1[s1$both==TRUE,]$route_id
+  return(s2)
+}
+
+
+
+#'
+#'
+#'
+both_directions_bool_check <- function(direction_ids){
+  1 %in% direction_ids &
+    0 %in% direction_ids
 }
