@@ -269,6 +269,66 @@ deduplicate_final_table <- function(df_stp_rt_hf) {
   return(df_stp_rt_hf)
 }
 
+
+#' make high frequency routes df into just routes and directions df, for use in construction geoms by route and direction sldf
+#' @param a dataframe made of am_routes and pm_routes
+#' @return a dataframe of routes by direction with headway stats for peak periods
+get_route_stats <- function(df1) {
+  df2 <- dcast(df1,route_id+direction_id~Peak_Period, value.var="Headway", fun.aggregate=mean)
+  names(df2)[3:4] <- c("am_headway","pm_headway")
+  df3 <- dcast(df1,route_id+direction_id~Peak_Period, value.var="Total_Trips", fun.aggregate=mean)
+  names(df3)[3:4] <- c("am_trips","pm_trips")
+  df4 <- inner_join(df2,df3)
+  row.names(df4) <- paste(df2$route_id,df2$direction_id,sep="-")
+  return(df4)
+}
+
+#' make high frequency routes df into just routes and directions df, for use in construction geoms by route and direction sldf
+#' @param a dataframe made of am_routes and pm_routes
+#' @return a dataframe of routes with headway stats for peak periods averaged over both directions
+get_route_stats_no_direction <- function(df1) {
+  df2 <- dcast(df1,route_id~Peak_Period, value.var="Headway", fun.aggregate=mean)
+  names(df2)[2:3] <- c("avg_am_headway","avg_pm_headway")
+  df3 <- dcast(df1,route_id~Peak_Period, value.var="Total_Trips", fun.aggregate=mean)
+  names(df3)[2:3] <- c("avg_am_trips","avg_pm_trips")
+  df4 <- inner_join(df2,df3,by=c("route_id"))
+  return(df4)
+}
+
+#' get a Route Pattern ID
+#' @param dataframe
+#' @returns a vector which combines the agency id, route id, and direction id in a string 
+get_route_pattern_id <- function(df) {
+  df$Route_Pattern_ID<-paste0(df$agency_id,
+                              "-",df$route_id,"-",
+                              df$direction_id)
+}
+
+#' string match check for loop routes
+#' @param headsign vector
+#' @return boolean/logical vector indicating whether its a loop
+is_loop_route <- function(headsign){
+  grepl('loop', headsign, ignore.case = TRUE)
+}
+
+#' check for bidirectional routes
+#' @param dataframe with route_id and direction_id columns
+#' @return boolean/logical vector indicating whether the loop goes in both directions
+is_in_both_directions <- function(df_rt_dr){
+  g1 <- group_by(df_rt_dr,route_id)
+  s1 <- summarise(g1, both=both_directions_bool_check(direction_id))
+  s2 <- df_rt_dr$route_id %in% s1[s1$both==TRUE,]$route_id
+  return(s2)
+}
+
+#'given a string vector, check whether both 0 and 1 are in it
+#' @param string vector of
+#' @return logical vector
+both_directions_bool_check <- function(direction_ids){
+  1 %in% direction_ids & 0 %in% direction_ids
+}
+
+
 ##################
 #geospatial work
 ###############
@@ -309,21 +369,10 @@ get_geoms <- function(route_id,gtfs_obj,weekday=TRUE,set_buffer=402.336) {
 }
 
 
-
-#' Return the geometries for a route and direction as single line
-#' @param a route_id
-#' @param a list output by get_hf_geoms 
-#' @return linestring with an id
-get_geoms_for_route <- function(r_id,sldf_list) {
-  t1 <- as.data.frame(sldf_list$shapes_routes_df[sldf_list$shapes_routes_df$route_id == r_id,"shape_id"])
-  dfsp1 <- sldf_list$sldf[sldf_list$sldf$shape_id %in% t1[,1],]
-  return(l2)
-}
-
 #' Return the geometries for a route as single line
-#' @param a route_id
+#' @param a list with route_id and direction id
 #' @param a list output by get_hf_geoms 
-#' @return linestring with an id
+#' @return linestring with an id for route and direction
 get_single_route_geom <- function(x,hf_l) {
   r_id <- x["route_id"]
   d_id <- x["direction_id"]
@@ -336,88 +385,4 @@ get_single_route_geom <- function(x,hf_l) {
   l1 <- Line(coordinates(g2))
   l2 <- Lines(list(l1),ID=rd_id)
   return(l2)
-}
-
-#' Return the geometries for a route as single line
-#' @param a route_id
-#' @param a gtfsr
-#' @return linestring with an id
-get_geoms_by_route <- function(r_id,sldf_list) {
-  t1 <- as.data.frame(hf_l$df[hf_l$df$route_id == r_id & hf_l$df$direction_id == d_id,"shape_id"])
-  dfsp1 <- hf_l$sldf[hf_l$sldf$shape_id %in% t1[,1],]
-  g1 <- geometry(dfsp1)
-  g2 <- gLineMerge(g1,byid=FALSE,id=rd_id)
-  if(length(g2)>1){stop("more than 1 sp Line after merge of gtfs shapes for route")}
-  l1 <- Line(coordinates(g2))
-  l2 <- Lines(list(l1),ID=rd_id)
-  return(l2)
-}
-
-
-#' make high frequency routes spatial df
-#' @param df a list of routes
-#' @param gtfs_obj a gtfs list fromas read by the gtfsr package
-#' @return a spatial dataframe with indexed by the routes
-route_id_indexed_sldf <- function(df_rts, gtfs_obj) {
-  w1 <- apply(df_rts,1,get_single_route_geom)
-  w2 <- SpatialLines(w1)
-  Sldf <- SpatialLinesDataFrame(w2,data=df1)
-}
-
-#' make high frequency routes df into just routes and directions df, for use in construction geoms by route and direction sldf
-#' @param a dataframe made of am_routes and pm_routes
-#' @return a dataframe of routes by direction with headway stats for peak periods
-get_route_stats <- function(df1) {
-  df2 <- dcast(df1,route_id+direction_id~Peak_Period, value.var="Headway", fun.aggregate=mean)
-  names(df2)[3:4] <- c("am_headway","pm_headway")
-  df3 <- dcast(df1,route_id+direction_id~Peak_Period, value.var="Total_Trips", fun.aggregate=mean)
-  names(df3)[3:4] <- c("am_trips","pm_trips")
-  df4 <- inner_join(df2,df3)
-  row.names(df4) <- paste(df2$route_id,df2$direction_id,sep="-")
-  return(df4)
-}
-
-get_route_stats_no_direction <- function(df1) {
-  df2 <- dcast(df1,route_id~Peak_Period, value.var="Headway", fun.aggregate=mean)
-  names(df2)[2:3] <- c("avg_am_headway","avg_pm_headway")
-  df3 <- dcast(df1,route_id~Peak_Period, value.var="Total_Trips", fun.aggregate=mean)
-  names(df3)[2:3] <- c("avg_am_trips","avg_pm_trips")
-  df4 <- inner_join(df2,df3,by=c("route_id"))
-  return(df4)
-}
-
-#' get a Route Pattern ID
-#' @param dataframe
-#' @returns a vector which combines the agency id, route id, and direction id in a string 
-get_route_pattern_id <- function(df) {
-  df$Route_Pattern_ID<-paste0(df$agency_id,
-                                 "-",df$route_id,"-",
-                                 df$direction_id)
-}
-
-#' string match check for loop routes
-#' @param headsign vector
-#' @return boolean/logical vector indicating whether its a loop
-is_loop_route <- function(headsign){
-  grepl('loop', headsign, ignore.case = TRUE)
-}
-
-#' check for bidirectional routes
-#' @param dataframe with route_id and direction_id columns
-#' @return boolean/logical vector indicating whether the loop goes in both directions
-is_in_both_directions <- function(df_rt_dr){
-  g1 <- group_by(df_rt_dr,route_id)
-  s1 <- summarise(g1, both=both_directions_bool_check(direction_id))
-  s2 <- df_rt_dr$route_id %in% s1[s1$both==TRUE,]$route_id
-  return(s2)
-}
-
-
-
-#'
-#'
-#'
-both_directions_bool_check <- function(direction_ids){
-  1 %in% direction_ids &
-    0 %in% direction_ids
 }
