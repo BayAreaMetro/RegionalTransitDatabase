@@ -285,14 +285,8 @@ spdfout2 <- l_high_frqncy_stps[[1]]
 spdfout2$agency <- names(l_high_frqncy_stps[1])
 
 for (s in names(l_high_frqncy_stps[2:length(l_high_frqncy_stps)])) {
-  print(s)
   tsdf <- l_high_frqncy_stps[[s]]
-  print(head(tsdf))
   tsdf$agency <- rep(s,nrow(tsdf))
-  print(class(tsdf))
-  print(class(spdfout2))
-  print(names(tsdf))
-  print(names(spdfout2))
   spdfout2 <- rbind(spdfout2,tsdf)
 }
 
