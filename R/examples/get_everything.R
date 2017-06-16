@@ -231,7 +231,7 @@ for (provider in providers) {
 
 
 #################
-#bind routes 
+#bind routes
 #together
 ################
 
@@ -241,20 +241,20 @@ for (provider in providers) {
 
 
 
-# 
-# spdfout <- l_high_frqncy_rt_bffrs_1_4[[1]]
-# spdfout$agency <- names(l_high_frqncy_rt_bffrs_1_4[1])
-# 
-# for (s in names(l_high_frqncy_rt_bffrs_1_4[2:length(l_high_frqncy_rt_bffrs_1_4)])) {
-#   tsdf <- l_high_frqncy_rt_bffrs_1_4[[s]]
-#   tsdf$agency <- rep(s,nrow(tsdf))
-#   spdfout <- rbind(spdfout,tsdf)
-# }
-# 
-# library(rgdal)
-# 
-# proj4string(spdfout) <- CRS("+init=epsg:26910")
-# writeOGR(spdfout,"hf_buffer_1_4.gpkg",driver="GPKG",layer = "hf_buffer", overwrite_layer = TRUE)
+
+spdfout <- l_high_frqncy_rt_bffrs_1_4[[1]]
+spdfout$agency <- names(l_high_frqncy_rt_bffrs_1_4[1])
+
+for (s in names(l_high_frqncy_rt_bffrs_1_4[2:length(l_high_frqncy_rt_bffrs_1_4)])) {
+  tsdf <- l_high_frqncy_rt_bffrs_1_4[[s]]
+  tsdf$agency <- rep(s,nrow(tsdf))
+  spdfout <- rbind(spdfout,tsdf)
+}
+
+library(rgdal)
+
+proj4string(spdfout) <- CRS("+init=epsg:26910")
+writeOGR(spdfout,"hf_buffer_1_4.gpkg",driver="GPKG",layer = "hf_buffer", overwrite_layer = TRUE)
 
 ####
 ##1/2 mile
@@ -273,40 +273,39 @@ library(rgdal)
 proj4string(spdfout) <- CRS("+init=epsg:26910")
 writeOGR(spdfout,"hf_buffer_1_2_2.gpkg",driver="GPKG",layer = "hf_buffer_2", overwrite_layer = TRUE)
 
-# 
-# spdfout_26910 <- spTransform(spdfout, CRS("+init=epsg:26910"))
-# writeOGR(spdfout_26910,"hf_bus_routes_26910.gpkg",driver="GPKG",layer = "hfbus_routes_26910", overwrite_layer = TRUE)
 
-#################
-#bind stops 
-#together
+spdfout_26910 <- spTransform(spdfout, CRS("+init=epsg:26910"))
+writeOGR(spdfout_26910,"hf_bus_routes_26910.gpkg",driver="GPKG",layer = "hfbus_routes_26910", overwrite_layer = TRUE)
 ################
-# 
-# spdfout2 <- l_high_frqncy_stps[[1]]
-# spdfout2$agency <- names(l_high_frqncy_stps[1])
-# 
-# for (s in names(l_high_frqncy_stps[2:length(l_high_frqncy_stps)])) {
-#   print(s)
-#   tsdf <- l_high_frqncy_stps[[s]]
-#   print(head(tsdf))
-#   tsdf$agency <- rep(s,nrow(tsdf))
-#   print(class(tsdf))
-#   print(class(spdfout2))
-#   print(names(tsdf))
-#   print(names(spdfout2))
-#   spdfout2 <- rbind(spdfout2,tsdf)
-# }
-# 
-# 
-# library(rgdal)
-# 
-# spdfout2$mtcstpid <- seq(1,nrow(spdfout2))
-# 
-# writeOGR(spdfout2,"hf_stops.csv",driver="CSV",layer = "hf_stops", overwrite_layer = TRUE)
-# 
-# spdfout2_sp <- spdfout2[,c("mtcstpid")]
-# 
-# writeOGR(spdfout2_sp,"hf_stops_spatial.shp",driver="ESRI Shapefile",layer = "hf_stops", overwrite_layer = TRUE)
-# 
-# writeOGR(spdfout2,"hf_stops.gpkg",driver="GPKG",layer = "hf_stops", overwrite_layer = TRUE)
-# 
+#bind stops
+#together
+###############
+
+spdfout2 <- l_high_frqncy_stps[[1]]
+spdfout2$agency <- names(l_high_frqncy_stps[1])
+
+for (s in names(l_high_frqncy_stps[2:length(l_high_frqncy_stps)])) {
+  print(s)
+  tsdf <- l_high_frqncy_stps[[s]]
+  print(head(tsdf))
+  tsdf$agency <- rep(s,nrow(tsdf))
+  print(class(tsdf))
+  print(class(spdfout2))
+  print(names(tsdf))
+  print(names(spdfout2))
+  spdfout2 <- rbind(spdfout2,tsdf)
+}
+
+
+library(rgdal)
+
+spdfout2$mtcstpid <- seq(1,nrow(spdfout2))
+
+writeOGR(spdfout2,"hf_stops.csv",driver="CSV",layer = "hf_stops", overwrite_layer = TRUE)
+
+spdfout2_sp <- spdfout2[,c("mtcstpid")]
+
+writeOGR(spdfout2_sp,"hf_stops_spatial.shp",driver="ESRI Shapefile",layer = "hf_stops", overwrite_layer = TRUE)
+
+writeOGR(spdfout2,"hf_stops.gpkg",driver="GPKG",layer = "hf_stops", overwrite_layer = TRUE)
+
