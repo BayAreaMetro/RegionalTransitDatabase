@@ -274,6 +274,7 @@ deduplicate_final_table <- function(df_stp_rt_hf) {
 #' @param a dataframe made of am_routes and pm_routes
 #' @return a dataframe of routes by direction with headway stats for peak periods
 get_route_stats <- function(df1) {
+  library(reshape2)
   df2 <- dcast(df1,route_id+direction_id~Peak_Period, value.var="Headway", fun.aggregate=mean)
   names(df2)[3:4] <- c("am_headway","pm_headway")
   df3 <- dcast(df1,route_id+direction_id~Peak_Period, value.var="Total_Trips", fun.aggregate=mean)
@@ -337,7 +338,7 @@ both_directions_bool_check <- function(direction_ids){
 #' @param l1 is a route name
 #' @param gtfs_obj is a gtfsr list of gtfs dataframes
 #' @return routes geometries as polygons, for weekend service
-get_geoms <- function(route_id,gtfs_obj,weekday=TRUE,set_buffer=402.336) {
+get_geoms <- function(route_id,gtfs_obj,weekday=TRUE,buffer=402.336) {
   out <- tryCatch({
     #get the spatial dataframe list from gtfsr
     l2 <- get_routes_sldf(gtfs_obj,route_id,NULL,NULL)
@@ -360,7 +361,7 @@ get_geoms <- function(route_id,gtfs_obj,weekday=TRUE,set_buffer=402.336) {
     #needed to use polygons since these aren't proper Lines (connected at endpoints)
     g1 <- geometry(df2)
     g1 <- spTransform(g1, CRS("+init=epsg:26910"))
-    g1 <- gBuffer(g1,width=set_buffer)
+    g1 <- gBuffer(g1,width=buffer)
     g2 <- gUnaryUnion(g1,id=route_id)
     return(g2)
     }, 
