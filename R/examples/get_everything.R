@@ -34,6 +34,8 @@ l_nearly_qualifying_routes <- list()
 l_non_qualifying_routes <- list()
 l_nearly_qualifying_routes_sp <- list()
 
+l_high_frqncy_stps <- list()
+
 ################################################
 # Section 3. Read a single provider set using GTFSr
 
@@ -65,6 +67,7 @@ for (provider in providers) {
       am_stops_hdwy <- subset(am_stops,
                               am_stops$Headways < 16)
       am_routes <- get_routes(am_stops_hdwy)
+      am_routes_nonq <- get_routes(am_stops)
       
       pm_stops <- flag_and_filter_peak_periods_by_time(df_sr,"PM")
       pm_stops <- remove_duplicate_stops(pm_stops) #todo: see https://github.com/MetropolitanTransportationCommission/RegionalTransitDatabase/issues/31
@@ -72,11 +75,14 @@ for (provider in providers) {
       pm_stops_hdwy <- subset(pm_stops,
                               pm_stops$Headways < 16)
       pm_routes <- get_routes(pm_stops_hdwy)
+      pm_routes_nonq <- get_routes(pm_stops)
       
       ###########################################################################################
       # Section 6. Join the calculated am and pm peak routes (tpa eligible) back to stop tables
       
       df_rt_hf <- join_high_frequency_routes_to_stops(am_stops,pm_stops,am_routes,pm_routes)
+      
+      # df_rt_hf_non_qualifying <- join_high_frequency_routes_to_stops(am_stops,pm_stops,am_routes_nonq,pm_routes_nonq)
       # 
       # ###########################################################################################
       # # Section 7. Join original stops mega-GTFSr data frame to Selected Routes for export to solve routes in Network Analyst
@@ -88,14 +94,42 @@ for (provider in providers) {
       #Remove select cols.
       df_stp_rt_hf <- df_stp_rt_hf[-c(1:13)]
       # 
-      
+
       df_stp_rt_hf$cnt_adjacent_hf_routes <- rep(0,nrow(df_stp_rt_hf))
       df_stp_rt_hf$lgcl_adjacent_hf_routes <- rep(FALSE,nrow(df_stp_rt_hf))
       
       df_stp_rt_hf <- df_stp_rt_hf[is_in_both_periods(df_stp_rt_hf[,c("stop_id","Peak_Period")]),]
       
+    
+      #do the same for all non-qualifying routes
+      # 
+      # df_stp_rt_hf_non_q <- join_mega_and_hf_routes(df_sr, df_rt_hf_non_qualifying)
+      # 
+      # df_stp_rt_hf_non_q <- deduplicate_final_table(df_stp_rt_hf_non_q)
+      # 
+      # #Remove select cols.
+      # df_stp_rt_hf_non_q <- df_stp_rt_hf_non_q[-c(1:13)]
+      
+      
       ########
       ##Routes
+      ########
+      
+      df_non_qualifying_rts <- rbind(am_routes_nonq,pm_routes_nonq)
+      
+      df_non_qualifying_route_ids <- names(table(df_non_qualifying_rts$route_id))
+      spply_non_q <- get_route_geometries(df_non_qualifying_route_ids, buffer=0.10)
+      
+      df_non_qualifying_routes_stats <- get_route_stats_no_direction(df_non_qualifying_rts)
+      row.names(df_non_qualifying_routes_stats) <- df_non_qualifying_routes_stats$route_id
+      
+      df_non_qualifying_rts_sbst <- df_non_qualifying_routes_stats[df_non_qualifying_routes_stats$route_id %in% getSpPPolygonsIDSlots(spply_non_q),]
+      nq_sp <- SpatialPolygonsDataFrame(Sr=spply_non_q, data=as.data.frame(df_non_qualifying_rts_sbst),FALSE)
+      l_non_qualifying_routes[[provider]] <- nq_sp
+
+      
+      ########
+      ##Routes-Qualifying
       ########
       
       if (dim(am_routes)[1] > 0 & dim(pm_routes)[1] > 0) {
@@ -126,25 +160,17 @@ for (provider in providers) {
         
         df_potential_routes <- rbind(am_routes,pm_routes)
         
-        df_non_qualifying_rts <- gtfs_obj$routes_df[!gtfs_obj$routes_df$route_id %in% df_potential_routes$route_id,]
-        row.names(df_non_qualifying_rts) <- df_non_qualifying_rts$route_id
-        df_non_qualifying_route_ids <- names(table(df_non_qualifying_rts$route_id))
-        spply_non_q <- get_route_geometries(df_non_qualifying_route_ids, buffer=0.10)
-        df_non_qualifying_rts_sbst <- df_non_qualifying_rts[df_non_qualifying_rts$route_id %in% getSpPPolygonsIDSlots(spply_non_q),]
-        nq_sp <- SpatialPolygonsDataFrame(Sr=spply_non_q, data=as.data.frame(df_non_qualifying_rts_sbst),FALSE)
-        l_non_qualifying_routes[[provider]] <- nq_sp
-        
-        df_nearly_qualifying_rts <- df_potential_routes[!df_potential_routes$route_id %in% df_qualifying_routes$route_id,] 
-        
-        l_nearly_qualifying_routes[[provider]] <- df_nearly_qualifying_rts
-        
-        df_nearly_qualifying_rts <- gtfs_obj$routes_df[!gtfs_obj$routes_df$route_id %in% df_qualifying_routes$route_id,]
-        row.names(df_nearly_qualifying_rts) <- df_nearly_qualifying_rts$route_id
-        df_non_qualifying_route_ids <- names(table(df_nearly_qualifying_rts$route_id))
-        spply_nrly_q <- get_route_geometries(df_non_qualifying_route_ids, buffer=0.10)
-        df_nearly_qualifying_rts_sbst <- df_nearly_qualifying_rts[df_nearly_qualifying_rts$route_id %in% getSpPPolygonsIDSlots(spply_nrly_q),]
-        nrly_q_sp <- SpatialPolygonsDataFrame(Sr=spply_nrly_q, data=as.data.frame(df_nearly_qualifying_rts_sbst),FALSE)
-        l_nearly_qualifying_routes_sp[[provider]] <- nrly_q_sp
+        # df_nearly_qualifying_rts <- df_potential_routes[!df_potential_routes$route_id %in% df_qualifying_routes$route_id,] 
+        # 
+        # l_nearly_qualifying_routes[[provider]] <- df_nearly_qualifying_rts
+        # 
+        # df_nearly_qualifying_rts <- gtfs_obj$routes_df[!gtfs_obj$routes_df$route_id %in% df_qualifying_routes$route_id,]
+        # row.names(df_nearly_qualifying_rts) <- df_nearly_qualifying_rts$route_id
+        # df_non_qualifying_route_ids <- names(table(df_nearly_qualifying_rts$route_id))
+        # spply_nrly_q <- get_route_geometries(df_non_qualifying_route_ids, buffer=0.10)
+        # df_nearly_qualifying_rts_sbst <- df_nearly_qualifying_rts[df_nearly_qualifying_rts$route_id %in% getSpPPolygonsIDSlots(spply_nrly_q),]
+        # nrly_q_sp <- SpatialPolygonsDataFrame(Sr=spply_nrly_q, data=as.data.frame(df_nearly_qualifying_rts_sbst),FALSE)
+        # l_nearly_qualifying_routes_sp[[provider]] <- nrly_q_sp
         
         if(dim(df_qualifying_routes)[1]>0){
           
@@ -179,21 +205,22 @@ for (provider in providers) {
           ###from hf Stops
           ########
           
-          # spply_1_4_minimal <- get_route_geometries(tpa_route_ids, buffer=0.10)
-          # 
-          # proj4string(spply_1_4_minimal) <- CRS("+init=epsg:26910")
-          # 
-          # df_rt_frqncy_sptl <- SpatialPolygonsDataFrame(Sr=spply_1_4_minimal, data=df_qualifying_routes_stats,FALSE)
+          spply_minimal <- get_route_geometries(tpa_route_ids, buffer=0.10)
           
+          proj4string(spply_minimal) <- CRS("+init=epsg:26910")
           
-          # if(dim(as.data.frame(df_rt_buffer_minimal))[1]>0) {
-          #   
-          #   df_stp_rt_hf_xy$dst_frm_rte <- get_stops_distances_from_routes(df_stp_rt_hf_xy,df_rt_buffer_minimal)
-          #   
-          #   df_stp_rt_hf_xy$src_rt <- df_stp_rt_hf_xy$route_id %in% names(table(df_rt_buffer_minimal$route_id))
-          #   l_high_frqncy_stps[provider] <- df_stp_rt_hf_xy
-          #   
-          # } 
+          df_rt_frqncy_sptl <- SpatialPolygonsDataFrame(Sr=spply_minimal, data=df_qualifying_routes_stats,FALSE)
+          
+          if(dim(as.data.frame(df_rt_frqncy_sptl))[1]>0) {
+            
+            df_stp_rt_hf_xy <- df_stp_rt_hf_xy[df_stp_rt_hf_xy$route_id %in% df_rt_frqncy_sptl$route_id,] 
+            
+            df_stp_rt_hf_xy$dst_frm_rte <- get_stops_distances_from_routes(df_stp_rt_hf_xy,df_rt_frqncy_sptl)
+            
+            df_stp_rt_hf_xy$src_rt <- df_stp_rt_hf_xy$route_id %in% names(table(df_rt_frqncy_sptl$route_id))
+            l_high_frqncy_stps[[provider]] <- df_stp_rt_hf_xy
+            
+          }
 
           } 
       }
@@ -230,14 +257,14 @@ nearly_qualifying_routes <- bind_list_of_routes_spatial_dataframes(l_nearly_qual
 #together
 ###############
 
-# spdfout_stps <- l_high_frqncy_stps[[1]]
-# spdfout_stps$agency <- names(l_high_frqncy_stps[1])
-# 
-# for (s in names(l_high_frqncy_stps[2:length(l_high_frqncy_stps)])) {
-#   tsdf <- l_high_frqncy_stps[[s]]
-#   tsdf$agency <- rep(s,nrow(tsdf))
-#   spdfout_stps <- rbind(spdfout_stps,tsdf)
-# }
+spdfout_stps <- l_high_frqncy_stps[[1]]
+spdfout_stps$agency <- names(l_high_frqncy_stps[1])
+
+for (s in names(l_high_frqncy_stps[2:length(l_high_frqncy_stps)])) {
+  tsdf <- l_high_frqncy_stps[[s]]
+  tsdf$agency <- rep(s,nrow(tsdf))
+  spdfout_stps <- rbind(spdfout_stps,tsdf)
+}
 
 ############
 ##Write to Files
@@ -248,14 +275,10 @@ write_to_geopackage_with_date(spdfout_1_4)
 write_to_geopackage_with_date(non_qualifying_routes)
 write_to_geopackage_with_date(nearly_qualifying_routes)
 
-#fix buggy names,
-#for why, see: http://r-sig-geo.2731867.n2.nabble.com/Bug-in-writeOGR-MSSQLSpatial-driver-td7583633.html
+# fix buggy names,
+# for why, see: http://r-sig-geo.2731867.n2.nabble.com/Bug-in-writeOGR-MSSQLSpatial-driver-td7583633.html
 # row.names(spdfout_stps) <- as.character(1:nrow(spdfout_stps))
-# writeOGR(spdfout_stps,
-#          "hf_stops1.gpkg",
-#          driver="GPKG",
-#          layer = "hf_stops2",
-#          overwrite_layer = TRUE)
 
+write_to_geopackage_with_date(spdfout_stps)
 
 
