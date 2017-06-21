@@ -212,17 +212,28 @@ for (provider in providers) {
           df_rt_frqncy_sptl <- SpatialPolygonsDataFrame(Sr=spply_minimal, data=df_qualifying_routes_stats,FALSE)
           
           if(dim(as.data.frame(df_rt_frqncy_sptl))[1]>0) {
-            
+            #drop stops not on hf routes
             df_stp_rt_hf_xy <- df_stp_rt_hf_xy[df_stp_rt_hf_xy$route_id %in% df_rt_frqncy_sptl$route_id,] 
             
+            #get high freq stops with hf neigbors
+            m1 <- gWithinDistance(df_stp_rt_hf_xy, df_stp_rt_hf_xy, byid = TRUE, dist = 321.869)
+            m2 <- outer(df_stp_rt_hf_xy$route_id,df_stp_rt_hf_xy$route_id, FUN= "!=")
+            m3 <- m1 == TRUE & m2 == TRUE
+
+            number_of_routes_within_distance <- function(x){table(x)['TRUE']}
+            l1 <- apply(m3,2,number_of_routes_within_distance)
+            df_stp_rt_hf_xy$cnt_adjacent_hf_routes <- l1
+            
+            within_distance_of_more_than_one_route <- function(x){table(x)['TRUE']>0}
+            l2 <- apply(m3,2,within_distance_of_more_than_one_route)
+            l2[is.na(l2)] <- FALSE
+            
+            df_stp_rt_hf_xy$lgcl_adjacent_hf_routes <- l2
             df_stp_rt_hf_xy$dst_frm_rte <- get_stops_distances_from_routes(df_stp_rt_hf_xy,df_rt_frqncy_sptl)
             
-            df_stp_rt_hf_xy$src_rt <- df_stp_rt_hf_xy$route_id %in% names(table(df_rt_frqncy_sptl$route_id))
             l_high_frqncy_stps[[provider]] <- df_stp_rt_hf_xy
-            
           }
-
-          } 
+        } 
       }
       
       #writeOGR(df_sp$gtfslines,"Sf_geoms3.csv",driver="CSV",layer = "sf",dataset_options = c("GEOMETRY=AS_WKT"))
@@ -240,13 +251,13 @@ for (provider in providers) {
 ##1/4 mile
 ####
 
-spdfout_1_4 <- bind_list_of_routes_spatial_dataframes(l_high_frqncy_rt_bffrs_1_4)
+hf_rts_1_4_ml_buf <- bind_list_of_routes_spatial_dataframes(l_high_frqncy_rt_bffrs_1_4)
 
 ####
 ##1/2 mile
 ####
 
-spdfout_1_2 <- bind_list_of_routes_spatial_dataframes(l_high_frqncy_rt_bffrs_1_2)
+hf_rts_1_2_ml_buf <- bind_list_of_routes_spatial_dataframes(l_high_frqncy_rt_bffrs_1_2)
 
 non_qualifying_routes <- bind_list_of_routes_spatial_dataframes(l_non_qualifying_routes)
 
@@ -270,8 +281,8 @@ for (s in names(l_high_frqncy_stps[2:length(l_high_frqncy_stps)])) {
 ##Write to Files
 ############
 
-write_to_geopackage_with_date(spdfout_1_2)
-write_to_geopackage_with_date(spdfout_1_4)
+write_to_geopackage_with_date(hf_rts_1_2_ml_buf)
+write_to_geopackage_with_date(hf_rts_1_4_ml_buf)
 write_to_geopackage_with_date(non_qualifying_routes)
 write_to_geopackage_with_date(nearly_qualifying_routes)
 
@@ -280,5 +291,13 @@ write_to_geopackage_with_date(nearly_qualifying_routes)
 # row.names(spdfout_stps) <- as.character(1:nrow(spdfout_stps))
 
 write_to_geopackage_with_date(spdfout_stps)
+
+hf_stops_with_hf_neighbors <- spdfout_stps[spdfout_stps$lgcl_adjacent_hf_routes==TRUE,]
+
+hf_stops_with_hf_neighbors_buffer <- SpatialPolygonsDataFrame(
+  gBuffer(hf_stops_with_hf_neighbors,width=804.672,byid = TRUE),
+  data=hf_stops_with_hf_neighbors@data)
+
+write_to_geopackage_with_date(hf_stops_with_hf_neighbors_buffer)
 
 
