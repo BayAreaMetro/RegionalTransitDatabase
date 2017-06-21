@@ -274,7 +274,6 @@ deduplicate_final_table <- function(df_stp_rt_hf) {
 #' @param a dataframe made of am_routes and pm_routes
 #' @return a dataframe of routes by direction with headway stats for peak periods
 get_route_stats <- function(df1) {
-  library(reshape2)
   df2 <- dcast(df1,route_id+direction_id~Peak_Period, value.var="Headway", fun.aggregate=mean)
   names(df2)[3:4] <- c("am_headway","pm_headway")
   df3 <- dcast(df1,route_id+direction_id~Peak_Period, value.var="Total_Trips", fun.aggregate=mean)
@@ -314,13 +313,32 @@ is_loop_route <- function(headsign){
 
 #' check for bidirectional routes
 #' @param dataframe with route_id and direction_id columns
-#' @return boolean/logical vector indicating whether the loop goes in both directions
+#' @return boolean/logical vector indicating whether the route goes in both directions
 is_in_both_directions <- function(df_rt_dr){
   g1 <- group_by(df_rt_dr,route_id)
   s1 <- summarise(g1, both=both_directions_bool_check(direction_id))
   s2 <- df_rt_dr$route_id %in% s1[s1$both==TRUE,]$route_id
   return(s2)
 }
+
+#' check for dual period stops
+#' @param dataframe with stop_id and "peak" columns
+#' @return boolean/logical vector indicating whether the stop is in both am and pm periods
+is_in_both_periods <- function(df_rt_dr){
+  g1 <- group_by(df_rt_dr,stop_id)
+  s1 <- summarise(g1, both=both_periods_bool_check(Peak_Period))
+  s2 <- df_rt_dr$stop_id %in% s1[s1$both==TRUE,]$stop_id
+  return(s2)
+}
+
+#'given a string vector, check whether both 0 and 1 are in it
+#' @param string vector of
+#' @return logical vector
+both_periods_bool_check <- function(direction_ids){
+  "AM Peak" %in% direction_ids & "PM Peak" %in% direction_ids
+}
+
+
 
 #'given a string vector, check whether both 0 and 1 are in it
 #' @param string vector of
@@ -387,3 +405,38 @@ get_single_route_geom <- function(x,hf_l) {
   l2 <- Lines(list(l1),ID=rd_id)
   return(l2)
 }
+
+get_route_geometries <- function(route_ids,buffer){
+  l3 <- lapply(route_ids,FUN=get_geoms,gtfs_obj=gtfs_obj, buffer=buffer)
+  
+  list.condition <- sapply(l3, function(x) class(x)!="SpatialPolygons")
+  l4  <- l3[list.condition]
+  print(l4)
+  
+  list.condition <- sapply(l3, function(x) class(x)=="SpatialPolygons")
+  l3  <- l3[list.condition]
+  
+  l3_flattened <- SpatialPolygons(lapply(l3, function(x){{x@polygons[[1]]}}))
+  
+  return(l3_flattened)
+}
+
+#tried doing this with "outer" but ran into s4 class coersion error
+get_stop_distance_from_route <- function(bus_stop,routes) {
+  route_id <- bus_stop$route_id
+  route <- routes[routes$route_id==route_id,]
+  distance <- gDistance(route, bus_stop)
+  return(distance)
+}
+
+get_stops_distances_from_routes <- function(stops,routes) {
+  distances <- numeric()
+  dflength <- dim(stops)[1]
+  
+  #tried lapply but had s4 class issue
+  for(bstop_ix in 1:dflength) {
+    distances <- c(distances,get_stop_distance_from_route(stops[bstop_ix,],routes))
+  }
+  return(distances)
+}
+
