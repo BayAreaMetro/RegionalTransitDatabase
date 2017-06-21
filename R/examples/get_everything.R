@@ -256,7 +256,6 @@ spdfout_stps <- l_high_frqncy_stps[[1]]
 spdfout_stps$agency <- names(l_high_frqncy_stps[1])
 
 for (s in names(l_high_frqncy_stps[2:length(l_high_frqncy_stps)])) {
-  print(s)
   tsdf <- l_high_frqncy_stps[[s]]
   tsdf$agency <- rep(s,nrow(tsdf))
   spdfout_stps <- rbind(spdfout_stps,tsdf)
