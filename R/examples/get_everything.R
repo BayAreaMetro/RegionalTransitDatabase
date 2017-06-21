@@ -125,8 +125,8 @@ for (provider in providers) {
       
       df_non_qualifying_rts_sbst <- df_non_qualifying_routes_stats[df_non_qualifying_routes_stats$route_id %in% getSpPPolygonsIDSlots(spply_non_q),]
       nq_sp <- SpatialPolygonsDataFrame(Sr=spply_non_q, data=as.data.frame(df_non_qualifying_rts_sbst),FALSE)
-      l_non_qualifying_routes[[provider]] <- nq_sp
-
+      
+      #see bottom of next if statement for where nq_sp is put in a list 
       
       ########
       ##Routes-Qualifying
@@ -233,7 +233,15 @@ for (provider in providers) {
             
             l_high_frqncy_stps[[provider]] <- df_stp_rt_hf_xy
           }
-        } 
+          
+        #drop qualifying routes from non-qualifying dataframe
+          nq_sp <- nq_sp[!nq_sp$route_id %in% tpa_route_ids,]
+          l_non_qualifying_routes[[provider]] <- nq_sp
+        }
+        else
+        {
+          l_non_qualifying_routes[[provider]] <- nq_sp  
+        }
       }
       
       #writeOGR(df_sp$gtfslines,"Sf_geoms3.csv",driver="CSV",layer = "sf",dataset_options = c("GEOMETRY=AS_WKT"))
@@ -268,13 +276,13 @@ nearly_qualifying_routes <- bind_list_of_routes_spatial_dataframes(l_nearly_qual
 #together
 ###############
 
-spdfout_stps <- l_high_frqncy_stps[[1]]
-spdfout_stps$agency <- names(l_high_frqncy_stps[1])
+hf_stops <- l_high_frqncy_stps[[1]]
+hf_stops$agency <- names(l_high_frqncy_stps[1])
 
 for (s in names(l_high_frqncy_stps[2:length(l_high_frqncy_stps)])) {
   tsdf <- l_high_frqncy_stps[[s]]
   tsdf$agency <- rep(s,nrow(tsdf))
-  spdfout_stps <- rbind(spdfout_stps,tsdf)
+  hf_stops <- rbind(hf_stops,tsdf)
 }
 
 ############
@@ -284,15 +292,14 @@ for (s in names(l_high_frqncy_stps[2:length(l_high_frqncy_stps)])) {
 write_to_geopackage_with_date(hf_rts_1_2_ml_buf)
 write_to_geopackage_with_date(hf_rts_1_4_ml_buf)
 write_to_geopackage_with_date(non_qualifying_routes)
-write_to_geopackage_with_date(nearly_qualifying_routes)
 
 # fix buggy names,
 # for why, see: http://r-sig-geo.2731867.n2.nabble.com/Bug-in-writeOGR-MSSQLSpatial-driver-td7583633.html
 # row.names(spdfout_stps) <- as.character(1:nrow(spdfout_stps))
 
-write_to_geopackage_with_date(spdfout_stps)
+write_to_geopackage_with_date(hf_stops)
 
-hf_stops_with_hf_neighbors <- spdfout_stps[spdfout_stps$lgcl_adjacent_hf_routes==TRUE,]
+hf_stops_with_hf_neighbors <- hf_stops[hf_stops$lgcl_adjacent_hf_routes==TRUE,]
 
 hf_stops_with_hf_neighbors_buffer <- SpatialPolygonsDataFrame(
   gBuffer(hf_stops_with_hf_neighbors,width=804.672,byid = TRUE),

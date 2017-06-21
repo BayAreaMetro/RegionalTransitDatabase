@@ -465,7 +465,7 @@ write_to_geopackage_with_date <- function(spdf) {
   library(rgdal)
   the_name <- deparse(substitute(spdf))
   writeOGR(spdf,
-           paste0(the_name,"_",format(Sys.time(), "%s"),".gpkg"),
+           paste0(format(Sys.time(),"%s"),the_name,"_",".gpkg"),
            driver="GPKG",
            layer = the_name, 
            overwrite_layer = TRUE)
