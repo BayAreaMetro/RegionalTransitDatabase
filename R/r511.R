@@ -440,3 +440,31 @@ get_stops_distances_from_routes <- function(stops,routes) {
   return(distances)
 }
 
+#' put a list of spatial dataframes (with agency_id as the list key) together into one
+#' @param a list of routes sp class dataframes
+#' @return an sp class dataframe
+#' 
+bind_list_of_routes_spatial_dataframes <- function(alist) { 
+  spdf <- alist[[1]]
+  spdf$agency <- names(alist[1])
+  for (s in names(alist[2:length(alist)])) {
+    tmp_sdf <- alist[[s]]
+    tmp_sdf$agency <- rep(s,nrow(tmp_sdf))
+    spdf <- rbind(spdf,tmp_sdf)
+  }
+  proj4string(spdf) <- CRS("+init=epsg:26910")
+  return(spdf)
+}
+#'write a spatial dataframe to the current working directory as a geopackage (with date in name-seconds since the epoch)
+#'@param spatial dataframe
+#'@return nothing
+write_to_geopackage_with_date <- function(spdf) {
+  library(rgdal)
+  the_name <- deparse(substitute(spdf))
+  writeOGR(spdf,
+           paste0(the_name,"_",format(Sys.time(), "%s"),".gpkg"),
+           driver="GPKG",
+           layer = the_name, 
+           overwrite_layer = TRUE)
+}
+

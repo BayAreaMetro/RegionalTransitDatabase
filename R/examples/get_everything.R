@@ -29,25 +29,17 @@ providers <- fromJSON(paste(readLines(json_file), collapse=""))
 l_high_frqncy_rt_bffrs_1_4 <- list()
 l_high_frqncy_rt_bffrs_1_2 <- list()
 
-l_high_frqncy_stps <- list()
-l_high_frqncy_stps_non_spatial <- list()
-l_candidate_routes <- list()
-
 l_all_stops <- list()
-
 l_nearly_qualifying_routes <- list()
-
 l_non_qualifying_routes <- list()
-
-l_nearly_qualifying_routes_sp <M- list()
+l_nearly_qualifying_routes_sp <- list()
 
 ################################################
 # Section 3. Read a single provider set using GTFSr
 
-for (provider in c("SM","SF")) {
+for (provider in providers) {
   try(
     {
-      l_candidate_routes_provider <- list()
       zip_path <- paste0(provider,".zip",collapse="")
       gtfs_obj <- import_gtfs(zip_path, local=TRUE)
       
@@ -139,7 +131,7 @@ for (provider in c("SM","SF")) {
         df_non_qualifying_route_ids <- names(table(df_non_qualifying_rts$route_id))
         spply_non_q <- get_route_geometries(df_non_qualifying_route_ids, buffer=0.10)
         df_non_qualifying_rts_sbst <- df_non_qualifying_rts[df_non_qualifying_rts$route_id %in% getSpPPolygonsIDSlots(spply_non_q),]
-        nq_sp <- SpatialPolygonsDataFrame(Sr=spply_non_q, data=df_non_qualifying_rts_sbst,FALSE)
+        nq_sp <- SpatialPolygonsDataFrame(Sr=spply_non_q, data=as.data.frame(df_non_qualifying_rts_sbst),FALSE)
         l_non_qualifying_routes[[provider]] <- nq_sp
         
         df_nearly_qualifying_rts <- df_potential_routes[!df_potential_routes$route_id %in% df_qualifying_routes$route_id,] 
@@ -151,7 +143,7 @@ for (provider in c("SM","SF")) {
         df_non_qualifying_route_ids <- names(table(df_nearly_qualifying_rts$route_id))
         spply_nrly_q <- get_route_geometries(df_non_qualifying_route_ids, buffer=0.10)
         df_nearly_qualifying_rts_sbst <- df_nearly_qualifying_rts[df_nearly_qualifying_rts$route_id %in% getSpPPolygonsIDSlots(spply_nrly_q),]
-        nrly_q_sp <- SpatialPolygonsDataFrame(Sr=spply_nrly_q, data=df_nearly_qualifying_rts_sbst,FALSE)
+        nrly_q_sp <- SpatialPolygonsDataFrame(Sr=spply_nrly_q, data=as.data.frame(df_nearly_qualifying_rts_sbst),FALSE)
         l_nearly_qualifying_routes_sp[[provider]] <- nrly_q_sp
         
         if(dim(df_qualifying_routes)[1]>0){
@@ -221,63 +213,49 @@ for (provider in c("SM","SF")) {
 ##1/4 mile
 ####
 
-spdfout_1_4 <- l_high_frqncy_rt_bffrs_1_4[[1]]
-spdfout_1_4$agency <- names(l_high_frqncy_rt_bffrs_1_4[1])
-
-for (s in names(l_high_frqncy_rt_bffrs_1_4[2:length(l_high_frqncy_rt_bffrs_1_4)])) {
-  tsdf <- l_high_frqncy_rt_bffrs_1_4[[s]]
-  tsdf$agency <- rep(s,nrow(tsdf))
-  spdfout_1_4 <- rbind(spdfout_1_4,tsdf)
-}
-
-proj4string(spdfout_1_4) <- CRS("+init=epsg:26910")
+spdfout_1_4 <- bind_list_of_routes_spatial_dataframes(l_high_frqncy_rt_bffrs_1_4)
 
 ####
 ##1/2 mile
 ####
 
-spdfout_1_2 <- l_high_frqncy_rt_bffrs_1_2[[1]]
-spdfout_1_2$agency <- names(l_high_frqncy_rt_bffrs_1_2[1])
+spdfout_1_2 <- bind_list_of_routes_spatial_dataframes(l_high_frqncy_rt_bffrs_1_2)
 
-for (s in names(l_high_frqncy_rt_bffrs_1_2[2:length(l_high_frqncy_rt_bffrs_1_2)])) {
-  tsdf <- l_high_frqncy_rt_bffrs_1_2[[s]]
-  tsdf$agency <- rep(s,nrow(tsdf))
-  spdfout_1_2 <- rbind(spdfout_1_2,tsdf)
-}
+non_qualifying_routes <- bind_list_of_routes_spatial_dataframes(l_non_qualifying_routes)
 
-proj4string(spdfout_1_2) <- CRS("+init=epsg:26910")
+nearly_qualifying_routes <- bind_list_of_routes_spatial_dataframes(l_nearly_qualifying_routes_sp)
 
 ################
 #bind stops
 #together
 ###############
 
-spdfout_stps <- l_high_frqncy_stps[[1]]
-spdfout_stps$agency <- names(l_high_frqncy_stps[1])
-
-for (s in names(l_high_frqncy_stps[2:length(l_high_frqncy_stps)])) {
-  tsdf <- l_high_frqncy_stps[[s]]
-  tsdf$agency <- rep(s,nrow(tsdf))
-  spdfout_stps <- rbind(spdfout_stps,tsdf)
-}
+# spdfout_stps <- l_high_frqncy_stps[[1]]
+# spdfout_stps$agency <- names(l_high_frqncy_stps[1])
+# 
+# for (s in names(l_high_frqncy_stps[2:length(l_high_frqncy_stps)])) {
+#   tsdf <- l_high_frqncy_stps[[s]]
+#   tsdf$agency <- rep(s,nrow(tsdf))
+#   spdfout_stps <- rbind(spdfout_stps,tsdf)
+# }
 
 ############
 ##Write to Files
 ############
 
-library(rgdal)
-
-writeOGR(spdfout_1_4,"spdfout_1_4.gpkg",driver="GPKG",layer = "hfbus_routes_1_4", overwrite_layer = TRUE)
-writeOGR(spdfout_1_2,"spdfout_1_2.gpkg",driver="GPKG",layer = "hfbus_routes_1_2", overwrite_layer = TRUE)
+write_to_geopackage_with_date(spdfout_1_2)
+write_to_geopackage_with_date(spdfout_1_4)
+write_to_geopackage_with_date(non_qualifying_routes)
+write_to_geopackage_with_date(nearly_qualifying_routes)
 
 #fix buggy names,
 #for why, see: http://r-sig-geo.2731867.n2.nabble.com/Bug-in-writeOGR-MSSQLSpatial-driver-td7583633.html
-row.names(spdfout_stps) <- as.character(1:nrow(spdfout_stps))
-writeOGR(spdfout_stps,
-         "hf_stops1.gpkg",
-         driver="GPKG",
-         layer = "hf_stops2",
-         overwrite_layer = TRUE)
+# row.names(spdfout_stps) <- as.character(1:nrow(spdfout_stps))
+# writeOGR(spdfout_stps,
+#          "hf_stops1.gpkg",
+#          driver="GPKG",
+#          layer = "hf_stops2",
+#          overwrite_layer = TRUE)
 
 
 
