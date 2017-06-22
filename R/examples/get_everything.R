@@ -4,7 +4,7 @@ PROJECT_PATH <- "C:/projects/RTD/RegionalTransitDatabase"
 GTFS_PATH <- paste0(PROJECT_PATH,"/data/gtfs_interpolated_05_01_20175/",collapse="")
 R_HELPER_FUNCTIONS_PATH <- paste0(PROJECT_PATH,"/R/r511.R",collapse="")
 source(R_HELPER_FUNCTIONS_PATH)
-CREDENTIALS_PATH <- paste0(PROJECT_PATH,"credentials.R",collapse="") 
+CREDENTIALS_PATH <- paste0(PROJECT_PATH,"/credentials.R",collapse="") 
 
 # if (!require(devtools)) {
 #   install.packages('devtools')
@@ -14,6 +14,7 @@ CREDENTIALS_PATH <- paste0(PROJECT_PATH,"credentials.R",collapse="")
 library(gtfsr)
 library(dplyr)
 library(rgeos)
+library(reshape2)
 
 setwd(GTFS_PATH)
 
@@ -113,7 +114,9 @@ for (provider in providers) {
       ##Routes
       ########
 
-      df_non_qualifying_rts <- get_routes_with_geoms_and_stats(am_routes_nonq,pm_routes_nonq)
+      df_routes_nonq <- rbind(am_routes_nonq,pm_routes_nonq)
+      
+      df_non_qualifying_rts <- get_routes_with_geoms_and_stats(df_routes_nonq)
     
       #see bottom of next if statement for where nq_sp is put in a list 
       
@@ -142,10 +145,16 @@ for (provider in providers) {
         pm_routes <- pm_routes[is_in_both_directions(pm_routes[,c("route_id","direction_id")]) 
                                | is_loop_route(pm_routes$trip_headsign),]
         
-        #in both am and pm
-        am_in_pm <- am_routes$route_id %in% pm_routes$route_id
-        pm_in_am <- pm_routes$route_id %in% am_routes$route_id
-        df_qualifying_routes <- rbind(am_routes[am_in_pm,],pm_routes[pm_in_am,])
+        all_am_pm_rts <- rbind(am_routes,pm_routes)
+        # divide into 2 dataframes:
+        # 1) routes that are in both am and pm peak periods (qualifying)
+        # 2) routes that are in one or the other but not both, or not in both directions (nearly qualifying)
+        am_pm_union <- union(am_routes$route_id, pm_routes$route_id)
+        am_pm_intersection <- intersect(am_routes$route_id, pm_routes$route_id)
+        nearly_qualifying_route_ids <- am_pm_union[!am_pm_union %in% am_pm_intersection]
+        
+        df_qualifying_routes <- all_am_pm_rts[all_am_pm_rts$route_id %in% am_pm_intersection,]
+        df_nearly_qualifying_routes <- all_am_pm_rts[all_am_pm_rts$route_id %in% nearly_qualifying_route_ids,]
         
         if(dim(df_potential_routes)[1]>0){
           l_nearly_qualifying_routes[[provider]] <- get_routes_with_geoms_and_stats(am_routes[!am_in_pm,],pm_routes[!pm_in_am,])
@@ -153,7 +162,7 @@ for (provider in providers) {
         
         if(dim(df_qualifying_routes)[1]>0){
           
-          library(reshape2)
+
           df_qualifying_routes_stats <- get_route_stats_no_direction(df_qualifying_routes)
           row.names(df_qualifying_routes_stats) <- df_qualifying_routes_stats$route_id
           ##############

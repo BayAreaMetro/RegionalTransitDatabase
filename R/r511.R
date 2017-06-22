@@ -472,12 +472,9 @@ write_to_geopackage_with_date <- function(spdf) {
 }
 
 #'given am routes and pm routes, return a spatial dataframe with the routes and their stats
-#'@param am_routes
-#'@param pm_routes
+#'@param df_routes
 #'@return spatial dataframe (polygons) of routes
-get_routes_with_geoms_and_stats <- function(am_routes,pm_routes) {
-  df1 <- rbind(am_routes,pm_routes)
-  
+get_routes_with_geoms_and_stats <- function(df_routes) {
   route_ids <- names(table(df1$route_id))
   spply_rts <- get_route_geometries(route_ids, buffer=0.10)
   
