@@ -37,131 +37,122 @@ l_nearly_qualifying_routes_sp <- list()
 
 l_high_frqncy_stps <- list()
 
+l_rt_frqncy_sptl <- list()
+
 ################################################
 # Section 3. Read a single provider set using GTFSr
 
-for (provider in providers) {
-      zip_path <- paste0(provider,".zip",collapse="")
-      gtfs_obj <- import_gtfs(zip_path, local=TRUE)
-      
-      #######
-      ##Stops
-      #######
-      
-      ###############################################
-      # Section 4. Join all the GTFS provider tables into 1 table based around stops
-      
-      
-      df_sr <- join_all_gtfs_tables(gtfs_obj)
-      df_sr <- make_arrival_hour_less_than_24(df_sr)
-      
-      l_all_stops[[provider]] <- as.data.frame(df_sr)
-      
-      ###########################################################################################
-      # Section 5. Create Peak Headway tables for weekday trips 
-      
-      am_stops <- flag_and_filter_peak_periods_by_time(df_sr,"AM")
-      am_stops <- remove_duplicate_stops(am_stops) #todo: see https://github.com/MetropolitanTransportationCommission/RegionalTransitDatabase/issues/31
-      am_stops <- count_trips(am_stops) 
-      am_stops_hdwy <- subset(am_stops,
-                              am_stops$Headways < 16)
-      am_routes <- get_routes(am_stops_hdwy)
-      am_routes_nonq <- get_routes(am_stops)
-      
-      pm_stops <- flag_and_filter_peak_periods_by_time(df_sr,"PM")
-      pm_stops <- remove_duplicate_stops(pm_stops) #todo: see https://github.com/MetropolitanTransportationCommission/RegionalTransitDatabase/issues/31
-      pm_stops <- count_trips(pm_stops)
-      pm_stops_hdwy <- subset(pm_stops,
-                              pm_stops$Headways < 16)
-      pm_routes <- get_routes(pm_stops_hdwy)
-      pm_routes_nonq <- get_routes(pm_stops)
-      
-      ###########################################################################################
-      # Section 6. Join the calculated am and pm peak routes (tpa eligible) back to stop tables
-      
-      df_rt_hf <- join_high_frequency_routes_to_stops(am_stops,pm_stops,am_routes,pm_routes)
-      
-      # df_rt_hf_non_qualifying <- join_high_frequency_routes_to_stops(am_stops,pm_stops,am_routes_nonq,pm_routes_nonq)
-      # 
-      # ###########################################################################################
-      # # Section 7. Join original stops mega-GTFSr data frame to Selected Routes for export to solve routes in Network Analyst
-      # 
-      df_stp_rt_hf <- join_mega_and_hf_routes(df_sr, df_rt_hf)
-      
-      df_stp_rt_hf <- deduplicate_final_table(df_stp_rt_hf)
-      
-      #Remove select cols.
-      df_stp_rt_hf <- df_stp_rt_hf[-c(1:13)]
-      # 
+# for (provider in c("AC")) {
 
-      df_stp_rt_hf$cnt_adjacent_hf_routes <- rep(0,nrow(df_stp_rt_hf))
-      df_stp_rt_hf$lgcl_adjacent_hf_routes <- rep(FALSE,nrow(df_stp_rt_hf))
-      
-      df_stp_rt_hf <- df_stp_rt_hf[is_in_both_periods(df_stp_rt_hf[,c("stop_id","Peak_Period")]),]
-      
-    
-      #do the same for all non-qualifying routes
-      # 
-      # df_stp_rt_hf_non_q <- join_mega_and_hf_routes(df_sr, df_rt_hf_non_qualifying)
-      # 
-      # df_stp_rt_hf_non_q <- deduplicate_final_table(df_stp_rt_hf_non_q)
-      # 
-      # #Remove select cols.
-      # df_stp_rt_hf_non_q <- df_stp_rt_hf_non_q[-c(1:13)]
-      
-      
-      ########
-      ##Routes
-      ########
+provider <- "AC"
 
-      df_routes_nonq <- rbind(am_routes_nonq,pm_routes_nonq)
+zip_path <- paste0(provider,".zip",collapse="")
+gtfs_obj <- import_gtfs(zip_path, local=TRUE)
+
+#######
+##Stops
+#######
+
+###############################################
+# Section 4. Join all the GTFS provider tables into 1 table based around stops
+
+  df_sr <- join_all_gtfs_tables(gtfs_obj)
+  df_sr <- make_arrival_hour_less_than_24(df_sr)
+
+gtfs_obj$mega_gtfs <- as.data.frame(df_sr)
       
-      df_non_qualifying_rts <- get_routes_with_geoms_and_stats(df_routes_nonq)
-    
-      #see bottom of next if statement for where nq_sp is put in a list 
-      
-      ########
-      ##Routes-Qualifying
-      ########
-      
-      if (dim(am_routes)[1] > 0 & dim(pm_routes)[1] > 0) {
-        #############################
-        ##Put stops into a 
-        ##SpatialPointsDataFrame
-        ##Need this later for distance 
-        ##from routes calculation
-        ############################
-        df_stp_rt_hf_xy <- as.data.frame(df_stp_rt_hf)
-        coordinates(df_stp_rt_hf_xy) = ~stop_lon + stop_lat
-        proj4string(df_stp_rt_hf_xy) <- CRS("+proj=longlat +datum=WGS84")
-        df_stp_rt_hf_xy <- spTransform(df_stp_rt_hf_xy, CRS("+init=epsg:26910"))
+###########################################################################################
+# Section 5. Create Peak Headway tables for weekday trips 
+
+  am_stops <- flag_and_filter_peak_periods_by_time(df_sr,"AM")
+  am_stops <- remove_duplicate_stops(am_stops) #todo: see https://github.com/MetropolitanTransportationCommission/RegionalTransitDatabase/issues/31
+  am_stops <- count_trips(am_stops) 
+  am_stops_hdwy <- subset(am_stops,
+                          am_stops$Headways < 16)
+  am_routes <- get_routes(am_stops_hdwy)
+  
+  
+  pm_stops <- flag_and_filter_peak_periods_by_time(df_sr,"PM")
+  pm_stops <- remove_duplicate_stops(pm_stops) #todo: see https://github.com/MetropolitanTransportationCommission/RegionalTransitDatabase/issues/31
+  pm_stops <- count_trips(pm_stops)
+  
+  pm_stops_hdwy <- subset(pm_stops,
+                          pm_stops$Headways < 16)
+  pm_routes <- get_routes(pm_stops_hdwy)
         
-        #both directions or loop
-        am_routes <- am_routes[!duplicated(as.list(am_routes))]
-        am_routes <- am_routes[is_in_both_directions(am_routes[,c("route_id","direction_id")]) 
-                               | is_loop_route(am_routes$trip_headsign),]
-        
-        pm_routes <- pm_routes[!duplicated(as.list(pm_routes))]
-        pm_routes <- pm_routes[is_in_both_directions(pm_routes[,c("route_id","direction_id")]) 
-                               | is_loop_route(pm_routes$trip_headsign),]
-        
-        all_am_pm_rts <- rbind(am_routes,pm_routes)
-        # divide into 2 dataframes:
-        # 1) routes that are in both am and pm peak periods (qualifying)
-        # 2) routes that are in one or the other but not both, or not in both directions (nearly qualifying)
-        am_pm_union <- union(am_routes$route_id, pm_routes$route_id)
-        am_pm_intersection <- intersect(am_routes$route_id, pm_routes$route_id)
-        nearly_qualifying_route_ids <- am_pm_union[!am_pm_union %in% am_pm_intersection]
-        
-        df_qualifying_routes <- all_am_pm_rts[all_am_pm_rts$route_id %in% am_pm_intersection,]
-        df_nearly_qualifying_routes <- all_am_pm_rts[all_am_pm_rts$route_id %in% nearly_qualifying_route_ids,]
-        
-        if(dim(df_potential_routes)[1]>0){
-          l_nearly_qualifying_routes[[provider]] <- get_routes_with_geoms_and_stats(am_routes[!am_in_pm,],pm_routes[!pm_in_am,])
-        } # end potential_routes if statement
-        
-        if(dim(df_qualifying_routes)[1]>0){
-          
+  #########
+  ######get non qualifying routes stats as dataframe
+  ########
+  am_routes_nonq <- get_routes(am_stops)
+  pm_routes_nonq <- get_routes(pm_stops)
+  
+  ########
+  ##Routes-Qualifying Check
+  ########
+  
+  # Input: am_routes and pm_routes dataframes
+  # Output: qualifying routes and nearly qualifying routes spatial dataframes
+  
+  # divide into 2 dataframes:
+  # 1) routes that are in both am and pm peak periods (qualifying)
+  # 2) routes that are in one or the other but not both, or not in both (nearly qualifying)
+  
+  ###### 1
+  
+  if (dim(am_routes)[1] > 0) {
+    am_routes_qual <- am_routes[!duplicated(as.list(am_routes))]
+    am_routes_qual <- am_routes_qual[is_in_both_directions(am_routes_qual[,c("route_id","direction_id")]) 
+                                     | is_loop_route(am_routes_qual$trip_headsign),]
+  }
+  
+  if (dim(pm_routes)[1] > 0) {
+    pm_routes_qual <- pm_routes[!duplicated(as.list(pm_routes))]
+    pm_routes_qual <- pm_routes_qual[is_in_both_directions(pm_routes_qual[,c("route_id","direction_id")]) 
+                                     | is_loop_route(pm_routes_qual$trip_headsign),]
+  }
+  
+  if (dim(am_routes_qual)[1] > 0 & dim(pm_routes_qual)[1] > 0) {
+    am_pm_union <- union(am_routes_qual$route_id, pm_routes_qual$route_id)
+    am_pm_intersection <- intersect(am_routes_qual$route_id, pm_routes_qual$route_id)
+    df1 <- rbind(am_routes_qual,pm_routes_qual)
+    df_qualifying_routes <- df1[df1$route_id %in% am_pm_intersection,]
+  }
+  
+  ###### 2
+  nearly_qualifying_route_ids <- am_pm_union[!am_pm_union %in% am_pm_intersection]
+  df2 <- rbind(am_routes,pm_routes)
+  df2 <- df2[!duplicated(as.list(df2)),]
+  
+  df_nearly_qualifying_routes <- df2[df2$route_id %in% nearly_qualifying_route_ids,]
+  df_nearly_qualifying_routes_sp <- get_routes_with_geoms_and_stats(df_nearly_qualifying_routes)
+
+  gtfs_obj$tpa_routes_nearly_qualifying <- df_nearly_qualifying_routes_sp
+  
+  ########
+  ##Routes - End qualifying check
+  ########      
+
+  df_non_qualifying_rts <- rbind(am_routes_nonq,pm_routes_nonq)
+  
+  df_non_qualifying_rts_sp <- get_routes_with_geoms_and_stats(df_non_qualifying_rts)
+
+  gtfs_obj$df_non_qualifying_rts_sp <- df_non_qualifying_rts_sp
+  
+  #see bottom of next if statement for where nq_sp is put in a list 
+
+  ########
+  ##Routes
+  ########
+
+      #param: df_qualifying_routes, 
+      #returns: l_high_frqncy_rt_bffrs_1_4, 
+      #         l_high_frqncy_rt_bffrs_1_2, 
+      #         l_df_rt_frqncy_sptl,
+      #         l_non_qualifying_routes,
+      #param: df_qualifying_routes, am_stops,pm_stops,am_routes,pm_routes,df_sr
+      #returns: l_high_frqncy_stps
+            
+      if(dim(df_qualifying_routes)[1]>0){
 
           df_qualifying_routes_stats <- get_route_stats_no_direction(df_qualifying_routes)
           row.names(df_qualifying_routes_stats) <- df_qualifying_routes_stats$route_id
@@ -188,10 +179,14 @@ for (provider in providers) {
           
           l_high_frqncy_rt_bffrs_1_2[provider] <- df_rt_frqncy_sptl_1_2
           
-          #########
-          ###Route Distance (02. miles)
-          ###from hf Stops
-          ########
+          ##############
+          #get route geometries 
+          #10 cm buffer
+          ###############
+          #lines don't work as well because 
+          #we are asking about routes without regard to direction, loop, etc
+          #a buffered polygon allows for this kind of shape, while an (sp class) line doesn't
+          #10 cm is an arbitrary number--small enough to not matter and hopefully big enough to see as a line.
           
           spply_minimal <- get_route_geometries(tpa_route_ids, buffer=0.10)
           
@@ -199,6 +194,68 @@ for (provider in providers) {
           
           df_rt_frqncy_sptl <- SpatialPolygonsDataFrame(Sr=spply_minimal, data=df_qualifying_routes_stats,FALSE)
           
+          l_rt_frqncy_sptl[provider] <- df_rt_frqncy_sptl
+          
+          ########
+          ##End Routes Processing
+          ########
+          
+          ########
+          ##Stops - Make a dataframe of stops along high frequency routes
+          ########
+
+          # Input: am_stops, pm_stops, am_routes, pm_routes, all stops (df_sr), dataframes
+          # Output: df_stp_rt_hf - a list of all high frequency stops
+          
+          ###########################################################################################
+          # Section 6. Join the calculated am and pm peak routes (tpa eligible) back to stop tables
+          
+          df_rt_hf <- join_high_frequency_routes_to_stops(am_stops,pm_stops,am_routes,pm_routes)
+          
+          # df_rt_hf_non_qualifying <- join_high_frequency_routes_to_stops(am_stops,pm_stops,am_routes_nonq,pm_routes_nonq)
+          # 
+          # ###########################################################################################
+          # # Section 7. Join original stops mega-GTFSr data frame to Selected Routes for export to solve routes in Network Analyst
+          # 
+          df_stp_rt_hf <- join_mega_and_hf_routes(df_sr, df_rt_hf)
+          
+          df_stp_rt_hf <- deduplicate_final_table(df_stp_rt_hf)
+          
+          #Remove select cols.
+          df_stp_rt_hf <- df_stp_rt_hf[-c(1:13)]
+ 
+          df_stp_rt_hf$cnt_adjacent_hf_routes <- rep(0,nrow(df_stp_rt_hf))
+          df_stp_rt_hf$lgcl_adjacent_hf_routes <- rep(FALSE,nrow(df_stp_rt_hf))
+          
+          df_stp_rt_hf <- df_stp_rt_hf[is_in_both_periods(df_stp_rt_hf[,c("stop_id","Peak_Period")]),]
+
+          ########
+          ##Stops - End of make a dataframe of stops along high frequency routes
+          ########
+                    
+          ############
+          ##distance from other routes 
+          ##calculation
+          ############################
+          # Input: df_stp_rt_hf, df_rt_frqncy_sptl
+          # Output: l_high_frqncy_stps
+          
+          #############################
+          ##Put stops into a 
+          ##SpatialPointsDataFrame
+          ###########################
+
+          df_stp_rt_hf_xy <- as.data.frame(df_stp_rt_hf)
+          coordinates(df_stp_rt_hf_xy) = ~stop_lon + stop_lat
+          proj4string(df_stp_rt_hf_xy) <- CRS("+proj=longlat +datum=WGS84")
+          df_stp_rt_hf_xy <- spTransform(df_stp_rt_hf_xy, CRS("+init=epsg:26910"))
+          
+          #########
+          ###Route Distance (02. miles)
+          ###from hf Stops
+          ########
+          
+          #only calculate and save distance information if the routes dataframe exists for the provider
           if(dim(as.data.frame(df_rt_frqncy_sptl))[1]>0) {
             #drop stops not on hf routes
             df_stp_rt_hf_xy <- df_stp_rt_hf_xy[df_stp_rt_hf_xy$route_id %in% df_rt_frqncy_sptl$route_id,] 
@@ -222,6 +279,11 @@ for (provider in providers) {
             l_high_frqncy_stps[[provider]] <- df_stp_rt_hf_xy
           }
           
+        ############
+        ##END distance from routes 
+        ##calculation
+        ############################
+          
         #drop qualifying routes from non-qualifying dataframe
           nq_sp <- nq_sp[!nq_sp$route_id %in% tpa_route_ids,]
           l_non_qualifying_routes[[provider]] <- nq_sp
@@ -232,7 +294,7 @@ for (provider in providers) {
         }
         
       #writeOGR(df_sp$gtfslines,"Sf_geoms3.csv",driver="CSV",layer = "sf",dataset_options = c("GEOMETRY=AS_WKT"))
-    }
+
 }
 
 
