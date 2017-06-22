@@ -76,39 +76,7 @@ for (provider in providers) {
       pm_routes <- get_routes(pm_stops_hdwy)
       pm_routes_nonq <- get_routes(pm_stops)
       
-      ###########################################################################################
-      # Section 6. Join the calculated am and pm peak routes (tpa eligible) back to stop tables
-      
-      df_rt_hf <- join_high_frequency_routes_to_stops(am_stops,pm_stops,am_routes,pm_routes)
-      
-      # df_rt_hf_non_qualifying <- join_high_frequency_routes_to_stops(am_stops,pm_stops,am_routes_nonq,pm_routes_nonq)
-      # 
-      # ###########################################################################################
-      # # Section 7. Join original stops mega-GTFSr data frame to Selected Routes for export to solve routes in Network Analyst
-      # 
-      df_stp_rt_hf <- join_mega_and_hf_routes(df_sr, df_rt_hf)
-      
-      df_stp_rt_hf <- deduplicate_final_table(df_stp_rt_hf)
-      
-      #Remove select cols.
-      df_stp_rt_hf <- df_stp_rt_hf[-c(1:13)]
-      # 
 
-      df_stp_rt_hf$cnt_adjacent_hf_routes <- rep(0,nrow(df_stp_rt_hf))
-      df_stp_rt_hf$lgcl_adjacent_hf_routes <- rep(FALSE,nrow(df_stp_rt_hf))
-      
-      df_stp_rt_hf <- df_stp_rt_hf[is_in_both_periods(df_stp_rt_hf[,c("stop_id","Peak_Period")]),]
-      
-    
-      #do the same for all non-qualifying routes
-      # 
-      # df_stp_rt_hf_non_q <- join_mega_and_hf_routes(df_sr, df_rt_hf_non_qualifying)
-      # 
-      # df_stp_rt_hf_non_q <- deduplicate_final_table(df_stp_rt_hf_non_q)
-      # 
-      # #Remove select cols.
-      # df_stp_rt_hf_non_q <- df_stp_rt_hf_non_q[-c(1:13)]
-      
       
       ########
       ##Routes
