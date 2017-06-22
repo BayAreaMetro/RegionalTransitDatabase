@@ -40,8 +40,6 @@ l_high_frqncy_stps <- list()
 # Section 3. Read a single provider set using GTFSr
 
 for (provider in providers) {
-  try(
-    {
       zip_path <- paste0(provider,".zip",collapse="")
       gtfs_obj <- import_gtfs(zip_path, local=TRUE)
       
@@ -114,18 +112,9 @@ for (provider in providers) {
       ########
       ##Routes
       ########
-      
-      df_non_qualifying_rts <- rbind(am_routes_nonq,pm_routes_nonq)
-      
-      df_non_qualifying_route_ids <- names(table(df_non_qualifying_rts$route_id))
-      spply_non_q <- get_route_geometries(df_non_qualifying_route_ids, buffer=0.10)
-      
-      df_non_qualifying_routes_stats <- get_route_stats_no_direction(df_non_qualifying_rts)
-      row.names(df_non_qualifying_routes_stats) <- df_non_qualifying_routes_stats$route_id
-      
-      df_non_qualifying_rts_sbst <- df_non_qualifying_routes_stats[df_non_qualifying_routes_stats$route_id %in% getSpPPolygonsIDSlots(spply_non_q),]
-      nq_sp <- SpatialPolygonsDataFrame(Sr=spply_non_q, data=as.data.frame(df_non_qualifying_rts_sbst),FALSE)
-      
+
+      df_non_qualifying_rts <- get_routes_with_geoms_and_stats(am_routes_nonq,pm_routes_nonq)
+    
       #see bottom of next if statement for where nq_sp is put in a list 
       
       ########
@@ -158,19 +147,9 @@ for (provider in providers) {
         pm_in_am <- pm_routes$route_id %in% am_routes$route_id
         df_qualifying_routes <- rbind(am_routes[am_in_pm,],pm_routes[pm_in_am,])
         
-        df_potential_routes <- rbind(am_routes,pm_routes)
-        
-        # df_nearly_qualifying_rts <- df_potential_routes[!df_potential_routes$route_id %in% df_qualifying_routes$route_id,] 
-        # 
-        # l_nearly_qualifying_routes[[provider]] <- df_nearly_qualifying_rts
-        # 
-        # df_nearly_qualifying_rts <- gtfs_obj$routes_df[!gtfs_obj$routes_df$route_id %in% df_qualifying_routes$route_id,]
-        # row.names(df_nearly_qualifying_rts) <- df_nearly_qualifying_rts$route_id
-        # df_non_qualifying_route_ids <- names(table(df_nearly_qualifying_rts$route_id))
-        # spply_nrly_q <- get_route_geometries(df_non_qualifying_route_ids, buffer=0.10)
-        # df_nearly_qualifying_rts_sbst <- df_nearly_qualifying_rts[df_nearly_qualifying_rts$route_id %in% getSpPPolygonsIDSlots(spply_nrly_q),]
-        # nrly_q_sp <- SpatialPolygonsDataFrame(Sr=spply_nrly_q, data=as.data.frame(df_nearly_qualifying_rts_sbst),FALSE)
-        # l_nearly_qualifying_routes_sp[[provider]] <- nrly_q_sp
+        if(dim(df_potential_routes)[1]>0){
+          l_nearly_qualifying_routes[[provider]] <- get_routes_with_geoms_and_stats(am_routes[!am_in_pm,],pm_routes[!pm_in_am,])
+        } # end potential_routes if statement
         
         if(dim(df_qualifying_routes)[1]>0){
           
@@ -242,11 +221,9 @@ for (provider in providers) {
         {
           l_non_qualifying_routes[[provider]] <- nq_sp  
         }
-      }
-      
+        
       #writeOGR(df_sp$gtfslines,"Sf_geoms3.csv",driver="CSV",layer = "sf",dataset_options = c("GEOMETRY=AS_WKT"))
     }
-  )
 }
 
 
