@@ -38,25 +38,29 @@ for (provider in providers) {
   gtfs_obj <- import_gtfs(zip_path, local=TRUE)
   
   l_gtfs_obj[[provider]] <- get_priority_routes(gtfs_obj)
+}
   
-  #this is a legacy setup--looping through these lists
-  if(exists("gtfs_obj_mtc$mtc_priority_stops") && 
-     is.data.frame(get("gtfs_obj_mtc$mtc_priority_stops")) &&
-     dim(gtfs_obj_mtc$mtc_priority_stops)[1]>0) {
-    l_high_frqncy_stops[[provider]] <- gtfs_obj_mtc$mtc_priority_stops
-  }
-  #l_high_frqncy_routes[[provider]] <- gtfs_objp$mtc_priority_routes
-  
-  ##TPA Geometry output - Line Buffers
-  if(exists("gtfs_obj_mtc$mtc_priority_routes") && 
-     is.data.frame(get("gtfs_obj_mtc$mtc_priority_routes")) &&
-     dim(gtfs_obj_mtc$mtc_priority_routes)[1]>0) {
-    l_high_frqncy_rt_bffrs_1_4[[provider]] <- get_buffered_tpa_routes(gtfs_obj_mtc$mtc_priority_routes, 
-                                                                      gtfs_obj_mtc, 
-                                                                      buffer=402.336)
-    l_high_frqncy_rt_bffrs_1_2[[provider]] <- get_buffered_tpa_routes(gtfs_obj_mtc$mtc_priority_routes, 
-                                                                      gtfs_obj_mtc, 
-                                                                      buffer=804.672)
+for (provider in providers) {
+  if(exists(provider, where=l_gtfs_obj)){
+    gtfs_obj_mtc <- l_gtfs_obj[[provider]]
+    #this is a legacy setup--looping through these lists
+    if(exists("mtc_priority_stops", where=gtfs_obj_mtc) && 
+       dim(gtfs_obj_mtc$mtc_priority_stops)[1]>0) {
+      print(provider)
+      l_high_frqncy_stops[[provider]] <- gtfs_obj_mtc$mtc_priority_stops
+    }
+    #l_high_frqncy_routes[[provider]] <- gtfs_objp$mtc_priority_routes
+    
+    ##TPA Geometry output - Line Buffers
+    if(exists("mtc_priority_routes", where=gtfs_obj_mtc) && 
+       dim(gtfs_obj_mtc$mtc_priority_stops)[1]>0) {
+      l_high_frqncy_rt_bffrs_1_4[[provider]] <- get_buffered_tpa_routes(gtfs_obj_mtc$mtc_priority_routes, 
+                                                                        gtfs_obj_mtc, 
+                                                                        buffer=402.336)
+      l_high_frqncy_rt_bffrs_1_2[[provider]] <- get_buffered_tpa_routes(gtfs_obj_mtc$mtc_priority_routes, 
+                                                                        gtfs_obj_mtc, 
+                                                                        buffer=804.672)
+    }
   }
 }
 
