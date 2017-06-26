@@ -15,39 +15,26 @@ Calculate frequency of service for stops and routes.
 
 [511 API Documentation](https://metrotrans-my.sharepoint.com/personal/ksmith_mtc_ca_gov/_layouts/15/guestaccess.aspx?guestaccesstoken=LaSLmz8PqjHcCy3J9t5JWiVYbBx2wq7AOn7XAeSI65c%3d&docid=2_1b3fffc8d501f42949c5c14bb423aa445)
 
-#### GTFS Flat Files    
-[RTD April 2016](https://mtcdrive.box.com/s/7zvjm6lqudj2gh7cfokt9g3hnzwvxoq0)   
-[RTD April 2017](https://mtcdrive.box.com/s/pkw8e0ng3n02b47mufaefqz5749cv5nm)     
-
-### Analysis Parameters   
-
 ### Methodology   
 
 ![rtd_process_outline.JPG](images/rtd_process_outline.JPG?raw=true)  
 
-#### [2016](https://metrotrans-my.sharepoint.com/personal/ksmith_mtc_ca_gov/_layouts/15/WopiFrame.aspx?sourcedoc=%7B2FB81C2E-8CF6-4BA4-8994-6B36F7E1B647%7D&file=511%20Data%20API%20Documentation.docx&action=default)
+Run these scripts to output the feature class linked below to your local machine:     
 
-#### 2017:     
+To skip Step 1 download processed (stop time interpolated) data [here](https://mtcdrive.box.com/s/41tfjd14hazu1x3qe53lt19u7fbiqdjk)
 
-A pseudo-shell/bat script with links reflecting the process thus far:   
+Step 1: data preprocessing   
+-  [get_and_format_511_gtfs_data](https://github.com/MetropolitanTransportationCommission/RegionalTransitDatabase/blob/master/python/get_and_format_511_for_sql.py)
+-  [interpolate blank stop times using gtfs-tools](https://github.com/MetropolitanTransportationCommission/RegionalTransitDatabase/blob/8a2ce450af213707bbc6d61dbd035363b40f058c/python/preprocess_gtfs_folders.py)
 
--  [get_and_format_511_gtfs_data](https://github.com/MetropolitanTransportationCommission/RegionalTransitDatabase/blob/master/python/get_and_format_511_for_sql.py)     
--  [calculate route frequencies for various times of day and types of transit, ad-hoc fixes to data where necessary](https://github.com/MetropolitanTransportationCommission/RegionalTransitDatabase/blob/f40857ee65e2aa833a6a4a63ddbe52ce4fe20d0c/R/RTD%20Data%20Processing.R)
--  [Build the Route Lines: Take the points for each route from previous step and then get route geometries](https://github.com/MetropolitanTransportationCommission/RegionalTransitDatabase/blob/a66673c376f9cb5468b39424f9439af18587c63b/python/network_analysis.py)   
+NOTE:for unknown reasons the gtfs tool for preprocessing seems to have dropped stop_times files during failures. you can use the following command to copy in stop_times from the source to fill those back in:   
+`find ./gtfs_pre_processed/ -type f \( -iname "stop_times.txt" \) -print | xargs -I {} cp -n {} ../gtfs_post_processed/{}`  
 
-##### To Calculate Stop Headways(Tabled momentarily):   
-
-Run the Preprocess GTFS Data for each operator.   
-
-Then run the [Count Trips at Stops](https://github.com/Esri/public-transit-tools/blob/master/better-bus-buffers/scripts/BBB_CountTripsAtStops.py) or [Points](https://github.com/Esri/public-transit-tools/blob/6451cf1de24d4e5b7337df402135f351a7eaf181/better-bus-buffers/scripts/BBB_CountTripsAtPoints.py) to calculate the Stop or Intersection frequency for Transit Service.   
+Step 2: frequency calculations and route geometries    
+-  [calculate route frequencies and output high frequency bus routes and stops](https://github.com/MetropolitanTransportationCommission/RegionalTransitDatabase/blob/e8c60dc4c76fd4227f1f960f08c00a742c297fd1/R/examples/get_everything.R)
+-  [add_transit and new routes](https://github.com/MetropolitanTransportationCommission/RegionalTransitDatabase/blob/a7cf88601fc73c0eca69aa6b24f2be1a9be3f04a/R/examples/add_transit_stops_new_routes_then_buffer.R)
+-  [make polygons from tpa eligible transit stops and routes](https://github.com/MetropolitanTransportationCommission/RegionalTransitDatabase/blob/a7cf88601fc73c0eca69aa6b24f2be1a9be3f04a/python/make_tpa_polygons.py)
 
 ### Outcomes   
 
-#### Flat Files:   
-
-#### Database details:   
-
-##### Ideas for Future Maps/Visualization:   
-
--  AM Peak/PM Peak transit stop frequency for all stops within a half mile distance of the intersection animated over a Weekday (or entire Week) by hour. These data are output by the Step 2 [Points tool](https://github.com/Esri/public-transit-tools/blob/6451cf1de24d4e5b7337df402135f351a7eaf181/better-bus-buffers/scripts/BBB_CountTripsAtPoints.py))      
-sql/Regional Transit Database Processing for 2016 final.sql
+[Feature Class With Geometries and Route Stats for High Frequency Routes](http://services3.arcgis.com/i2dkYWmb4wHvYPda/arcgis/rest/services/WeekdayPeakPeriodRoutesSourceGeoms/FeatureServer)   
