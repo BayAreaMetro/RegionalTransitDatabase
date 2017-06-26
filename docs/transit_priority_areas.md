@@ -45,7 +45,7 @@ As such, output representations of both and/or either of these areas.
 
 ### Methodology   
 
-![rtd_process_outline.JPG](images/rtd_process_outline.JPG?raw=true)  
+![rtd_process_outline.JPG](../images/rtd_process_outline.JPG?raw=true)  
 
 Run these scripts to output the feature class linked below to your local machine:     
 
