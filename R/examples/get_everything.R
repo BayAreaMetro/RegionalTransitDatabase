@@ -31,6 +31,7 @@ l_gtfs_obj <- list()
 l_high_frqncy_stops <- list()
 l_high_frqncy_rt_bffrs_1_4 <- list()
 l_high_frqncy_rt_bffrs_1_2 <- list()
+l_priority_routes_no_geom <- list()
 
 for (provider in providers) {
 
@@ -46,77 +47,86 @@ for (provider in providers) {
     #this is a legacy setup--looping through these lists
     if(exists("mtc_priority_stops", where=gtfs_obj_mtc) && 
        dim(gtfs_obj_mtc$mtc_priority_stops)[1]>0) {
-      print(provider)
       l_high_frqncy_stops[[provider]] <- gtfs_obj_mtc$mtc_priority_stops
     }
     #l_high_frqncy_routes[[provider]] <- gtfs_objp$mtc_priority_routes
     
     ##TPA Geometry output - Line Buffers
     if(exists("mtc_priority_routes", where=gtfs_obj_mtc) && 
-       dim(gtfs_obj_mtc$mtc_priority_stops)[1]>0) {
+      dim(gtfs_obj_mtc$mtc_priority_stops)[1]>0) {
       l_high_frqncy_rt_bffrs_1_4[[provider]] <- get_buffered_tpa_routes(gtfs_obj_mtc$mtc_priority_routes, 
                                                                         gtfs_obj_mtc, 
                                                                         buffer=402.336)
       l_high_frqncy_rt_bffrs_1_2[[provider]] <- get_buffered_tpa_routes(gtfs_obj_mtc$mtc_priority_routes, 
                                                                         gtfs_obj_mtc, 
                                                                         buffer=804.672)
+      l_priority_routes_no_geom[[provider]] <- l_gtfs_obj$SF$mtc_priority_routes$route_id[!l_gtfs_obj$SF$mtc_priority_routes$route_id %in% l_high_frqncy_rt_bffrs_1_2$SF$route_id]
+                                                                        
     }
   }
 }
 
-
-
-
 #################
-#bind routes
+#bind outputs
 #together
 ################
 
-####
-##1/4 mile
-####
+l_rts <- lapply(l_gtfs_obj,function(x) x$mtc_routes_df)
+df_mtc_routes <- bind_df_list(l_rts)
 
-hf_rts_1_4_ml_buf <- bind_list_of_routes_spatial_dataframes(l_high_frqncy_rt_bffrs_1_4)
+l_rts_drctnl <- lapply(l_gtfs_obj,function(x) x$mtc_routes_df_directional_stats)
+df_rts_drctnl <- bind_df_list(l_rts_drctnl)
 
-####
-##1/2 mile
-####
+l_priority_routes <- lapply(l_gtfs_obj,function(x) x$mtc_priority_routes)
+df_rts_priority <- bind_df_list(l_priority_routes)
+
+hf_rts_1_4_ml_buf <- bind_list_of_routes_spatial_dataframes(x$mtc_priority_routes)
 
 hf_rts_1_2_ml_buf <- bind_list_of_routes_spatial_dataframes(l_high_frqncy_rt_bffrs_1_2)
 
-################
-#bind stops
-#together
-###############
+hf_stops <- bind_list_of_routes_spatial_dataframes(l_high_frqncy_stops)
 
-hf_stops <- l_high_frqncy_stps[[1]]
-hf_stops$agency <- names(l_high_frqncy_stps[1])
-
-for (s in names(l_high_frqncy_stps[2:length(l_high_frqncy_stps)])) {
-  tsdf <- l_high_frqncy_stps[[s]]
-  tsdf$agency <- rep(s,nrow(tsdf))
-  hf_stops <- rbind(hf_stops,tsdf)
-}
-
-############
-##Write to Files
-############
-
-write_to_geopackage_with_date(hf_rts_1_2_ml_buf)
-write_to_geopackage_with_date(hf_rts_1_4_ml_buf)
-
-# fix buggy names,
+# names character fix
 # for why, see: http://r-sig-geo.2731867.n2.nabble.com/Bug-in-writeOGR-MSSQLSpatial-driver-td7583633.html
-# row.names(spdfout_stps) <- as.character(1:nrow(spdfout_stps))
+row.names(hf_stops) <- as.character(1:nrow(hf_stops))
 
-write_to_geopackage_with_date(hf_stops)
-
+#buffer the stops
 hf_stops_with_hf_neighbors <- hf_stops[hf_stops$lgcl_adjacent_hf_routes==TRUE,]
 
 hf_stops_with_hf_neighbors_buffer <- SpatialPolygonsDataFrame(
   gBuffer(hf_stops_with_hf_neighbors,width=804.672,byid = TRUE),
   data=hf_stops_with_hf_neighbors@data)
 
+############
+##Write to Files
+############
+
+write_to_geopackage_with_date(hf_stops)
 write_to_geopackage_with_date(hf_stops_with_hf_neighbors_buffer)
+write_to_geopackage_with_date(hf_rts_1_2_ml_buf)
+write_to_geopackage_with_date(hf_rts_1_4_ml_buf)
+
+library(knitr)
+sink(paste0(PROJECT_PATH,"/data/routes_tpa_flags_headways.md"))
+kable(mtc_routes_df)
+sink()
+write.csv(mtc_routes_df, file=paste0(PROJECT_PATH,"/data/routes_tpa_flags_headways.csv"))
+
+sink(paste0(PROJECT_PATH,"/data/routes_directional_headways.md"))
+kable(df_rts_drctnl)
+sink()
+write.csv(df_rts_drctnl, file=paste0(PROJECT_PATH,"/data/routes_directional_headways.csv"))
+
+sink(paste0(PROJECT_PATH,"/data/routes_priority.md"))
+kable(df_rts_priority)
+sink()
+write.csv(df_rts_priority, file=paste0(PROJECT_PATH,"/data/routes_priority.csv"))
+
+#check that all priority routes have a buffered geometry
+sink(paste0(PROJECT_PATH,"/data/priority_routes_no_geom.log"))
+cat(l_priority_routes_no_geom)
+sink()
+
+
 
 

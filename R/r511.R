@@ -76,8 +76,11 @@ get_buffered_tpa_routes <- function(df_qualifying_routes, gtfs_obj, buffer=402.3
   tpa_route_ids <- names(table(df_qualifying_routes$route_id))
   row.names(df_qualifying_routes) <- df_qualifying_routes$route_id
   spply <- get_non_directional_route_geometries(tpa_route_ids, gtfs_obj, buffer=buffer)
-  df_rt_frqncy_sptl <- SpatialPolygonsDataFrame(Sr=spply, data=df_qualifying_routes,FALSE)
+  df_rt_frqncy_sptl <- SpatialPolygonsDataFrame(Sr=spply, data=as.data.frame(df_qualifying_routes),FALSE)
+  row.names(df_rt_frqncy_sptl) <- as.character(seq(1,nrow(df_rt_frqncy_sptl)))
+  return(df_rt_frqncy_sptl)                                   
 }
+
 
 #'Analyze a GTFS object for a provider to determine which bus routes are eligible for Transit Priority Areas (http://www.fehrandpeers.com/sb743/). Return a spatial dataframe with data attached for inspection and review of methodology.
 #'@param A gtfsr object
@@ -156,7 +159,6 @@ get_priority_routes <- function(gtfs_obj) {
   gtfs_obj$mtc_routes_df$f_tpa_qual <- rep(FALSE,nrow(gtfs_obj$mtc_routes_df))
   
   if (dim(am_routes_hdwy)[1] > 0) {
-    print(head(am_routes_hdwy))
     am_routes_qual <- am_routes_hdwy[!duplicated(as.list(am_routes_hdwy)),]
     am_routes_qual <- am_routes_qual[is_in_both_directions(am_routes_qual[,c("route_id","direction_id")]) 
                                      | is_loop_route(am_routes_qual$trip_headsign),]
@@ -700,14 +702,27 @@ bind_list_of_routes_spatial_dataframes <- function(l1) {
   return(spdf)
 }
 
+bind_df_list <- function(l1) {
+  df <- l1[[1]]
+  for (s in names(l1[2:length(l1)])) {
+    if(dim(l1[[s]])[1]>0) {
+      tmp_df <- l1[[s]]
+      df <- rbind(df,tmp_df)
+    }
+  }
+  return(df)
+}
+
+
+
 #'write a spatial dataframe to the current working directory as a geopackage (with date in name-seconds since the epoch)
 #'@param spatial dataframe
 #'@return nothing
-write_to_geopackage_with_date <- function(spdf) {
+write_to_geopackage_with_date <- function(spdf, project_data_path="C:/projects/RTD/RegionalTransitDatabase/data") {
   library(rgdal)
   the_name <- deparse(substitute(spdf))
   writeOGR(spdf,
-           paste0(format(Sys.time(),"%s"),the_name,"_",".gpkg"),
+           paste0(project_data_path,format(Sys.time(),"%s"),the_name,"_",".gpkg"),
            driver="GPKG",
            layer = the_name, 
            overwrite_layer = TRUE)
