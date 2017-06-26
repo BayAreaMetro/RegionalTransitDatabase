@@ -122,10 +122,10 @@ kable(df_rts_priority)
 sink()
 write.csv(df_rts_priority, file=paste0(PROJECT_PATH,"/data/routes_priority.csv"))
 
-#check that all priority routes have a buffered geometry
-sink(paste0(PROJECT_PATH,"/data/priority_routes_no_geom.log"))
-cat(l_priority_routes_no_geom)
-sink()
+# #check that all priority routes have a buffered geometry
+# sink(paste0(PROJECT_PATH,"/data/priority_routes_no_geom.log"))
+# cat(l_priority_routes_no_geom)
+# sink()
 
 
 

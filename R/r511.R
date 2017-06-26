@@ -705,9 +705,9 @@ bind_list_of_routes_spatial_dataframes <- function(l1) {
 bind_df_list <- function(l1) {
   df <- l1[[1]]
   for (s in names(l1[2:length(l1)])) {
-    if(dim(l1[[s]])[1]>0) {
+    if(!is.null(dim(l1[[s]])) && dim(l1[[s]])[1]>0) {
       tmp_df <- l1[[s]]
-      df <- rbind(df,tmp_df)
+      df <- bind_rows(df,tmp_df)
     }
   }
   return(df)
