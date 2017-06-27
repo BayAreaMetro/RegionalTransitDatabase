@@ -11,5 +11,5 @@ The expected output of these scripts is a set (CSV, DBF, GeoPackage) of bus stop
 a draft script for route building. 
 -  `r511.R`     
 a library of helper functions for processing gtfs data into tpa eligible routes/stops   
--  `examples/`  
-contains example ways of fetching high frequency routes by provider, sets of providers, or all providers, and some tools to compare outputs  
+-  `priority_routes/`  
+scripts for fetching high frequency routes by provider, and some tools to compare outputs  
