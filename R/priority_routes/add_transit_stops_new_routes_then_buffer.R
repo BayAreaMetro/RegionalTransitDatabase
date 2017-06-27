@@ -17,6 +17,8 @@ library(rgeos)
 d1 <- "C:/projects/RTD/RegionalTransitDatabase"
 setwd(d1)
 
+#from http://services3.arcgis.com/i2dkYWmb4wHvYPda/arcgis/rest/services/TPAs_2016_Draft_2016_8_5/FeatureServer/0
+#docs http://mtc.maps.arcgis.com/home/item.html?id=f1d073078d13450f92b362bdb9cc7827
 spdf1 <- readOGR(dsn="data/hf_bus_routes_source.gdb",layer = "tpa_transit_stops_2016")
 
 j1 <- fromJSON(readLines("http://projects.planbayarea.org/assets/js/rtpLines.json"))

@@ -7,11 +7,9 @@
 
 ### Problem Statement  
 
-Identify bus routes and stops that match the definition of a Transit Priority Area.   
+Identify bus routes and stops that match the definition of a Transit Priority Area (TPA).  Output geometries for them.      
 
-for buses and output the geometries for high priority bus routes
-
-### TPAs as defined in Senate Bill 743:
+#### TPA as defined in Senate Bill 743:
 
 TPAs as defined in Senate Bill 743:
 -  1/4 and/or 1/2 mile Buffer around high-frequency bus routes
@@ -39,37 +37,44 @@ and 1/2 mile here: http://leginfo.legislature.ca.gov/faces/billCompareClient.xht
 
 As such, output representations of both and/or either of these areas.   
 
+[Some pretty, though some potentially incorrect, graphics about SB743 are here](http://www.fehrandpeers.com/sb743/)   
+
 ### Data Sources   
 
 [511 API Documentation](https://metrotrans-my.sharepoint.com/personal/ksmith_mtc_ca_gov/_layouts/15/guestaccess.aspx?guestaccesstoken=LaSLmz8PqjHcCy3J9t5JWiVYbBx2wq7AOn7XAeSI65c%3d&docid=2_1b3fffc8d501f42949c5c14bb423aa445)
 
 ### Methodology   
 
-1. 2017 Freq Data      
-2. Query      
-3. Stop Freq    
-4. Combine Into Lines (network analyst/street segment the route traverses)    
-5. Generate Line + Fix (1/4, 1/2 mile buffer)    
-6. Overlay Point Approach + Rail/Ferry    
-7. Density/Intensity Overlay    
-8. Generate TPA Map    
+1. 2017 Freq Data
+-  download processed (stop time interpolated) data [here](https://mtcdrive.box.com/s/41tfjd14hazu1x3qe53lt19u7fbiqdjk)      
+alternatively, process from the source:  
+-  [get_and_format_511_gtfs_data](https://github.com/MetropolitanTransportationCommission/RegionalTransitDatabase/blob/master/python/get_and_format_511_for_sql.py)
+-  [interpolate blank stop times using gtfs-tools](https://github.com/MetropolitanTransportationCommission/RegionalTransitDatabase/blob/8a2ce450af213707bbc6d61dbd035363b40f058c/python/preprocess_gtfs_folders.py)
+2. [Query](https://github.com/MetropolitanTransportationCommission/RegionalTransitDatabase/blob/0435639579044ba099a1f516bb1a896d6bc00ad0/R/priority_routes/identify_bus_tpas_and_output_geometries.R#L54)      
+3. [Determine Stop Frequency and Headway](https://github.com/MetropolitanTransportationCommission/RegionalTransitDatabase/blob/0435639579044ba099a1f516bb1a896d6bc00ad0/R/priority_routes/identify_bus_tpas_and_output_geometries.R#L55-L81)  
+4. [Combine Into Lines, 1/4, 1/2 mile buffer](https://github.com/MetropolitanTransportationCommission/RegionalTransitDatabase/blob/0435639579044ba099a1f516bb1a896d6bc00ad0/R/priority_routes/identify_bus_tpas_and_output_geometries.R#L156-L191)   
+5. [Add Rail/Ferry Buffered Areas (1/2 mile)](https://github.com/MetropolitanTransportationCommission/RegionalTransitDatabase/blob/0435639579044ba099a1f516bb1a896d6bc00ad0/R/priority_routes/add_transit_stops_new_routes_then_buffer.R)    
+6. [Density/Intensity Overlay](https://github.com/MetropolitanTransportationCommission/tpp_ceqa_map_for_pba_17)    
+7. Generate TPA Map    
+
+#### Confirm the Buffer Methodology    
+
+from [this issue](https://github.com/MetropolitanTransportationCommission/RegionalTransitDatabase/issues/43)   
+
+1. All HF Bus route lines are 1/4 buffer. Not the stops, just the lines (see step 4 above)
+2. HF Bus Stops that are within 0.2 miles of a HF bus stop (which is served by a different route) is buffered 1/2 mile (done [here](https://github.com/MetropolitanTransportationCommission/RegionalTransitDatabase/blob/master/R/priority_routes/identify_bus_tpas_and_output_geometries.R#L194-L213))   
+3. All Rail, Ferry and Light Rail stops (Planned and Existing) are buffered 1/2 Mile. (see step 5 above)
 
 Run these scripts to output the feature class linked below to your local machine:     
 
-To skip Step 1 download processed (stop time interpolated) data [here](https://mtcdrive.box.com/s/41tfjd14hazu1x3qe53lt19u7fbiqdjk)
-
-Step 1: data preprocessing   
--  [get_and_format_511_gtfs_data](https://github.com/MetropolitanTransportationCommission/RegionalTransitDatabase/blob/master/python/get_and_format_511_for_sql.py)
--  [interpolate blank stop times using gtfs-tools](https://github.com/MetropolitanTransportationCommission/RegionalTransitDatabase/blob/8a2ce450af213707bbc6d61dbd035363b40f058c/python/preprocess_gtfs_folders.py)
-
-NOTE:for unknown reasons the gtfs tool for preprocessing seems to have dropped stop_times files during failures. you can use the following command to copy in stop_times from the source to fill those back in:   
-`find ./gtfs_pre_processed/ -type f \( -iname "stop_times.txt" \) -print | xargs -I {} cp -n {} ../gtfs_post_processed/{}`  
-
 Step 2: frequency calculations and route geometries    
--  [calculate route frequencies and output high frequency bus routes and stops](https://github.com/MetropolitanTransportationCommission/RegionalTransitDatabase/blob/e8c60dc4c76fd4227f1f960f08c00a742c297fd1/R/examples/get_everything.R)
 -  [add_transit and new routes](https://github.com/MetropolitanTransportationCommission/RegionalTransitDatabase/blob/a7cf88601fc73c0eca69aa6b24f2be1a9be3f04a/R/examples/add_transit_stops_new_routes_then_buffer.R)
 -  [make polygons from tpa eligible transit stops and routes](https://github.com/MetropolitanTransportationCommission/RegionalTransitDatabase/blob/a7cf88601fc73c0eca69aa6b24f2be1a9be3f04a/python/make_tpa_polygons.py)
 
 ### Outcomes   
 
-[Feature Class With Geometries and Route Stats for High Frequency Routes](http://services3.arcgis.com/i2dkYWmb4wHvYPda/arcgis/rest/services/WeekdayPeakPeriodRoutesSourceGeoms/FeatureServer)   
+-  [Feature Class With Geometries and Route Stats for High Frequency Routes](http://www.arcgis.com/home/webmap/viewer.html?webmap=3f89d2b053bf4dbc81318a0e707531fb&extent=-122.5562,37.5907,-122.0491,37.8571)   
+
+-  [List of High Priority Routes](https://gist.github.com/tombuckley/eeafd0b32c6c8f588aba6fd49d268a0b)  
+
+-  Further diagnostics are in the branch called [diagnostic-improvements](https://github.com/MetropolitanTransportationCommission/RegionalTransitDatabase/tree/diagnostic-improvements)  
