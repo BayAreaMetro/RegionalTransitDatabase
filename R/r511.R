@@ -269,7 +269,7 @@ deduplicate_final_table <- function(df_stp_rt_hf) {
              Headway, Peak_Period, TPA_Criteria, stop_lon, stop_lat)
   return(df_stp_rt_hf)
 }
-=======
+
 #' Make a dataframe GTFS tables all joined together for route frequency calculations
 #' @param a GTFSr object for a given provider with routes, stops, stop_times, etc
 #' @return a mega-GTFSr data frame with stops, stop_times, trips, calendar, and routes all joined
