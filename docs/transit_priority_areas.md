@@ -73,7 +73,7 @@ Step 2: frequency calculations and route geometries
 
 ### Outcomes   
 
--  [Feature Class With Geometries and Route Stats for High Frequency Routes](http://www.arcgis.com/home/webmap/viewer.html?webmap=3f89d2b053bf4dbc81318a0e707531fb&extent=-122.5562,37.5907,-122.0491,37.8571)   
+-  [Map & Data](http://www.arcgis.com/home/webmap/viewer.html?webmap=3f89d2b053bf4dbc81318a0e707531fb&extent=-122.5562,37.5907,-122.0491,37.8571)   
 
 -  [List of High Priority Routes](https://gist.github.com/tombuckley/eeafd0b32c6c8f588aba6fd49d268a0b)  
 
