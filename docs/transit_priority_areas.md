@@ -45,7 +45,14 @@ As such, output representations of both and/or either of these areas.
 
 ### Methodology   
 
-![rtd_process_outline.JPG](../images/rtd_process_outline.JPG?raw=true)  
+1. 2017 Freq Data      
+2. Query      
+3. Stop Freq    
+4. Combine Into Lines (network analyst/street segment the route traverses)    
+5. Generate Line + Fix (1/4, 1/2 mile buffer)    
+6. Overlay Point Approach + Rail/Ferry    
+7. Density/Intensity Overlay    
+8. Generate TPA Map    
 
 Run these scripts to output the feature class linked below to your local machine:     
 
