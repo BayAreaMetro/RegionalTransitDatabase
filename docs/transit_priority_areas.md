@@ -11,15 +11,18 @@ Identify bus routes and stops that match the definition of a Transit Priority Ar
 
 #### TPA as defined in Senate Bill 743:
 
+##### Routes
 -  [1/4](http://mtc.maps.arcgis.com/home/item.html?id=dc818c03e86243ec8cf85b8995caab4d) and/or [1/2](http://mtc.maps.arcgis.com/home/item.html?id=303f6c62df4842af8459d2cab86b80fe) mile Buffer around existing (and/or planned??) high-frequency bus routes (lines) with a headway of 15 minutes or better during both the morning and evening peak periods  (Data Source: 511 Regional Transit Database API June 2017)
--  Defined as half-mile buffer around the following geographies:   
+##### 1/2 mile buffer around the following geographies:   
 -  Existing rail stations  (Data Source: [MTC GIS- Heavy Rail](http://mtc.maps.arcgis.com/home/item.html?id=f1d073078d13450f92b362bdb9cc7827) | [MTC GIS Light Rail](http://mtc.maps.arcgis.com/home/item.html?id=420799986ef0418bba532a82d0e31c49)) 
 -  Planned rail stations in an adopted RTP (Data Source: [MTC GIS]() | [Plan Bay Area 2040](http://projects.planbayarea.org))   
 -  Existing/Planned ferry terminals with bus or rail service (Data Source: [MTC GIS](http://mtc.maps.arcgis.com/home/item.html?id=1188286d6b24418bbe57e573bfff00ee))   
--  Peak periods were defined as 6 AM to 10 AM and 3 PM to 7 PM  
--  Bus stops had to meet the criterion for both AM and PM peaks  
--  Average headway during the 4-hour window was used to identify achievement of 15 minute threshold  
--  Bus stops have to be less than 0.2 miles in distance from one another (i.e., short walk to transfer) (Data Source: [MTC GIS](http://mtc.maps.arcgis.com/home/item.html?id=a239938913e24c618bea07b6f5f34d52))  
+
+##### Stop-Qualifying Criteria
+-  Peak periods were defined as 6 AM to 10 AM and 3 PM to 7 PM (as filtered by [this function](https://github.com/MetropolitanTransportationCommission/RegionalTransitDatabase/blob/9c370d72e9fa0d788fedf33d1cbec5a844e96c19/R/r511.R#L352-L379)) 
+-  Bus routes had to meet the criterion for both AM and PM peaks (as checked [here](https://github.com/MetropolitanTransportationCommission/RegionalTransitDatabase/blob/9c370d72e9fa0d788fedf33d1cbec5a844e96c19/R/priority_routes/identify_bus_tpas_and_output_geometries.R#L137-L143)) 
+-  Average headway (as calculated [here](https://github.com/MetropolitanTransportationCommission/RegionalTransitDatabase/blob/9c370d72e9fa0d788fedf33d1cbec5a844e96c19/R/r511.R#L144-L159) during the 4-hour window was used to identify achievement of [15 minute threshold](https://github.com/MetropolitanTransportationCommission/RegionalTransitDatabase/blob/master/R/priority_routes/identify_bus_tpas_and_output_geometries.R#L65-L66)  
+-  Bus stops have to be less than 0.2 miles in distance from one another, as calculated [here](https://github.com/MetropolitanTransportationCommission/RegionalTransitDatabase/blob/9c370d72e9fa0d788fedf33d1cbec5a844e96c19/R/priority_routes/identify_bus_tpas_and_output_geometries.R#L198-L200) (i.e., short walk to transfer) (Data Source: [MTC GIS](http://mtc.maps.arcgis.com/home/item.html?id=a239938913e24c618bea07b6f5f34d52))  
 -  Intersection of at least two existing or planned bus routes with headways of 15 minutes or better during both the morning and evening peak periods 
 -  Bus service had to originate from a single route (i.e., not combined headways of multiple routes)  
 
