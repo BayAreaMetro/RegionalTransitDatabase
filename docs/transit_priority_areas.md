@@ -79,7 +79,7 @@ feature classes:
 
 name|description
 -----|--------
-[main_hf_rts_1_4_ml_buf]((http://mtc.maps.arcgis.com/home/item.html?id=dc818c03e86243ec8cf85b8995caab4d)|1/4 mile buffer of tpa route lines from source gtfs
+[main_hf_rts_1_4_ml_buf](http://mtc.maps.arcgis.com/home/item.html?id=dc818c03e86243ec8cf85b8995caab4d)|1/4 mile buffer of tpa route lines from source gtfs
 [main_hf_stops_with_hf_neighbors_buffer](http://mtc.maps.arcgis.com/home/item.html?id=a239938913e24c618bea07b6f5f34d52)|0.2 mile buffer of tpa qualifying main_hf_stops
 [main_hf_rts_1_2_ml_buf](http://mtc.maps.arcgis.com/home/item.html?id=303f6c62df4842af8459d2cab86b80fe)|1/2 mile buffer of tpa route lines from source gtfs
 [geneva_route_1_4_mile](http://mtc.maps.arcgis.com/home/item.html?id=c076e3dd52b1422bbf2ea122bbd280f3)|1/4 mile buffer around the new geneva route
