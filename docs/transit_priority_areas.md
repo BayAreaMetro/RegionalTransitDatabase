@@ -75,7 +75,7 @@ Step 2: frequency calculations and route geometries
 
 -  [Map](http://www.arcgis.com/home/webmap/viewer.html?webmap=3f89d2b053bf4dbc81318a0e707531fb&extent=-122.5562,37.5907,-122.0491,37.8571)   
 
-#### [tpa_2017_draft4 feature service](http://services3.arcgis.com/i2dkYWmb4wHvYPda/ArcGIS/rest/services/tpa_2017_draft4/FeatureServer?token=g7M1_7cqEbOd0CR3Xxb9eSm2ZzgzynuFvQ452G_lqed1ueeTZdkahKvYNCMF0k9nsovI7qkt1H1NzDODWio2mA8BT9FFy6Zhn6f-NuysQeTkgaZqm6YpkH3gwBiCyA2mP3CKmh_68BYeYY6cCJI_EC1kI1iq0wf5YYqQmFCDCm7l58dv0fqp-zXFzPo0QTiCI7H32R_QBT5TsDLSv7xvkg)  
+#### Data   
 
 feature classes: 
 
