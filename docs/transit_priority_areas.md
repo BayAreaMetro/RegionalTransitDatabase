@@ -11,7 +11,6 @@ Identify bus routes and stops that match the definition of a Transit Priority Ar
 
 #### TPA as defined in Senate Bill 743:
 
-TPAs as defined in Senate Bill 743:
 -  [1/4](http://services3.arcgis.com/i2dkYWmb4wHvYPda/ArcGIS/rest/services/tpa_2017_draft4/FeatureServer/1) and/or 1/2 mile Buffer around existing (and/or planned??) high-frequency bus routes (lines) with a headway of 15 minutes or better during both the morning and evening peak periods  (Data Source: 511 Regional Transit Database API June 2017)
 -  Defined as half-mile buffer around the following geographies:   
 -  Existing rail stations  (Data Source: [MTC GIS- Heavy Rail](http://mtc.maps.arcgis.com/home/item.html?id=f1d073078d13450f92b362bdb9cc7827) | [MTC GIS Light Rail](http://mtc.maps.arcgis.com/home/item.html?id=420799986ef0418bba532a82d0e31c49)) 
