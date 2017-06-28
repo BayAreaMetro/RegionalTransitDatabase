@@ -77,16 +77,14 @@ Step 2: frequency calculations and route geometries
 
 feature classes: 
 
-name|description|link
------|--------|--------
-main_hf_stops (0)|bus stops on high frequency routes|<a href="/i2dkYWmb4wHvYPda/ArcGIS/rest/services/tpa_2017_draft4/FeatureServer/0?token=g7M1_7cqEbOd0CR3Xxb9eSm2ZzgzynuFvQ452G_lqed1ueeTZdkahKvYNCMF0k9nsovI7qkt1H1NzDODWio2mA8BT9FFy6Zhn6f-NuysQeTkgaZqm6YpkH3gwBiCyA2mP3CKmh_68BYeYY6cCJI_EC1kI1iq0wf5YYqQmFCDCm7l58dv0fqp-zXFzPo0QTiCI7H32R_QBT5TsDLSv7xvkg..">main_hf_stops</a> (0)
-main_hf_rts_1_4_ml_buf (1)|1/4 mile buffer of tpa route lines from source gtfs|<a href="/i2dkYWmb4wHvYPda/ArcGIS/rest/services/tpa_2017_draft4/FeatureServer/1?token=g7M1_7cqEbOd0CR3Xxb9eSm2ZzgzynuFvQ452G_lqed1ueeTZdkahKvYNCMF0k9nsovI7qkt1H1NzDODWio2mA8BT9FFy6Zhn6f-NuysQeTkgaZqm6YpkH3gwBiCyA2mP3CKmh_68BYeYY6cCJI_EC1kI1iq0wf5YYqQmFCDCm7l58dv0fqp-zXFzPo0QTiCI7H32R_QBT5TsDLSv7xvkg..">main_hf_rts_1_4_ml_buf</a> (1)
-main_hf_stops_with_hf_neighbors_buffer (2)|0.2 mile buffer of tpa qualifying main_hf_stops|<a href="/i2dkYWmb4wHvYPda/ArcGIS/rest/services/tpa_2017_draft4/FeatureServer/2?token=g7M1_7cqEbOd0CR3Xxb9eSm2ZzgzynuFvQ452G_lqed1ueeTZdkahKvYNCMF0k9nsovI7qkt1H1NzDODWio2mA8BT9FFy6Zhn6f-NuysQeTkgaZqm6YpkH3gwBiCyA2mP3CKmh_68BYeYY6cCJI_EC1kI1iq0wf5YYqQmFCDCm7l58dv0fqp-zXFzPo0QTiCI7H32R_QBT5TsDLSv7xvkg..">main_hf_stops_with_hf_neighbors_buffer</a> (2)
-main_hf_rts_1_2_ml_buf (3)|1/2 mile buffer of tpa route lines from source gtfs|<a href="/i2dkYWmb4wHvYPda/ArcGIS/rest/services/tpa_2017_draft4/FeatureServer/3?token=g7M1_7cqEbOd0CR3Xxb9eSm2ZzgzynuFvQ452G_lqed1ueeTZdkahKvYNCMF0k9nsovI7qkt1H1NzDODWio2mA8BT9FFy6Zhn6f-NuysQeTkgaZqm6YpkH3gwBiCyA2mP3CKmh_68BYeYY6cCJI_EC1kI1iq0wf5YYqQmFCDCm7l58dv0fqp-zXFzPo0QTiCI7H32R_QBT5TsDLSv7xvkg..">main_hf_rts_1_2_ml_buf</a> (3)
-main_non_weekday_qualifying_routes (4)|non tpa qualifying route lines|<a href="/i2dkYWmb4wHvYPda/ArcGIS/rest/services/tpa_2017_draft4/FeatureServer/4?token=g7M1_7cqEbOd0CR3Xxb9eSm2ZzgzynuFvQ452G_lqed1ueeTZdkahKvYNCMF0k9nsovI7qkt1H1NzDODWio2mA8BT9FFy6Zhn6f-NuysQeTkgaZqm6YpkH3gwBiCyA2mP3CKmh_68BYeYY6cCJI_EC1kI1iq0wf5YYqQmFCDCm7l58dv0fqp-zXFzPo0QTiCI7H32R_QBT5TsDLSv7xvkg..">main_non_weekday_qualifying_routes</a> (4)
-geneva_route_1_4_mile|1/4 mile buffer around the new geneva route|[geneva_route_1_4_mile](http://services3.arcgis.com/i2dkYWmb4wHvYPda/arcgis/rest/services/tpa_2017/FeatureServer/11?token=g7M1_7cqEbOd0CR3Xxb9eSm2ZzgzynuFvQ452G_lqed1ueeTZdkahKvYNCMF0k9nsovI7qkt1H1NzDODWio2mA8BT9FFy6Zhn6f-NuysQeTkgaZqm6YpkH3gwBiCyA2mP3CKmh_68BYeYY6cCJI_EC1kI1iq0wf5YYqQmFCDCm7l58dv0fqp-zXFzPo0QTiCI7H32R_QBT5TsDLSv7xvkg)
-geneva_route_1_2_mile|1/2 mile buffer around the new geneva route|[geneva_route_1_4_mile](http://services3.arcgis.com/i2dkYWmb4wHvYPda/arcgis/rest/services/tpa_2017/FeatureServer/11?token=g7M1_7cqEbOd0CR3Xxb9eSm2ZzgzynuFvQ452G_lqed1ueeTZdkahKvYNCMF0k9nsovI7qkt1H1NzDODWio2mA8BT9FFy6Zhn6f-NuysQeTkgaZqm6YpkH3gwBiCyA2mP3CKmh_68BYeYY6cCJI_EC1kI1iq0wf5YYqQmFCDCm7l58dv0fqp-zXFzPo0QTiCI7H32R_QBT5TsDLSv7xvkg..)
-rail_and_ferry_1_2_mile_buffer|1/2 mile buffer around new rail and ferry projects|[rail_and_ferry_1_2_mile_buffer](http://services3.arcgis.com/i2dkYWmb4wHvYPda/arcgis/rest/services/tpa_2017/FeatureServer/10?token=g7M1_7cqEbOd0CR3Xxb9eSm2ZzgzynuFvQ452G_lqed1ueeTZdkahKvYNCMF0k9nsovI7qkt1H1NzDODWio2mA8BT9FFy6Zhn6f-NuysQeTkgaZqm6YpkH3gwBiCyA2mP3CKmh_68BYeYY6cCJI_EC1kI1iq0wf5YYqQmFCDCm7l58dv0fqp-zXFzPo0QTiCI7H32R_QBT5TsDLSv7xvkg)  
+name|description
+-----|--------
+[main_hf_rts_1_4_ml_buf]((http://mtc.maps.arcgis.com/home/item.html?id=dc818c03e86243ec8cf85b8995caab4d)|1/4 mile buffer of tpa route lines from source gtfs
+[main_hf_stops_with_hf_neighbors_buffer](http://mtc.maps.arcgis.com/home/item.html?id=a239938913e24c618bea07b6f5f34d52)|0.2 mile buffer of tpa qualifying main_hf_stops
+[main_hf_rts_1_2_ml_buf](http://mtc.maps.arcgis.com/home/item.html?id=303f6c62df4842af8459d2cab86b80fe)|1/2 mile buffer of tpa route lines from source gtfs
+[geneva_route_1_4_mile](http://mtc.maps.arcgis.com/home/item.html?id=c076e3dd52b1422bbf2ea122bbd280f3)|1/4 mile buffer around the new geneva route
+[geneva_route_1_2_mile](http://www.arcgis.com/home/item.html?id=1e65df8b816c4dd2b41c811dcbdd540c)|1/2 mile buffer around the new geneva route
+rail_and_ferry_1_2_mile_buffer|1/2 mile buffer around new rail and ferry projects
 
 -  [List of High Priority Routes](https://gist.github.com/tombuckley/eeafd0b32c6c8f588aba6fd49d268a0b)  
 
