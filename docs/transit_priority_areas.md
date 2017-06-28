@@ -12,12 +12,12 @@ Identify bus routes and stops that match the definition of a Transit Priority Ar
 #### TPA as defined in Senate Bill 743:
 
 TPAs as defined in Senate Bill 743:
--  1/4 and/or 1/2 mile Buffer around high-frequency bus routes
+-  1/4 and/or 1/2 mile Buffer around existing (and/or planned??) high-frequency bus routes (lines) with a headway of 15 minutes or better during both the morning and evening peak periods  
 -  Defined as half-mile buffer around the following geographies: Existing rail stations   
 -  Planned rail stations in an adopted RTP   
 -  Existing ferry terminals with bus or rail service   
 -  Planned ferry terminals with bus or rail service in an adopted RTP Intersection of at least two existing or planned bus   -  routes with headways of 15 minutes or better during both the morning and evening peak periods   
--  Half-mile buffer around existing or planned fixed-route bus corridor with headway of 15 minutes or better during both   the -  morning and evening peak periods  
+-    
 -  Data Source: Regional Transit Database, 2016, Plan Bay Area 2017  
 -  Peak periods were defined as 6 AM to 10 AM and 3 PM to 7 PM  
 -  Bus stops had to meet the criterion for both AM and PM peaks  
