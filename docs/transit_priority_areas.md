@@ -73,7 +73,21 @@ Step 2: frequency calculations and route geometries
 
 ### Outcomes   
 
--  [Map & Data](http://www.arcgis.com/home/webmap/viewer.html?webmap=3f89d2b053bf4dbc81318a0e707531fb&extent=-122.5562,37.5907,-122.0491,37.8571)   
+-  [Map](http://www.arcgis.com/home/webmap/viewer.html?webmap=3f89d2b053bf4dbc81318a0e707531fb&extent=-122.5562,37.5907,-122.0491,37.8571)   
+
+#### [tpa_2017_draft4 feature service](http://services3.arcgis.com/i2dkYWmb4wHvYPda/ArcGIS/rest/services/tpa_2017_draft4/FeatureServer?token=g7M1_7cqEbOd0CR3Xxb9eSm2ZzgzynuFvQ452G_lqed1ueeTZdkahKvYNCMF0k9nsovI7qkt1H1NzDODWio2mA8BT9FFy6Zhn6f-NuysQeTkgaZqm6YpkH3gwBiCyA2mP3CKmh_68BYeYY6cCJI_EC1kI1iq0wf5YYqQmFCDCm7l58dv0fqp-zXFzPo0QTiCI7H32R_QBT5TsDLSv7xvkg)  
+
+feature classes: 
+
+name|description|link
+-----|--------|--------
+main_hf_stops (0)|bus stops on high frequency routes|<a href="/i2dkYWmb4wHvYPda/ArcGIS/rest/services/tpa_2017_draft4/FeatureServer/0?token=g7M1_7cqEbOd0CR3Xxb9eSm2ZzgzynuFvQ452G_lqed1ueeTZdkahKvYNCMF0k9nsovI7qkt1H1NzDODWio2mA8BT9FFy6Zhn6f-NuysQeTkgaZqm6YpkH3gwBiCyA2mP3CKmh_68BYeYY6cCJI_EC1kI1iq0wf5YYqQmFCDCm7l58dv0fqp-zXFzPo0QTiCI7H32R_QBT5TsDLSv7xvkg..">main_hf_stops</a> (0)
+main_hf_rts_1_4_ml_buf (1)|1/4 mile buffer of tpa route lines from source gtfs|<a href="/i2dkYWmb4wHvYPda/ArcGIS/rest/services/tpa_2017_draft4/FeatureServer/1?token=g7M1_7cqEbOd0CR3Xxb9eSm2ZzgzynuFvQ452G_lqed1ueeTZdkahKvYNCMF0k9nsovI7qkt1H1NzDODWio2mA8BT9FFy6Zhn6f-NuysQeTkgaZqm6YpkH3gwBiCyA2mP3CKmh_68BYeYY6cCJI_EC1kI1iq0wf5YYqQmFCDCm7l58dv0fqp-zXFzPo0QTiCI7H32R_QBT5TsDLSv7xvkg..">main_hf_rts_1_4_ml_buf</a> (1)
+main_hf_stops_with_hf_neighbors_buffer (2)|buffer of tpa qualifying main_hf_stops|<a href="/i2dkYWmb4wHvYPda/ArcGIS/rest/services/tpa_2017_draft4/FeatureServer/2?token=g7M1_7cqEbOd0CR3Xxb9eSm2ZzgzynuFvQ452G_lqed1ueeTZdkahKvYNCMF0k9nsovI7qkt1H1NzDODWio2mA8BT9FFy6Zhn6f-NuysQeTkgaZqm6YpkH3gwBiCyA2mP3CKmh_68BYeYY6cCJI_EC1kI1iq0wf5YYqQmFCDCm7l58dv0fqp-zXFzPo0QTiCI7H32R_QBT5TsDLSv7xvkg..">main_hf_stops_with_hf_neighbors_buffer</a> (2)
+main_hf_rts_1_2_ml_buf (3)|1/2 mile buffer of tpa route lines from source gtfs|<a href="/i2dkYWmb4wHvYPda/ArcGIS/rest/services/tpa_2017_draft4/FeatureServer/3?token=g7M1_7cqEbOd0CR3Xxb9eSm2ZzgzynuFvQ452G_lqed1ueeTZdkahKvYNCMF0k9nsovI7qkt1H1NzDODWio2mA8BT9FFy6Zhn6f-NuysQeTkgaZqm6YpkH3gwBiCyA2mP3CKmh_68BYeYY6cCJI_EC1kI1iq0wf5YYqQmFCDCm7l58dv0fqp-zXFzPo0QTiCI7H32R_QBT5TsDLSv7xvkg..">main_hf_rts_1_2_ml_buf</a> (3)
+main_non_weekday_qualifying_routes (4)|non tpa qualifying route lines|<a href="/i2dkYWmb4wHvYPda/ArcGIS/rest/services/tpa_2017_draft4/FeatureServer/4?token=g7M1_7cqEbOd0CR3Xxb9eSm2ZzgzynuFvQ452G_lqed1ueeTZdkahKvYNCMF0k9nsovI7qkt1H1NzDODWio2mA8BT9FFy6Zhn6f-NuysQeTkgaZqm6YpkH3gwBiCyA2mP3CKmh_68BYeYY6cCJI_EC1kI1iq0wf5YYqQmFCDCm7l58dv0fqp-zXFzPo0QTiCI7H32R_QBT5TsDLSv7xvkg..">main_non_weekday_qualifying_routes</a> (4)
+
+
 
 -  [List of High Priority Routes](https://gist.github.com/tombuckley/eeafd0b32c6c8f588aba6fd49d268a0b)  
 
