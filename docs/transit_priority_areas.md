@@ -18,7 +18,7 @@ Identify bus routes and stops that match the definition of a Transit Priority Ar
 -  Planned rail stations in an adopted RTP (Data Source: [MTC GIS]() | [Plan Bay Area 2040](http://projects.planbayarea.org))   
 -  Existing/Planned ferry terminals with bus or rail service (Data Source: [MTC GIS](http://mtc.maps.arcgis.com/home/item.html?id=1188286d6b24418bbe57e573bfff00ee))   
 
-##### Stop-Qualifying Criteria
+##### Stop and Route Qualifying Criteria
 -  Peak periods were defined as 6 AM to 10 AM and 3 PM to 7 PM (as filtered by [this function](https://github.com/MetropolitanTransportationCommission/RegionalTransitDatabase/blob/9c370d72e9fa0d788fedf33d1cbec5a844e96c19/R/r511.R#L352-L379)) 
 -  Bus routes had to meet the criterion for both AM and PM peaks (as checked [here](https://github.com/MetropolitanTransportationCommission/RegionalTransitDatabase/blob/9c370d72e9fa0d788fedf33d1cbec5a844e96c19/R/priority_routes/identify_bus_tpas_and_output_geometries.R#L137-L143)) 
 -  Average headway (as calculated [here](https://github.com/MetropolitanTransportationCommission/RegionalTransitDatabase/blob/9c370d72e9fa0d788fedf33d1cbec5a844e96c19/R/r511.R#L144-L159) during the 4-hour window was used to identify achievement of [15 minute threshold](https://github.com/MetropolitanTransportationCommission/RegionalTransitDatabase/blob/master/R/priority_routes/identify_bus_tpas_and_output_geometries.R#L65-L66)  
