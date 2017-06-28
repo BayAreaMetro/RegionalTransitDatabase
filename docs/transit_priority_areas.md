@@ -26,8 +26,6 @@ Identify bus routes and stops that match the definition of a Transit Priority Ar
 -  Intersection of at least two existing or planned bus routes with headways of 15 minutes or better during both the morning and evening peak periods 
 -  Bus service had to originate from a single route (i.e., not combined headways of multiple routes)  
 
-copied from http://mtc.maps.arcgis.com/home/item.html?id=1188286d6b24418bbe57e573bfff00ee
-
 #### 2 Bills:
 
 There are 2 laws defining the relevant distance from a transit corridor
