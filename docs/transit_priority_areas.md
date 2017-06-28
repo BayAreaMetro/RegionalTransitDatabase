@@ -12,17 +12,16 @@ Identify bus routes and stops that match the definition of a Transit Priority Ar
 #### TPA as defined in Senate Bill 743:
 
 TPAs as defined in Senate Bill 743:
--  1/4 and/or 1/2 mile Buffer around existing (and/or planned??) high-frequency bus routes (lines) with a headway of 15 minutes or better during both the morning and evening peak periods  
--  Defined as half-mile buffer around the following geographies: Existing rail stations   
--  Planned rail stations in an adopted RTP   
--  Existing ferry terminals with bus or rail service   
--  Planned ferry terminals with bus or rail service in an adopted RTP Intersection of at least two existing or planned bus   -  routes with headways of 15 minutes or better during both the morning and evening peak periods   
--    
--  Data Source: Regional Transit Database, 2016, Plan Bay Area 2017  
+-  1/4 and/or 1/2 mile Buffer around existing (and/or planned??) high-frequency bus routes (lines) with a headway of 15 minutes or better during both the morning and evening peak periods  (Data Source: 511 Regional Transit Database API June 2017)
+-  Defined as half-mile buffer around the following geographies:   
+-  Existing rail stations  (Data Source: [MTC GIS- Heavy Rail](http://mtc.maps.arcgis.com/home/item.html?id=f1d073078d13450f92b362bdb9cc7827) | [MTC GIS Light Rail](http://mtc.maps.arcgis.com/home/item.html?id=420799986ef0418bba532a82d0e31c49)) 
+-  Planned rail stations in an adopted RTP (Data Source: [MTC GIS]() | [Plan Bay Area 2040](http://projects.planbayarea.org))   
+-  Existing/Planned ferry terminals with bus or rail service (Data Source: [MTC GIS](http://mtc.maps.arcgis.com/home/item.html?id=1188286d6b24418bbe57e573bfff00ee))   
 -  Peak periods were defined as 6 AM to 10 AM and 3 PM to 7 PM  
 -  Bus stops had to meet the criterion for both AM and PM peaks  
 -  Average headway during the 4-hour window was used to identify achievement of 15 minute threshold  
--  Bus stops have to be less than 0.2 miles in distance from one another (i.e., short walk to transfer)  
+-  Bus stops have to be less than 0.2 miles in distance from one another (i.e., short walk to transfer) (Data Source: [MTC GIS](http://mtc.maps.arcgis.com/home/item.html?id=1188286d6b24418bbe57e573bfff00ee))  
+-  Intersection of at least two existing or planned bus routes with headways of 15 minutes or better during both the morning and evening peak periods 
 -  Bus service had to originate from a single route (i.e., not combined headways of multiple routes)  
 
 copied from http://mtc.maps.arcgis.com/home/item.html?id=1188286d6b24418bbe57e573bfff00ee
