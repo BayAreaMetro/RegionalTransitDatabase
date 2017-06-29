@@ -31,16 +31,21 @@ GTFS data (stop time interpolated) from MTC 511 were [processed](https://github.
 
 #### Rail, Ferry & Bus Rapid Transit
 
-location|source data
---------------|-------
-Existing heavy rail stations|[MTC GIS - Heavy Rail Filter on system: Rail and status: Existing](http://mtc.maps.arcgis.com/home/item.html?id=f998f0940316431b99ab5e4ca826133f)
-Existing light rail stations|[MTC GIS - Light Rail Filter on system: Light Rail and status: Existing](http://mtc.maps.arcgis.com/home/item.html?id=f998f0940316431b99ab5e4ca826133f)
-Planned heavy rail stations in an adopted RTP|[MTC GIS - Heavy Rail Filter on system: Rail and status: Planned or Under Construction](http://mtc.maps.arcgis.com/home/item.html?id=f998f0940316431b99ab5e4ca826133f)
-Existing ferry terminals with bus or rail service|[MTC GIS - Ferry Filter on system: Ferry and status: Existing](http://mtc.maps.arcgis.com/home/item.html?id=f998f0940316431b99ab5e4ca826133f)
-Planned ferry terminals in an adopted RTP with bus or rail service |[MTC GIS - Ferry Filter on system: Ferry and status: Planned or Under Construction](http://mtc.maps.arcgis.com/home/item.html?id=f998f0940316431b99ab5e4ca826133f)
-Planned Bus Rapid Transit service in an adopted RTP|[MTC GIS - Bus Rapid Transit Ferry Filter on system: Ferry and status: Planned or Under Construction](http://mtc.maps.arcgis.com/home/item.html?id=f998f0940316431b99ab5e4ca826133f)
+A Feature Class from [MTCGIS](http://mtc.maps.arcgis.com/home/item.html?id=f998f0940316431b99ab5e4ca826133f) for Transit, Rail, and Ferry.
 
 ### Methodology   
+
+#### Rail & Ferry   
+
+The following columns (headers) and values (table string values) were used to select TPA eligible Rail & Ferry stops
+
+System|Status
+------|-------
+Rail|Existing
+Light Rail|Existing
+Rail|Planned or Under Construction
+Ferry|Planned or Under Construction
+Bus|Planned or Under Construction
 
 #### Bus Stop and Route Qualifying Criteria
 -  Peak periods were defined as 6 AM to 10 AM and 3 PM to 7 PM (as filtered by [this function](https://github.com/MetropolitanTransportationCommission/RegionalTransitDatabase/blob/9c370d72e9fa0d788fedf33d1cbec5a844e96c19/R/r511.R#L352-L379)) 
@@ -60,17 +65,10 @@ alternatively, process from the source:
 3. [Determine Stop Frequency and Headway](https://github.com/MetropolitanTransportationCommission/RegionalTransitDatabase/blob/0435639579044ba099a1f516bb1a896d6bc00ad0/R/priority_routes/identify_bus_tpas_and_output_geometries.R#L55-L81)  
 4. [Combine Into Lines, 1/4, 1/2 mile buffer](https://github.com/MetropolitanTransportationCommission/RegionalTransitDatabase/blob/0435639579044ba099a1f516bb1a896d6bc00ad0/R/priority_routes/identify_bus_tpas_and_output_geometries.R#L156-L191)   
 
-#### Rail & Ferry Processing (2017)
-
-Much of the Rail and Ferry data did not require processing. What little processing was required in 2017 is below:  
-
-1. [Add Rail/Ferry Buffered Areas (1/2 mile)](https://github.com/MetropolitanTransportationCommission/RegionalTransitDatabase/blob/0435639579044ba099a1f516bb1a896d6bc00ad0/R/priority_routes/add_transit_stops_new_routes_then_buffer.R)    
-
 #### Buffers    
 
-Run these scripts to output the feature class linked below to your local machine:     
+These scripts were used to create buffers around some Rail & Ferry features from MTCGIS and the new BRT route (Geneva) from the RTP database:
 
-Step 2: frequency calculations and route geometries    
 -  [add_transit and new routes](https://github.com/MetropolitanTransportationCommission/RegionalTransitDatabase/blob/a7cf88601fc73c0eca69aa6b24f2be1a9be3f04a/R/examples/add_transit_stops_new_routes_then_buffer.R)
 -  [make polygons from tpa eligible transit stops and routes](https://github.com/MetropolitanTransportationCommission/RegionalTransitDatabase/blob/a7cf88601fc73c0eca69aa6b24f2be1a9be3f04a/python/make_tpa_polygons.py)
 
@@ -100,8 +98,7 @@ name|description|Category|Planned/Existing
 [main_hf_stops_with_hf_neighbors_buffer](http://mtc.maps.arcgis.com/home/item.html?id=a239938913e24c618bea07b6f5f34d52)|0.2 mile buffer of tpa qualifying main_hf_stops|Bus|Existing
 [geneva_route_1_4_mile](http://mtc.maps.arcgis.com/home/item.html?id=c076e3dd52b1422bbf2ea122bbd280f3)|1/4 mile buffer around the geneva route|Bus|Planned    
 [geneva_route_1_2_mile](http://www.arcgis.com/home/item.html?id=1e65df8b816c4dd2b41c811dcbdd540c)|1/2 mile buffer around the geneva route|Bus|Planned   
-[rail_and_ferry_1_2_mile_buffer](http://mtc.maps.arcgis.com/home/item.html?id=1bbb5e24e8b048f6b291784920eaf61c)|1/2 mile buffer around new rail and ferry projects|Rail&Ferry|Planned
-
+[heavy rail_and_ferry_1_2_mile_buffer](http://mtc.maps.arcgis.com/home/item.html?id=1bbb5e24e8b048f6b291784920eaf61c)|1/2 mile buffer around new rail and ferry projects|Rail&Ferry|Planned
 
 #### Related Projects:
 
