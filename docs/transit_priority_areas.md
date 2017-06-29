@@ -76,16 +76,16 @@ Step 2: frequency calculations and route geometries
 -  [add_transit and new routes](https://github.com/MetropolitanTransportationCommission/RegionalTransitDatabase/blob/a7cf88601fc73c0eca69aa6b24f2be1a9be3f04a/R/examples/add_transit_stops_new_routes_then_buffer.R)
 -  [make polygons from tpa eligible transit stops and routes](https://github.com/MetropolitanTransportationCommission/RegionalTransitDatabase/blob/a7cf88601fc73c0eca69aa6b24f2be1a9be3f04a/python/make_tpa_polygons.py)
 
-#### Buffer Overlays and Summarization  
+#### Process Buffer Overlays and Summarize Accordingly  
 Using the buffers generated in the previous step, dissolve and merge using spatial modeling tools to create a final TPA Polygon Feature Class.  
 
 - Insert Python data processing scripts here.
 
-
-
 ### Outcome   
+-  [Buffer Review Map](http://www.arcgis.com/home/webmap/viewer.html?webmap=3f89d2b053bf4dbc81318a0e707531fb&extent=-122.5562,37.5907,-122.0491,37.8571) 
 
--  [Map](http://www.arcgis.com/home/webmap/viewer.html?webmap=3f89d2b053bf4dbc81318a0e707531fb&extent=-122.5562,37.5907,-122.0491,37.8571)   
+- [TPA Dataset](http://mtc.maps.arcgis.com/home/item.html?id=ff94bb94a2e64f648ae93b528ca0e7b1)
+  
 
 #### Data   
 
