@@ -83,16 +83,16 @@ Using the buffers generated in the previous step, dissolve and merge using spati
 - [TPA Dataset](http://mtc.maps.arcgis.com/home/item.html?id=ff94bb94a2e64f648ae93b528ca0e7b1)
   
 
-#### Data   
+#### Transit Priority Areas by Category  
 
-name|description|Category|Planned/Existing
------|--------|-----|------
-[main_hf_rts_1_4_ml_buf](http://mtc.maps.arcgis.com/home/item.html?id=dc818c03e86243ec8cf85b8995caab4d)|1/4 mile buffer of tpa route lines from source gtfs|Bus|Existing
-[main_hf_rts_1_2_ml_buf](http://mtc.maps.arcgis.com/home/item.html?id=303f6c62df4842af8459d2cab86b80fe)|1/2 mile buffer of tpa route lines from source gtfs|Bus|Existing
-[main_hf_stops_with_hf_neighbors_buffer](http://mtc.maps.arcgis.com/home/item.html?id=a239938913e24c618bea07b6f5f34d52)|0.2 mile buffer of tpa qualifying main_hf_stops|Bus|Existing
-[geneva_route_1_4_mile](http://mtc.maps.arcgis.com/home/item.html?id=c076e3dd52b1422bbf2ea122bbd280f3)|1/4 mile buffer around the geneva route|Bus|Planned    
-[geneva_route_1_2_mile](http://www.arcgis.com/home/item.html?id=1e65df8b816c4dd2b41c811dcbdd540c)|1/2 mile buffer around the geneva route|Bus|Planned   
-[heavy rail_and_ferry_1_2_mile_buffer](http://mtc.maps.arcgis.com/home/item.html?id=1bbb5e24e8b048f6b291784920eaf61c)|1/2 mile buffer around rail and ferry projects|Rail&Ferry|Planned
+Category|Planned/Existing|description|link
+-----|------|--------|-----
+Bus|Existing|1/4 mile buffer of tpa route lines from source gtfs|[main_hf_rts_1_4_ml_buf](http://mtc.maps.arcgis.com/home/tem.html?id=dc818c03e86243ec8cf85b8995caab4d)
+Bus|Existing|1/2 mile buffer of tpa route lines from source gtfs|[main_hf_rts_1_2_ml_buf](http://mtc.maps.arcgis.com/home/tem.html?id=303f6c62df4842af8459d2cab86b80fe)
+Bus|Existing|0.2 mile buffer of tpa qualifying high frequency stops|[main_hf_stops_with_hf_neighbors_buffer](http://mtc.maps.arcgis.com/home/tem.html?id=a239938913e24c618bea07b6f5f34d52)
+Bus|Planned|1/4 mile buffer around the geneva route|[geneva_route_1_4_mile](http://mtc.maps.arcgis.com/home/tem.html?id=c076e3dd52b1422bbf2ea122bbd280f3)
+Bus|Planned|1/2 mile buffer around the geneva route|[geneva_route_1_2_mile](http://www.arcgis.com/home/tem.html?id=1e65df8b816c4dd2b41c811dcbdd540c)
+Rail&Ferry|Planned|1/2 mile buffer around rail and ferry projects|[heavy rail_and_ferry_1_2_mile_buffer](http://mtc.maps.arcgis.com/home/item.html?id=1bbb5e24e8b048f6b291784920eaf61c)
 
 #### Related Projects:
 
