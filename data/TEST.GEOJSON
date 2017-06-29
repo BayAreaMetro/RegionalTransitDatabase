@@ -1,0 +1,1274 @@
+{
+  "type" : "FeatureCollection", 
+  "crs" : 
+  {
+    "type" : "name", 
+    "properties" : 
+    {
+      "name" : "EPSG:4326"
+    }
+  }, 
+  "features" : [
+    {
+      "type" : "Feature", 
+      "geometry" : 
+      {
+        "type" : "Point", 
+        "coordinates" : [
+          -122.271998965263, 37.7935245164331
+        ]
+      }, 
+      "properties" : {
+        "agency_name" : "Capitol Corridor"
+      }
+    }, 
+    {
+      "type" : "Feature", 
+      "geometry" : 
+      {
+        "type" : "Point", 
+        "coordinates" : [
+          -122.137110201109, 38.019514985156
+        ]
+      }, 
+      "properties" : {
+        "agency_name" : "Capitol Corridor"
+      }
+    }, 
+    {
+      "type" : "Feature", 
+      "geometry" : 
+      {
+        "type" : "Point", 
+        "coordinates" : [
+          -122.300956207916, 37.8672819600594
+        ]
+      }, 
+      "properties" : {
+        "agency_name" : "Capitol Corridor"
+      }
+    }, 
+    {
+      "type" : "Feature", 
+      "geometry" : 
+      {
+        "type" : "Point", 
+        "coordinates" : [
+          -122.291313203225, 37.8405519594191
+        ]
+      }, 
+      "properties" : {
+        "agency_name" : "Capitol Corridor"
+      }
+    }, 
+    {
+      "type" : "Feature", 
+      "geometry" : 
+      {
+        "type" : "Point", 
+        "coordinates" : [
+          -122.006775127842, 37.5582289564104
+        ]
+      }, 
+      "properties" : {
+        "agency_name" : "Capitol Corridor"
+      }
+    }, 
+    {
+      "type" : "Feature", 
+      "geometry" : 
+      {
+        "type" : "Point", 
+        "coordinates" : [
+          -122.098559154724, 37.6667169581661
+        ]
+      }, 
+      "properties" : {
+        "agency_name" : "Capitol Corridor"
+      }
+    }, 
+    {
+      "type" : "Feature", 
+      "geometry" : 
+      {
+        "type" : "Point", 
+        "coordinates" : [
+          -122.197498999898, 37.7534517481786
+        ]
+      }, 
+      "properties" : {
+        "agency_name" : "Capitol Corridor"
+      }
+    }, 
+    {
+      "type" : "Feature", 
+      "geometry" : 
+      {
+        "type" : "Point", 
+        "coordinates" : [
+          -122.352319534334, 37.9356939221411
+        ]
+      }, 
+      "properties" : {
+        "agency_name" : "Capitol Corridor"
+      }
+    }, 
+    {
+      "type" : "Feature", 
+      "geometry" : 
+      {
+        "type" : "Point", 
+        "coordinates" : [
+          -121.901910087083, 37.3296669443497
+        ]
+      }, 
+      "properties" : {
+        "agency_name" : "Capitol Corridor"
+      }
+    }, 
+    {
+      "type" : "Feature", 
+      "geometry" : 
+      {
+        "type" : "Point", 
+        "coordinates" : [
+          -121.966495104785, 37.4064779456007
+        ]
+      }, 
+      "properties" : {
+        "agency_name" : "Capitol Corridor"
+      }
+    }, 
+    {
+      "type" : "Feature", 
+      "geometry" : 
+      {
+        "type" : "Point", 
+        "coordinates" : [
+          -121.936213094635, 37.3530449431898
+        ]
+      }, 
+      "properties" : {
+        "agency_name" : "Capitol Corridor"
+      }
+    }, 
+    {
+      "type" : "Feature", 
+      "geometry" : 
+      {
+        "type" : "Point", 
+        "coordinates" : [
+          -122.271420196398, 37.8032019574007
+        ]
+      }, 
+      "properties" : {
+        "agency_name" : "BART"
+      }
+    }, 
+    {
+      "type" : "Feature", 
+      "geometry" : 
+      {
+        "type" : "Point", 
+        "coordinates" : [
+          -122.41933421394, 37.7651889430603
+        ]
+      }, 
+      "properties" : {
+        "agency_name" : "BART"
+      }
+    }, 
+    {
+      "type" : "Feature", 
+      "geometry" : 
+      {
+        "type" : "Point", 
+        "coordinates" : [
+          -122.268691196625, 37.80748595755
+        ]
+      }, 
+      "properties" : {
+        "agency_name" : "BART"
+      }
+    }, 
+    {
+      "type" : "Feature", 
+      "geometry" : 
+      {
+        "type" : "Point", 
+        "coordinates" : [
+          -122.418119212473, 37.7523979420289
+        ]
+      }, 
+      "properties" : {
+        "agency_name" : "BART"
+      }
+    }, 
+    {
+      "type" : "Feature", 
+      "geometry" : 
+      {
+        "type" : "Point", 
+        "coordinates" : [
+          -122.269772201518, 37.8529209616268
+        ]
+      }, 
+      "properties" : {
+        "agency_name" : "BART"
+      }
+    }, 
+    {
+      "type" : "Feature", 
+      "geometry" : 
+      {
+        "type" : "Point", 
+        "coordinates" : [
+          -122.447266213443, 37.7218659382015
+        ]
+      }, 
+      "properties" : {
+        "agency_name" : "BART"
+      }
+    }, 
+    {
+      "type" : "Feature", 
+      "geometry" : 
+      {
+        "type" : "Point", 
+        "coordinates" : [
+          -122.126310161853, 37.6970069588427
+        ]
+      }, 
+      "properties" : {
+        "agency_name" : "BART"
+      }
+    }, 
+    {
+      "type" : "Feature", 
+      "geometry" : 
+      {
+        "type" : "Point", 
+        "coordinates" : [
+          -122.075450154074, 37.6907919624549
+        ]
+      }, 
+      "properties" : {
+        "agency_name" : "BART"
+      }
+    }, 
+    {
+      "type" : "Feature", 
+      "geometry" : 
+      {
+        "type" : "Point", 
+        "coordinates" : [
+          -122.413470214636, 37.7794289452207
+        ]
+      }, 
+      "properties" : {
+        "agency_name" : "BART"
+      }
+    }, 
+    {
+      "type" : "Feature", 
+      "geometry" : 
+      {
+        "type" : "Point", 
+        "coordinates" : [
+          -122.196575179154, 37.7536039584372
+        ]
+      }, 
+      "properties" : {
+        "agency_name" : "BART"
+      }
+    }, 
+    {
+      "type" : "Feature", 
+      "geometry" : 
+      {
+        "type" : "Point", 
+        "coordinates" : [
+          -122.466070211757, 37.6846379335308
+        ]
+      }, 
+      "properties" : {
+        "agency_name" : "BART"
+      }
+    }, 
+    {
+      "type" : "Feature", 
+      "geometry" : 
+      {
+        "type" : "Point", 
+        "coordinates" : [
+          -122.029050179469, 37.9732359889361
+        ]
+      }, 
+      "properties" : {
+        "agency_name" : "BART"
+      }
+    }, 
+    {
+      "type" : "Feature", 
+      "geometry" : 
+      {
+        "type" : "Point", 
+        "coordinates" : [
+          -122.468720214749, 37.7063589351834
+        ]
+      }, 
+      "properties" : {
+        "agency_name" : "BART"
+      }
+    }, 
+    {
+      "type" : "Feature", 
+      "geometry" : 
+      {
+        "type" : "Point", 
+        "coordinates" : [
+          -122.26784920349, 37.8696949627174
+        ]
+      }, 
+      "properties" : {
+        "agency_name" : "BART"
+      }
+    }, 
+    {
+      "type" : "Feature", 
+      "geometry" : 
+      {
+        "type" : "Point", 
+        "coordinates" : [
+          -121.898907128078, 37.7016529760305
+        ]
+      }, 
+      "properties" : {
+        "agency_name" : "BART"
+      }
+    }, 
+    {
+      "type" : "Feature", 
+      "geometry" : 
+      {
+        "type" : "Point", 
+        "coordinates" : [
+          -122.316694217487, 37.9250259642287
+        ]
+      }, 
+      "properties" : {
+        "agency_name" : "BART"
+      }
+    }, 
+    {
+      "type" : "Feature", 
+      "geometry" : 
+      {
+        "type" : "Point", 
+        "coordinates" : [
+          -122.298734211564, 37.902458963928
+        ]
+      }, 
+      "properties" : {
+        "agency_name" : "BART"
+      }
+    }, 
+    {
+      "type" : "Feature", 
+      "geometry" : 
+      {
+        "type" : "Point", 
+        "coordinates" : [
+          -122.396547213489, 37.7928849474389
+        ]
+      }, 
+      "properties" : {
+        "agency_name" : "BART"
+      }
+    }, 
+    {
+      "type" : "Feature", 
+      "geometry" : 
+      {
+        "type" : "Point", 
+        "coordinates" : [
+          -121.976457123436, 37.5574439579873
+        ]
+      }, 
+      "properties" : {
+        "agency_name" : "BART"
+      }
+    }, 
+    {
+      "type" : "Feature", 
+      "geometry" : 
+      {
+        "type" : "Point", 
+        "coordinates" : [
+          -122.223914185459, 37.7749039588802
+        ]
+      }, 
+      "properties" : {
+        "agency_name" : "BART"
+      }
+    }, 
+    {
+      "type" : "Feature", 
+      "geometry" : 
+      {
+        "type" : "Point", 
+        "coordinates" : [
+          -122.433928212644, 37.7329689393941
+        ]
+      }, 
+      "properties" : {
+        "agency_name" : "BART"
+      }
+    }, 
+    {
+      "type" : "Feature", 
+      "geometry" : 
+      {
+        "type" : "Point", 
+        "coordinates" : [
+          -122.086767152684, 37.6697339592794
+        ]
+      }, 
+      "properties" : {
+        "agency_name" : "BART"
+      }
+    }, 
+    {
+      "type" : "Feature", 
+      "geometry" : 
+      {
+        "type" : "Point", 
+        "coordinates" : [
+          -122.124508185094, 37.8929859758225
+        ]
+      }, 
+      "properties" : {
+        "agency_name" : "BART"
+      }
+    }, 
+    {
+      "type" : "Feature", 
+      "geometry" : 
+      {
+        "type" : "Point", 
+        "coordinates" : [
+          -122.265681195044, 37.7973499572193
+        ]
+      }, 
+      "properties" : {
+        "agency_name" : "BART"
+      }
+    }, 
+    {
+      "type" : "Feature", 
+      "geometry" : 
+      {
+        "type" : "Point", 
+        "coordinates" : [
+          -122.266938199017, 37.8287859597608
+        ]
+      }, 
+      "properties" : {
+        "agency_name" : "BART"
+      }
+    }, 
+    {
+      "type" : "Feature", 
+      "geometry" : 
+      {
+        "type" : "Point", 
+        "coordinates" : [
+          -122.386394190016, 37.6000429318742
+        ]
+      }, 
+      "properties" : {
+        "agency_name" : "BART"
+      }
+    }, 
+    {
+      "type" : "Feature", 
+      "geometry" : 
+      {
+        "type" : "Point", 
+        "coordinates" : [
+          -122.401330214408, 37.7893849466685
+        ]
+      }, 
+      "properties" : {
+        "agency_name" : "BART"
+      }
+    }, 
+    {
+      "type" : "Feature", 
+      "geometry" : 
+      {
+        "type" : "Point", 
+        "coordinates" : [
+          -122.283279206661, 37.8737979620378
+        ]
+      }, 
+      "properties" : {
+        "agency_name" : "BART"
+      }
+    }, 
+    {
+      "type" : "Feature", 
+      "geometry" : 
+      {
+        "type" : "Point", 
+        "coordinates" : [
+          -122.024475182747, 38.0030429917491
+        ]
+      }, 
+      "properties" : {
+        "agency_name" : "BART"
+      }
+    }, 
+    {
+      "type" : "Feature", 
+      "geometry" : 
+      {
+        "type" : "Point", 
+        "coordinates" : [
+          -122.18347519153, 37.8782629695717
+        ]
+      }, 
+      "properties" : {
+        "agency_name" : "BART"
+      }
+    }, 
+    {
+      "type" : "Feature", 
+      "geometry" : 
+      {
+        "type" : "Point", 
+        "coordinates" : [
+          -121.944960171766, 38.0187309995111
+        ]
+      }, 
+      "properties" : {
+        "agency_name" : "BART"
+      }
+    }, 
+    {
+      "type" : "Feature", 
+      "geometry" : 
+      {
+        "type" : "Point", 
+        "coordinates" : [
+          -122.05576117872, 37.9282839837125
+        ]
+      }, 
+      "properties" : {
+        "agency_name" : "BART"
+      }
+    }, 
+    {
+      "type" : "Feature", 
+      "geometry" : 
+      {
+        "type" : "Point", 
+        "coordinates" : [
+          -122.406794214635, 37.7849799458081
+        ]
+      }, 
+      "properties" : {
+        "agency_name" : "BART"
+      }
+    }, 
+    {
+      "type" : "Feature", 
+      "geometry" : 
+      {
+        "type" : "Point", 
+        "coordinates" : [
+          -122.352947223906, 37.9366709623485
+        ]
+      }, 
+      "properties" : {
+        "agency_name" : "BART"
+      }
+    }, 
+    {
+      "type" : "Feature", 
+      "geometry" : 
+      {
+        "type" : "Point", 
+        "coordinates" : [
+          -122.251129197534, 37.8445949623373
+        ]
+      }, 
+      "properties" : {
+        "agency_name" : "BART"
+      }
+    }, 
+    {
+      "type" : "Feature", 
+      "geometry" : 
+      {
+        "type" : "Point", 
+        "coordinates" : [
+          -122.415950198618, 37.6375129330642
+        ]
+      }, 
+      "properties" : {
+        "agency_name" : "BART"
+      }
+    }, 
+    {
+      "type" : "Feature", 
+      "geometry" : 
+      {
+        "type" : "Point", 
+        "coordinates" : [
+          -122.160469170534, 37.7218059582209
+        ]
+      }, 
+      "properties" : {
+        "agency_name" : "BART"
+      }
+    }, 
+    {
+      "type" : "Feature", 
+      "geometry" : 
+      {
+        "type" : "Point", 
+        "coordinates" : [
+          -122.39202819311, 37.6160329333798
+        ]
+      }, 
+      "properties" : {
+        "agency_name" : "BART"
+      }
+    }, 
+    {
+      "type" : "Feature", 
+      "geometry" : 
+      {
+        "type" : "Point", 
+        "coordinates" : [
+          -122.0569851443, 37.6343759591613
+        ]
+      }, 
+      "properties" : {
+        "agency_name" : "BART"
+      }
+    }, 
+    {
+      "type" : "Feature", 
+      "geometry" : 
+      {
+        "type" : "Point", 
+        "coordinates" : [
+          -122.443723206176, 37.6642429332843
+        ]
+      }, 
+      "properties" : {
+        "agency_name" : "BART"
+      }
+    }, 
+    {
+      "type" : "Feature", 
+      "geometry" : 
+      {
+        "type" : "Point", 
+        "coordinates" : [
+          -122.01704113371, 37.5907509583398
+        ]
+      }, 
+      "properties" : {
+        "agency_name" : "BART"
+      }
+    }, 
+    {
+      "type" : "Feature", 
+      "geometry" : 
+      {
+        "type" : "Point", 
+        "coordinates" : [
+          -122.067119177395, 37.9055969810851
+        ]
+      }, 
+      "properties" : {
+        "agency_name" : "BART"
+      }
+    }, 
+    {
+      "type" : "Feature", 
+      "geometry" : 
+      {
+        "type" : "Point", 
+        "coordinates" : [
+          -121.927844133026, 37.6998339734518
+        ]
+      }, 
+      "properties" : {
+        "agency_name" : "BART"
+      }
+    }, 
+    {
+      "type" : "Feature", 
+      "geometry" : 
+      {
+        "type" : "Point", 
+        "coordinates" : [
+          -122.212453176612, 37.7129769545663
+        ]
+      }, 
+      "properties" : {
+        "agency_name" : "BART"
+      }
+    }, 
+    {
+      "type" : "Feature", 
+      "geometry" : 
+      {
+        "type" : "Point", 
+        "coordinates" : [
+          -122.007611498262, 37.5585635062541
+        ]
+      }, 
+      "properties" : {
+        "agency_name" : "ACE Altamont Corridor Express"
+      }
+    }, 
+    {
+      "type" : "Feature", 
+      "geometry" : 
+      {
+        "type" : "Point", 
+        "coordinates" : [
+          -121.966684605521, 37.4064030258386
+        ]
+      }, 
+      "properties" : {
+        "agency_name" : "ACE Altamont Corridor Express"
+      }
+    }, 
+    {
+      "type" : "Feature", 
+      "geometry" : 
+      {
+        "type" : "Point", 
+        "coordinates" : [
+          -121.767508276242, 37.6851102740132
+        ]
+      }, 
+      "properties" : {
+        "agency_name" : "ACE Altamont Corridor Express"
+      }
+    }, 
+    {
+      "type" : "Feature", 
+      "geometry" : 
+      {
+        "type" : "Point", 
+        "coordinates" : [
+          -121.882974850287, 37.6575535130484
+        ]
+      }, 
+      "properties" : {
+        "agency_name" : "ACE Altamont Corridor Express"
+      }
+    }, 
+    {
+      "type" : "Feature", 
+      "geometry" : 
+      {
+        "type" : "Point", 
+        "coordinates" : [
+          -121.903201446782, 37.3295732736298
+        ]
+      }, 
+      "properties" : {
+        "agency_name" : "ACE Altamont Corridor Express"
+      }
+    }, 
+    {
+      "type" : "Feature", 
+      "geometry" : 
+      {
+        "type" : "Point", 
+        "coordinates" : [
+          -121.936359094311, 37.3528969434054
+        ]
+      }, 
+      "properties" : {
+        "agency_name" : "ACE Altamont Corridor Express"
+      }
+    }, 
+    {
+      "type" : "Feature", 
+      "geometry" : 
+      {
+        "type" : "Point", 
+        "coordinates" : [
+          -122.395419212188, 37.7765459462326
+        ]
+      }, 
+      "properties" : {
+        "agency_name" : "Caltrain"
+      }
+    }, 
+    {
+      "type" : "Feature", 
+      "geometry" : 
+      {
+        "type" : "Point", 
+        "coordinates" : [
+          -122.39233120928, 37.7576969444527
+        ]
+      }, 
+      "properties" : {
+        "agency_name" : "Caltrain"
+      }
+    }, 
+    {
+      "type" : "Feature", 
+      "geometry" : 
+      {
+        "type" : "Point", 
+        "coordinates" : [
+          -122.40137920491, 37.7112069402619
+        ]
+      }, 
+      "properties" : {
+        "agency_name" : "Caltrain"
+      }
+    }, 
+    {
+      "type" : "Feature", 
+      "geometry" : 
+      {
+        "type" : "Point", 
+        "coordinates" : [
+          -122.405834199737, 37.6549769351092
+        ]
+      }, 
+      "properties" : {
+        "agency_name" : "Caltrain"
+      }
+    }, 
+    {
+      "type" : "Feature", 
+      "geometry" : 
+      {
+        "type" : "Point", 
+        "coordinates" : [
+          -122.411304197214, 37.6298359328561
+        ]
+      }, 
+      "properties" : {
+        "agency_name" : "Caltrain"
+      }
+    }, 
+    {
+      "type" : "Feature", 
+      "geometry" : 
+      {
+        "type" : "Point", 
+        "coordinates" : [
+          -122.386110189519, 37.5992279323803
+        ]
+      }, 
+      "properties" : {
+        "agency_name" : "Caltrain"
+      }
+    }, 
+    {
+      "type" : "Feature", 
+      "geometry" : 
+      {
+        "type" : "Point", 
+        "coordinates" : [
+          -122.363418185668, 37.5878829325776
+        ]
+      }, 
+      "properties" : {
+        "agency_name" : "Caltrain"
+      }
+    }, 
+    {
+      "type" : "Feature", 
+      "geometry" : 
+      {
+        "type" : "Point", 
+        "coordinates" : [
+          -122.345158181629, 37.5802509331531
+        ]
+      }, 
+      "properties" : {
+        "agency_name" : "Caltrain"
+      }
+    }, 
+    {
+      "type" : "Feature", 
+      "geometry" : 
+      {
+        "type" : "Point", 
+        "coordinates" : [
+          -122.323263177209, 37.5676209341397
+        ]
+      }, 
+      "properties" : {
+        "agency_name" : "Caltrain"
+      }
+    }, 
+    {
+      "type" : "Feature", 
+      "geometry" : 
+      {
+        "type" : "Point", 
+        "coordinates" : [
+          -122.3091101735, 37.5521859338425
+        ]
+      }, 
+      "properties" : {
+        "agency_name" : "Caltrain"
+      }
+    }, 
+    {
+      "type" : "Feature", 
+      "geometry" : 
+      {
+        "type" : "Point", 
+        "coordinates" : [
+          -122.297014169206, 37.5374209333732
+        ]
+      }, 
+      "properties" : {
+        "agency_name" : "Caltrain"
+      }
+    }, 
+    {
+      "type" : "Feature", 
+      "geometry" : 
+      {
+        "type" : "Point", 
+        "coordinates" : [
+          -122.275587165083, 37.5207179331829
+        ]
+      }, 
+      "properties" : {
+        "agency_name" : "Caltrain"
+      }
+    }, 
+    {
+      "type" : "Feature", 
+      "geometry" : 
+      {
+        "type" : "Point", 
+        "coordinates" : [
+          -122.259875160426, 37.5076529333579
+        ]
+      }, 
+      "properties" : {
+        "agency_name" : "Caltrain"
+      }
+    }, 
+    {
+      "type" : "Feature", 
+      "geometry" : 
+      {
+        "type" : "Point", 
+        "coordinates" : [
+          -122.231607154181, 37.4858969335699
+        ]
+      }, 
+      "properties" : {
+        "agency_name" : "Caltrain"
+      }
+    }, 
+    {
+      "type" : "Feature", 
+      "geometry" : 
+      {
+        "type" : "Point", 
+        "coordinates" : [
+          -122.198165146227, 37.4644629344614
+        ]
+      }, 
+      "properties" : {
+        "agency_name" : "Caltrain"
+      }
+    }, 
+    {
+      "type" : "Feature", 
+      "geometry" : 
+      {
+        "type" : "Point", 
+        "coordinates" : [
+          -122.18227914341, 37.4543869343717
+        ]
+      }, 
+      "properties" : {
+        "agency_name" : "Caltrain"
+      }
+    }, 
+    {
+      "type" : "Feature", 
+      "geometry" : 
+      {
+        "type" : "Point", 
+        "coordinates" : [
+          -122.164195139104, 37.4433449348051
+        ]
+      }, 
+      "properties" : {
+        "agency_name" : "Caltrain"
+      }
+    }, 
+    {
+      "type" : "Feature", 
+      "geometry" : 
+      {
+        "type" : "Point", 
+        "coordinates" : [
+          -122.142271134419, 37.4295249357189
+        ]
+      }, 
+      "properties" : {
+        "agency_name" : "Caltrain"
+      }
+    }, 
+    {
+      "type" : "Feature", 
+      "geometry" : 
+      {
+        "type" : "Point", 
+        "coordinates" : [
+          -122.108171126232, 37.4079649360864
+        ]
+      }, 
+      "properties" : {
+        "agency_name" : "Caltrain"
+      }
+    }, 
+    {
+      "type" : "Feature", 
+      "geometry" : 
+      {
+        "type" : "Point", 
+        "coordinates" : [
+          -122.075967120799, 37.3944629368764
+        ]
+      }, 
+      "properties" : {
+        "agency_name" : "Caltrain"
+      }
+    }, 
+    {
+      "type" : "Feature", 
+      "geometry" : 
+      {
+        "type" : "Point", 
+        "coordinates" : [
+          -122.030696111843, 37.3786179392192
+        ]
+      }, 
+      "properties" : {
+        "agency_name" : "Caltrain"
+      }
+    }, 
+    {
+      "type" : "Feature", 
+      "geometry" : 
+      {
+        "type" : "Point", 
+        "coordinates" : [
+          -121.996450105327, 37.3705199412177
+        ]
+      }, 
+      "properties" : {
+        "agency_name" : "Caltrain"
+      }
+    }, 
+    {
+      "type" : "Feature", 
+      "geometry" : 
+      {
+        "type" : "Point", 
+        "coordinates" : [
+          -121.936359094311, 37.3528969434054
+        ]
+      }, 
+      "properties" : {
+        "agency_name" : "Caltrain"
+      }
+    }, 
+    {
+      "type" : "Feature", 
+      "geometry" : 
+      {
+        "type" : "Point", 
+        "coordinates" : [
+          -121.915403090088, 37.3426919440507
+        ]
+      }, 
+      "properties" : {
+        "agency_name" : "Caltrain"
+      }
+    }, 
+    {
+      "type" : "Feature", 
+      "geometry" : 
+      {
+        "type" : "Point", 
+        "coordinates" : [
+          -121.903460086316, 37.3286469439258
+        ]
+      }, 
+      "properties" : {
+        "agency_name" : "Caltrain"
+      }
+    }, 
+    {
+      "type" : "Feature", 
+      "geometry" : 
+      {
+        "type" : "Point", 
+        "coordinates" : [
+          -121.841806072717, 37.2838689441278
+        ]
+      }, 
+      "properties" : {
+        "agency_name" : "Caltrain"
+      }
+    }, 
+    {
+      "type" : "Feature", 
+      "geometry" : 
+      {
+        "type" : "Point", 
+        "coordinates" : [
+          -121.797374061716, 37.2522019450635
+        ]
+      }, 
+      "properties" : {
+        "agency_name" : "Caltrain"
+      }
+    }, 
+    {
+      "type" : "Feature", 
+      "geometry" : 
+      {
+        "type" : "Point", 
+        "coordinates" : [
+          -121.652757026463, 37.1316979445398
+        ]
+      }, 
+      "properties" : {
+        "agency_name" : "Caltrain"
+      }
+    }, 
+    {
+      "type" : "Feature", 
+      "geometry" : 
+      {
+        "type" : "Point", 
+        "coordinates" : [
+          -121.609929015295, 37.085111943187
+        ]
+      }, 
+      "properties" : {
+        "agency_name" : "Caltrain"
+      }
+    }, 
+    {
+      "type" : "Feature", 
+      "geometry" : 
+      {
+        "type" : "Point", 
+        "coordinates" : [
+          -121.567089000429, 37.0054549396404
+        ]
+      }, 
+      "properties" : {
+        "agency_name" : "Caltrain"
+      }
+    }, 
+    {
+      "type" : "Feature", 
+      "geometry" : 
+      {
+        "type" : "Point", 
+        "coordinates" : [
+          -122.007611498262, 37.5585635062541
+        ]
+      }, 
+      "properties" : {
+        "agency_name" : "ACE"
+      }
+    }, 
+    {
+      "type" : "Feature", 
+      "geometry" : 
+      {
+        "type" : "Point", 
+        "coordinates" : [
+          -121.966684605521, 37.4064030258386
+        ]
+      }, 
+      "properties" : {
+        "agency_name" : "ACE"
+      }
+    }, 
+    {
+      "type" : "Feature", 
+      "geometry" : 
+      {
+        "type" : "Point", 
+        "coordinates" : [
+          -121.767508276242, 37.6851102740132
+        ]
+      }, 
+      "properties" : {
+        "agency_name" : "ACE"
+      }
+    }, 
+    {
+      "type" : "Feature", 
+      "geometry" : 
+      {
+        "type" : "Point", 
+        "coordinates" : [
+          -121.882974850287, 37.6575535130484
+        ]
+      }, 
+      "properties" : {
+        "agency_name" : "ACE"
+      }
+    }, 
+    {
+      "type" : "Feature", 
+      "geometry" : 
+      {
+        "type" : "Point", 
+        "coordinates" : [
+          -121.903052587167, 37.3290749042315
+        ]
+      }, 
+      "properties" : {
+        "agency_name" : "ACE"
+      }
+    }, 
+    {
+      "type" : "Feature", 
+      "geometry" : 
+      {
+        "type" : "Point", 
+        "coordinates" : [
+          -121.719396090541, 37.7013925085977
+        ]
+      }, 
+      "properties" : {
+        "agency_name" : "ACE"
+      }
+    }
+  ]
+}
