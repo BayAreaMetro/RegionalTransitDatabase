@@ -31,7 +31,7 @@ GTFS data (stop time interpolated) from MTC 511 were [processed](https://github.
 
 #### Rail, Ferry & Bus Rapid Transit
 
-A Feature Class from [MTCGIS](http://mtc.maps.arcgis.com/home/item.html?id=f998f0940316431b99ab5e4ca826133f) for Transit, Rail, and Ferry.
+A Feature Class from MTCGIS: [TPA Eligible Non Bus Stops](http://mtc.maps.arcgis.com/home/item.html?id=f998f0940316431b99ab5e4ca826133f).
 
 ### Methodology   
 
