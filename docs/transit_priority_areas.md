@@ -74,7 +74,7 @@ Step 2: frequency calculations and route geometries
 -  [add_transit and new routes](https://github.com/MetropolitanTransportationCommission/RegionalTransitDatabase/blob/a7cf88601fc73c0eca69aa6b24f2be1a9be3f04a/R/examples/add_transit_stops_new_routes_then_buffer.R)
 -  [make polygons from tpa eligible transit stops and routes](https://github.com/MetropolitanTransportationCommission/RegionalTransitDatabase/blob/a7cf88601fc73c0eca69aa6b24f2be1a9be3f04a/python/make_tpa_polygons.py)
 
-### Outcomes   
+### Outcome   
 
 -  [Map](http://www.arcgis.com/home/webmap/viewer.html?webmap=3f89d2b053bf4dbc81318a0e707531fb&extent=-122.5562,37.5907,-122.0491,37.8571)   
 
