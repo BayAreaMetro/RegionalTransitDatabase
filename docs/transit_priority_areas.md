@@ -37,7 +37,7 @@ A Feature Class from [MTCGIS](http://mtc.maps.arcgis.com/home/item.html?id=f998f
 
 #### Rail, Ferry & Bus Rapid Transit.  
 
-Columns and values were used to select TPA eligible Rail & Ferry stops from the MTCGIS source data.  See the individual selections in the Data section under Outcomes.  
+Columns and values were used to select TPA eligible Rail & Ferry stops from the MTCGIS source data.  See the individual selections in the [Data Subsets](  section under [Outcome](#outcome).   
 
 #### Bus Stop and Route Qualifying Criteria
 -  Peak periods were defined as 6 AM to 10 AM and 3 PM to 7 PM (as filtered by [this function](https://github.com/MetropolitanTransportationCommission/RegionalTransitDatabase/blob/9c370d72e9fa0d788fedf33d1cbec5a844e96c19/R/r511.R#L352-L379)) 
@@ -79,14 +79,19 @@ Using the buffers generated in the previous step, dissolve and merge using spati
 
 #### Data Subsets  
 
-Category|Planned/Existing|Description|Link to Data
------|------|--------|-----
-Bus|Existing|1/4 mile buffer of tpa route lines from source gtfs|[main_hf_rts_1_4_ml_buf](http://mtc.maps.arcgis.com/home/tem.html?id=dc818c03e86243ec8cf85b8995caab4d)
-Bus|Existing|1/2 mile buffer of tpa route lines from source gtfs|[main_hf_rts_1_2_ml_buf](http://mtc.maps.arcgis.com/home/tem.html?id=303f6c62df4842af8459d2cab86b80fe)
-Bus|Existing|0.2 mile buffer of tpa qualifying high frequency stops|[main_hf_stops_with_hf_neighbors_buffer](http://mtc.maps.arcgis.com/home/tem.html?id=a239938913e24c618bea07b6f5f34d52)
-Bus|Planned|1/4 mile buffer around the geneva route|[geneva_route_1_4_mile](http://mtc.maps.arcgis.com/home/tem.html?id=c076e3dd52b1422bbf2ea122bbd280f3)
-Bus|Planned|1/2 mile buffer around the geneva route|[geneva_route_1_2_mile](http://www.arcgis.com/home/tem.html?id=1e65df8b816c4dd2b41c811dcbdd540c)
-Rail&Ferry|Planned|1/2 mile buffer around rail and ferry projects|[heavy rail_and_ferry_1_2_mile_buffer](http://mtc.maps.arcgis.com/home/item.html?id=1bbb5e24e8b048f6b291784920eaf61c)
+Buffers:  
+
+Category|Planned/Existing|Buffer|Feature Type|Link to Data
+-----|------|--------|-----|----
+Bus|Existing|1/4 mile|routes|[main_hf_rts_1_4_ml_buf](http://mtc.maps.arcgis.com/home/tem.html?id=dc818c03e86243ec8cf85b8995caab4d)
+Bus|Existing|1/2 mile|routes|[main_hf_rts_1_2_ml_buf](http://mtc.maps.arcgis.com/home/tem.html?id=303f6c62df4842af8459d2cab86b80fe)
+Bus|Planned|1/4 mile|routes|[geneva_route_1_4_mile](http://mtc.maps.arcgis.com/home/tem.html?id=c076e3dd52b1422bbf2ea122bbd280f3)
+Bus|Planned|1/2 mile|route|[geneva_route_1_2_mile](http://www.arcgis.com/home/tem.html?id=1e65df8b816c4dd2b41c811dcbdd540c)
+Bus|Existing|0.2 mile|stops|[main_hf_stops_with_hf_neighbors_buffer](http://mtc.maps.arcgis.com/home/tem.html?id=a239938913e24c618bea07b6f5f34d52)
+Rail&Ferry|Planned|1/2 mile|stops|[heavy rail_and_ferry_1_2_mile_buffer](http://mtc.maps.arcgis.com/home/item.html?id=1bbb5e24e8b048f6b291784920eaf61c)
+
+
+Individual Points:  
 
 System|Status|Link to Data
 ------|-------|----
