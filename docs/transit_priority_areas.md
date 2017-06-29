@@ -37,7 +37,7 @@ A Feature Class from [MTCGIS](http://mtc.maps.arcgis.com/home/item.html?id=f998f
 
 #### Rail, Ferry & Bus Rapid Transit.  
 
-Columns and values were used to select TPA eligible Rail & Ferry stops from the MTCGIS source data.  See the individual selections in the [Data Subsets](  section under [Outcome](#outcome).   
+Columns and values were used to select TPA eligible Rail & Ferry stops from the MTCGIS source data.  See the individual selections in the [Data Subsets](#data-subsets) section under [Outcome](#outcome).   
 
 #### Bus Stop and Route Qualifying Criteria
 -  Peak periods were defined as 6 AM to 10 AM and 3 PM to 7 PM (as filtered by [this function](https://github.com/MetropolitanTransportationCommission/RegionalTransitDatabase/blob/9c370d72e9fa0d788fedf33d1cbec5a844e96c19/R/r511.R#L352-L379)) 
