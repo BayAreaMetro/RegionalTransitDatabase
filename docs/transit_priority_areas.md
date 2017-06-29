@@ -93,6 +93,8 @@ Rail&Ferry|Planned|1/2 mile|stops|[heavy rail_and_ferry_1_2_mile_buffer](http://
 
 Individual Points:  
 
+Below are relevant subsets from [TPA Eligible Non Bus Stops](http://mtc.maps.arcgis.com/home/item.html?id=f998f0940316431b99ab5e4ca826133f):   
+
 System|Status|Link to Data
 ------|-------|----
 Rail|Existing|[GeoJSON](https://services3.arcgis.com/i2dkYWmb4wHvYPda/arcgis/rest/services/TPA_Non_Bus_Eligible_Stops_2017/FeatureServer/0/query?where=system+%3D+%27Rail%27+AND+status%3D%27Existing%27&objectIds=&time=&geometry=&geometryType=esriGeometryEnvelope&inSR=&spatialRel=esriSpatialRelIntersects&resultType=none&distance=0.0&units=esriSRUnit_Meter&returnGeodetic=false&outFields=&returnGeometry=true&multipatchOption=xyFootprint&maxAllowableOffset=&geometryPrecision=&outSR=&returnIdsOnly=false&returnCountOnly=false&returnExtentOnly=false&returnDistinctValues=false&orderByFields=&groupByFieldsForStatistics=&outStatistics=&resultOffset=&resultRecordCount=&returnZ=false&returnM=false&quantizationParameters=&sqlFormat=none&f=pgeojson&token=)
