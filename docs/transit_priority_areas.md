@@ -37,15 +37,7 @@ A Feature Class from [MTCGIS](http://mtc.maps.arcgis.com/home/item.html?id=f998f
 
 #### Rail, Ferry & Bus Rapid Transit.  
 
-The following columns (headers) and values (table string values) were used to select TPA eligible Rail & Ferry stops
-
-System|Status|Query Result
-------|-------|----
-Rail|Existing|[GeoJSON](https://services3.arcgis.com/i2dkYWmb4wHvYPda/arcgis/rest/services/TPA_Non_Bus_Eligible_Stops_2017/FeatureServer/0/query?where=system+%3D+%27Rail%27+AND+status%3D%27Existing%27&objectIds=&time=&geometry=&geometryType=esriGeometryEnvelope&inSR=&spatialRel=esriSpatialRelIntersects&resultType=none&distance=0.0&units=esriSRUnit_Meter&returnGeodetic=false&outFields=&returnGeometry=true&multipatchOption=xyFootprint&maxAllowableOffset=&geometryPrecision=&outSR=&returnIdsOnly=false&returnCountOnly=false&returnExtentOnly=false&returnDistinctValues=false&orderByFields=&groupByFieldsForStatistics=&outStatistics=&resultOffset=&resultRecordCount=&returnZ=false&returnM=false&quantizationParameters=&sqlFormat=none&f=pgeojson&token=)
-Light Rail|Existing|[GeoJSON](https://services3.arcgis.com/i2dkYWmb4wHvYPda/arcgis/rest/services/TPA_Non_Bus_Eligible_Stops_2017/FeatureServer/0/query?where=system+%3D+%27Light+Rail%27+AND+status%3D%27Existing%27&objectIds=&time=&geometry=&geometryType=esriGeometryEnvelope&inSR=&spatialRel=esriSpatialRelIntersects&resultType=none&distance=0.0&units=esriSRUnit_Meter&returnGeodetic=false&outFields=&returnGeometry=true&multipatchOption=xyFootprint&maxAllowableOffset=&geometryPrecision=&outSR=&returnIdsOnly=false&returnCountOnly=false&returnExtentOnly=false&returnDistinctValues=false&orderByFields=&groupByFieldsForStatistics=&outStatistics=&resultOffset=&resultRecordCount=&returnZ=false&returnM=false&quantizationParameters=&sqlFormat=none&f=pgeojson&token=)
-Rail|Planned or Under Construction|[GeoJSON](https://services3.arcgis.com/i2dkYWmb4wHvYPda/arcgis/rest/services/TPA_Non_Bus_Eligible_Stops_2017/FeatureServer/0/query?where=system+%3D+%27Rail%27+AND+%28status%3D%27Planned%27+OR+status%3D%27Under+Construction%27%29&objectIds=&time=&geometry=&geometryType=esriGeometryEnvelope&inSR=&spatialRel=esriSpatialRelIntersects&resultType=none&distance=0.0&units=esriSRUnit_Meter&returnGeodetic=false&outFields=&returnGeometry=true&multipatchOption=xyFootprint&maxAllowableOffset=&geometryPrecision=&outSR=&returnIdsOnly=false&returnCountOnly=false&returnExtentOnly=false&returnDistinctValues=false&orderByFields=&groupByFieldsForStatistics=&outStatistics=&resultOffset=&resultRecordCount=&returnZ=false&returnM=false&quantizationParameters=&sqlFormat=none&f=pgeojson&token=)
-Ferry|Planned or Under Construction|[GeoJSON](https://services3.arcgis.com/i2dkYWmb4wHvYPda/arcgis/rest/services/TPA_Non_Bus_Eligible_Stops_2017/FeatureServer/0/query?where=system+%3D+%27Ferry%27+AND+%28status%3D%27Planned%27+OR+status%3D%27Under+Construction%27%29&objectIds=&time=&geometry=&geometryType=esriGeometryEnvelope&inSR=&spatialRel=esriSpatialRelIntersects&resultType=none&distance=0.0&units=esriSRUnit_Meter&returnGeodetic=false&outFields=&returnGeometry=true&multipatchOption=xyFootprint&maxAllowableOffset=&geometryPrecision=&outSR=&returnIdsOnly=false&returnCountOnly=false&returnExtentOnly=false&returnDistinctValues=false&orderByFields=&groupByFieldsForStatistics=&outStatistics=&resultOffset=&resultRecordCount=&returnZ=false&returnM=false&quantizationParameters=&sqlFormat=none&f=pgeojson&token=)
-Bus Rapid Transit|Planned or Under Construction|[GeoJSON](https://services3.arcgis.com/i2dkYWmb4wHvYPda/arcgis/rest/services/TPA_Non_Bus_Eligible_Stops_2017/FeatureServer/0/query?where=system+%3D+%27Bus+Rapid+Transit%27+AND+%28status%3D%27Planned%27+OR+status%3D%27Under+Construction%27%29&objectIds=&time=&geometry=&geometryType=esriGeometryEnvelope&inSR=&spatialRel=esriSpatialRelIntersects&resultType=none&distance=0.0&units=esriSRUnit_Meter&returnGeodetic=false&outFields=&returnGeometry=true&multipatchOption=xyFootprint&maxAllowableOffset=&geometryPrecision=&outSR=&returnIdsOnly=false&returnCountOnly=false&returnExtentOnly=false&returnDistinctValues=false&orderByFields=&groupByFieldsForStatistics=&outStatistics=&resultOffset=&resultRecordCount=&returnZ=false&returnM=false&quantizationParameters=&sqlFormat=none&f=pgeojson&token=)
+Columns and values were used to select TPA eligible Rail & Ferry stops from the MTCGIS source data.  See the individual selections in the Data section under Outcomes.  
 
 #### Bus Stop and Route Qualifying Criteria
 -  Peak periods were defined as 6 AM to 10 AM and 3 PM to 7 PM (as filtered by [this function](https://github.com/MetropolitanTransportationCommission/RegionalTransitDatabase/blob/9c370d72e9fa0d788fedf33d1cbec5a844e96c19/R/r511.R#L352-L379)) 
@@ -78,14 +70,16 @@ Using the buffers generated in the previous step, dissolve and merge using spati
 - Insert Python data processing scripts here.
 
 ### Outcome   
--  [Buffer Review Map](http://www.arcgis.com/home/webmap/viewer.html?webmap=3f89d2b053bf4dbc81318a0e707531fb&extent=-122.5562,37.5907,-122.0491,37.8571) 
 
-- [TPA Dataset](http://mtc.maps.arcgis.com/home/item.html?id=ff94bb94a2e64f648ae93b528ca0e7b1)
-  
+#### Transit Priority Areas  
 
-#### Transit Priority Areas by Category  
+-  [Transit Priority Area Buffer Review Map](http://www.arcgis.com/home/webmap/viewer.html?webmap=3f89d2b053bf4dbc81318a0e707531fb&extent=-122.5562,37.5907,-122.0491,37.8571) 
 
-Category|Planned/Existing|description|link
+- [Transit Priority Area Buffer Dataset](http://mtc.maps.arcgis.com/home/item.html?id=ff94bb94a2e64f648ae93b528ca0e7b1)
+
+#### Data Subsets  
+
+Category|Planned/Existing|Description|Link to Data
 -----|------|--------|-----
 Bus|Existing|1/4 mile buffer of tpa route lines from source gtfs|[main_hf_rts_1_4_ml_buf](http://mtc.maps.arcgis.com/home/tem.html?id=dc818c03e86243ec8cf85b8995caab4d)
 Bus|Existing|1/2 mile buffer of tpa route lines from source gtfs|[main_hf_rts_1_2_ml_buf](http://mtc.maps.arcgis.com/home/tem.html?id=303f6c62df4842af8459d2cab86b80fe)
@@ -93,6 +87,14 @@ Bus|Existing|0.2 mile buffer of tpa qualifying high frequency stops|[main_hf_sto
 Bus|Planned|1/4 mile buffer around the geneva route|[geneva_route_1_4_mile](http://mtc.maps.arcgis.com/home/tem.html?id=c076e3dd52b1422bbf2ea122bbd280f3)
 Bus|Planned|1/2 mile buffer around the geneva route|[geneva_route_1_2_mile](http://www.arcgis.com/home/tem.html?id=1e65df8b816c4dd2b41c811dcbdd540c)
 Rail&Ferry|Planned|1/2 mile buffer around rail and ferry projects|[heavy rail_and_ferry_1_2_mile_buffer](http://mtc.maps.arcgis.com/home/item.html?id=1bbb5e24e8b048f6b291784920eaf61c)
+
+System|Status|Link to Data
+------|-------|----
+Rail|Existing|[GeoJSON](https://services3.arcgis.com/i2dkYWmb4wHvYPda/arcgis/rest/services/TPA_Non_Bus_Eligible_Stops_2017/FeatureServer/0/query?where=system+%3D+%27Rail%27+AND+status%3D%27Existing%27&objectIds=&time=&geometry=&geometryType=esriGeometryEnvelope&inSR=&spatialRel=esriSpatialRelIntersects&resultType=none&distance=0.0&units=esriSRUnit_Meter&returnGeodetic=false&outFields=&returnGeometry=true&multipatchOption=xyFootprint&maxAllowableOffset=&geometryPrecision=&outSR=&returnIdsOnly=false&returnCountOnly=false&returnExtentOnly=false&returnDistinctValues=false&orderByFields=&groupByFieldsForStatistics=&outStatistics=&resultOffset=&resultRecordCount=&returnZ=false&returnM=false&quantizationParameters=&sqlFormat=none&f=pgeojson&token=)
+Light Rail|Existing|[GeoJSON](https://services3.arcgis.com/i2dkYWmb4wHvYPda/arcgis/rest/services/TPA_Non_Bus_Eligible_Stops_2017/FeatureServer/0/query?where=system+%3D+%27Light+Rail%27+AND+status%3D%27Existing%27&objectIds=&time=&geometry=&geometryType=esriGeometryEnvelope&inSR=&spatialRel=esriSpatialRelIntersects&resultType=none&distance=0.0&units=esriSRUnit_Meter&returnGeodetic=false&outFields=&returnGeometry=true&multipatchOption=xyFootprint&maxAllowableOffset=&geometryPrecision=&outSR=&returnIdsOnly=false&returnCountOnly=false&returnExtentOnly=false&returnDistinctValues=false&orderByFields=&groupByFieldsForStatistics=&outStatistics=&resultOffset=&resultRecordCount=&returnZ=false&returnM=false&quantizationParameters=&sqlFormat=none&f=pgeojson&token=)
+Rail|Planned or Under Construction|[GeoJSON](https://services3.arcgis.com/i2dkYWmb4wHvYPda/arcgis/rest/services/TPA_Non_Bus_Eligible_Stops_2017/FeatureServer/0/query?where=system+%3D+%27Rail%27+AND+%28status%3D%27Planned%27+OR+status%3D%27Under+Construction%27%29&objectIds=&time=&geometry=&geometryType=esriGeometryEnvelope&inSR=&spatialRel=esriSpatialRelIntersects&resultType=none&distance=0.0&units=esriSRUnit_Meter&returnGeodetic=false&outFields=&returnGeometry=true&multipatchOption=xyFootprint&maxAllowableOffset=&geometryPrecision=&outSR=&returnIdsOnly=false&returnCountOnly=false&returnExtentOnly=false&returnDistinctValues=false&orderByFields=&groupByFieldsForStatistics=&outStatistics=&resultOffset=&resultRecordCount=&returnZ=false&returnM=false&quantizationParameters=&sqlFormat=none&f=pgeojson&token=)
+Ferry|Planned or Under Construction|[GeoJSON](https://services3.arcgis.com/i2dkYWmb4wHvYPda/arcgis/rest/services/TPA_Non_Bus_Eligible_Stops_2017/FeatureServer/0/query?where=system+%3D+%27Ferry%27+AND+%28status%3D%27Planned%27+OR+status%3D%27Under+Construction%27%29&objectIds=&time=&geometry=&geometryType=esriGeometryEnvelope&inSR=&spatialRel=esriSpatialRelIntersects&resultType=none&distance=0.0&units=esriSRUnit_Meter&returnGeodetic=false&outFields=&returnGeometry=true&multipatchOption=xyFootprint&maxAllowableOffset=&geometryPrecision=&outSR=&returnIdsOnly=false&returnCountOnly=false&returnExtentOnly=false&returnDistinctValues=false&orderByFields=&groupByFieldsForStatistics=&outStatistics=&resultOffset=&resultRecordCount=&returnZ=false&returnM=false&quantizationParameters=&sqlFormat=none&f=pgeojson&token=)
+Bus Rapid Transit|Planned or Under Construction|[GeoJSON](https://services3.arcgis.com/i2dkYWmb4wHvYPda/arcgis/rest/services/TPA_Non_Bus_Eligible_Stops_2017/FeatureServer/0/query?where=system+%3D+%27Bus+Rapid+Transit%27+AND+%28status%3D%27Planned%27+OR+status%3D%27Under+Construction%27%29&objectIds=&time=&geometry=&geometryType=esriGeometryEnvelope&inSR=&spatialRel=esriSpatialRelIntersects&resultType=none&distance=0.0&units=esriSRUnit_Meter&returnGeodetic=false&outFields=&returnGeometry=true&multipatchOption=xyFootprint&maxAllowableOffset=&geometryPrecision=&outSR=&returnIdsOnly=false&returnCountOnly=false&returnExtentOnly=false&returnDistinctValues=false&orderByFields=&groupByFieldsForStatistics=&outStatistics=&resultOffset=&resultRecordCount=&returnZ=false&returnM=false&quantizationParameters=&sqlFormat=none&f=pgeojson&token=)
 
 #### Related Projects:
 
