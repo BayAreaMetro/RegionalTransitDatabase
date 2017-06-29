@@ -31,14 +31,15 @@ TPA's are defined for the following areas. The numbers adjacent to the definitio
 #### Bus Stops & Routes
 GTFS data (stop time interpolated) from MTC 511 were [processed](https://github.com/MetropolitanTransportationCommission/RegionalTransitDatabase/blob/8a2ce450af213707bbc6d61dbd035363b40f058c/python/preprocess_gtfs_folders.py) and put [here](https://mtcdrive.box.com/s/41tfjd14hazu1x3qe53lt19u7fbiqdjk)      
 
-#### Rail & Ferry
+#### Rail, Ferry & Bus Rapid Transit
 
 location|source data
 --------------|-------
-Existing heavy rail stations|[MTC GIS - Heavy Rail](http://mtc.maps.arcgis.com/home/item.html?id=f1d073078d13450f92b362bdb9cc7827)
-Existing light rail stations|[MTC GIS - Light Rail](http://mtc.maps.arcgis.com/home/item.html?id=420799986ef0418bba532a82d0e31c49)
+Existing heavy rail stations|[MTC GIS - Heavy Rail](http://mtc.maps.arcgis.com/home/item.html?id=f998f0940316431b99ab5e4ca826133f)
+Existing light rail stations|[MTC GIS - Light Rail](http://mtc.maps.arcgis.com/home/item.html?id=f998f0940316431b99ab5e4ca826133f)
 Planned rail stations in an adopted RTP|[Plan Bay Area 2040](http://projects.planbayarea.org)
-Existing/Planned ferry terminals with bus or rail service|[MTC GIS](http://mtc.maps.arcgis.com/home/item.html?id=1188286d6b24418bbe57e573bfff00ee)
+Existing/Planned ferry terminals with bus or rail service|[MTC GIS](http://mtc.maps.arcgis.com/home/item.html?id=f998f0940316431b99ab5e4ca826133f)
+Planned Bus Rapid Transit service|[MTC GIS](http://mtc.maps.arcgis.com/home/item.html?id=f998f0940316431b99ab5e4ca826133f)
 
 ### Methodology   
 
