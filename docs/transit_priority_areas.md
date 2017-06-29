@@ -85,10 +85,6 @@ Using the buffers generated in the previous step, dissolve and merge using spati
 
 #### Data   
 
-feature classes: 
-
-##### Existing Bus Routes & Stops   
-
 name|description|Category|Planned/Existing
 -----|--------|-----|------
 [main_hf_rts_1_4_ml_buf](http://mtc.maps.arcgis.com/home/item.html?id=dc818c03e86243ec8cf85b8995caab4d)|1/4 mile buffer of tpa route lines from source gtfs|Bus|Existing
