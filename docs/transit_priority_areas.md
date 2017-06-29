@@ -15,7 +15,7 @@ Identify bus routes and stops that match the definition of a Transit Priority Ar
 #### Bus Stops
 -  0.2 mile Buffer around existing or planned *high-frequency* bus stops. (2)*
 
-*See Qualifying Criteria in Methods for a more thorough definition of "high frequency"
+*See Qualifying Criteria in Methods for a more thorough definition of *high frequency*
 
 #### Rail & Ferry:   
 -  Existing rail stations  (3)
