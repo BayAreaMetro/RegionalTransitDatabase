@@ -35,8 +35,8 @@ GTFS data (stop time interpolated) from MTC 511 were [processed](https://github.
 
 location|source data
 --------------|-------
-Existing heavy rail stations|[MTC GIS- Heavy Rail](http://mtc.maps.arcgis.com/home/item.html?id=f1d073078d13450f92b362bdb9cc7827)
-existing light rail stations|[MTC GIS Light Rail](http://mtc.maps.arcgis.com/home/item.html?id=420799986ef0418bba532a82d0e31c49)
+Existing heavy rail stations|[MTC GIS - Heavy Rail](http://mtc.maps.arcgis.com/home/item.html?id=f1d073078d13450f92b362bdb9cc7827)
+Existing light rail stations|[MTC GIS - Light Rail](http://mtc.maps.arcgis.com/home/item.html?id=420799986ef0418bba532a82d0e31c49)
 Planned rail stations in an adopted RTP|[Plan Bay Area 2040](http://projects.planbayarea.org)
 Existing/Planned ferry terminals with bus or rail service|[MTC GIS](http://mtc.maps.arcgis.com/home/item.html?id=1188286d6b24418bbe57e573bfff00ee)
 
