@@ -35,7 +35,7 @@ A Feature Class from [MTCGIS](http://mtc.maps.arcgis.com/home/item.html?id=f998f
 
 ### Methodology   
 
-#### Rail & Ferry   
+#### Rail, Ferry & Bus Rapid Transit.  
 
 The following columns (headers) and values (table string values) were used to select TPA eligible Rail & Ferry stops
 
