@@ -8,21 +8,19 @@
 ### Problem Statement  
 
 Identify bus routes and stops that match the definition of a Transit Priority Area (TPA).  Output geometries for them.     
-
-TPA's are defined for the following areas. The numbers adjacent to the definition, e.g. (1), refer to that area type in the data output listed below in the [Outcome](#outcome) section.   
-
+ 
 #### Bus Routes
--  [1/4](http://www.leginfo.ca.gov/pub/11-12/bill/asm/ab_0901-0950/ab_904_bill_20120612_amended_sen_v94.html) and/or [1/2](http://leginfo.legislature.ca.gov/faces/billCompareClient.xhtml?bill_id=201320140SB743) mile Buffer around existing or planned *high-frequency* bus routes (lines). (1)*
+-  [1/4](http://www.leginfo.ca.gov/pub/11-12/bill/asm/ab_0901-0950/ab_904_bill_20120612_amended_sen_v94.html) and/or [1/2](http://leginfo.legislature.ca.gov/faces/billCompareClient.xhtml?bill_id=201320140SB743) mile Buffer around existing or planned *high-frequency* bus routes (lines).
 
 #### Bus Stops
--  0.2 mile Buffer around existing or planned *high-frequency* bus stops. (2)*
+-  0.2 mile Buffer around existing or planned *high-frequency* bus stops.
 
 *See Qualifying Criteria in Methods for a more thorough definition of *high frequency*
 
 #### Rail & Ferry:   
--  Existing rail stations  (3)
--  Planned rail stations in an adopted RTP (4)   
--  Existing/Planned ferry terminals with bus or rail service (5)   
+-  Existing rail stations
+-  Planned rail stations in an adopted RTP
+-  Existing and Planned ferry terminals with bus or rail service   
 
 ![stops_and_routes](http://www.fehrandpeers.com/wp-content/uploads/2016/01/SB743-transit-asset_REV-01.png)  
 
@@ -95,24 +93,15 @@ feature classes:
 
 *TPA type* is defined in the [Problem Statement](#problem-statement)  
 
-name|description|TPA type
------|--------|-----
-[main_hf_rts_1_4_ml_buf](http://mtc.maps.arcgis.com/home/item.html?id=dc818c03e86243ec8cf85b8995caab4d)|1/4 mile buffer of tpa route lines from source gtfs|1
-[main_hf_rts_1_2_ml_buf](http://mtc.maps.arcgis.com/home/item.html?id=303f6c62df4842af8459d2cab86b80fe)|1/2 mile buffer of tpa route lines from source gtfs|1
-[main_hf_stops_with_hf_neighbors_buffer](http://mtc.maps.arcgis.com/home/item.html?id=a239938913e24c618bea07b6f5f34d52)|0.2 mile buffer of tpa qualifying main_hf_stops|2
+name|description|Category|Planned/Existing
+-----|--------|-----|------
+[main_hf_rts_1_4_ml_buf](http://mtc.maps.arcgis.com/home/item.html?id=dc818c03e86243ec8cf85b8995caab4d)|1/4 mile buffer of tpa route lines from source gtfs|Bus|Existing
+[main_hf_rts_1_2_ml_buf](http://mtc.maps.arcgis.com/home/item.html?id=303f6c62df4842af8459d2cab86b80fe)|1/2 mile buffer of tpa route lines from source gtfs|Bus|Existing
+[main_hf_stops_with_hf_neighbors_buffer](http://mtc.maps.arcgis.com/home/item.html?id=a239938913e24c618bea07b6f5f34d52)|0.2 mile buffer of tpa qualifying main_hf_stops|Bus|Existing
+[geneva_route_1_4_mile](http://mtc.maps.arcgis.com/home/item.html?id=c076e3dd52b1422bbf2ea122bbd280f3)|1/4 mile buffer around the geneva route|Bus|Planned    
+[geneva_route_1_2_mile](http://www.arcgis.com/home/item.html?id=1e65df8b816c4dd2b41c811dcbdd540c)|1/2 mile buffer around the geneva route|Bus|Planned   
+[rail_and_ferry_1_2_mile_buffer](http://mtc.maps.arcgis.com/home/item.html?id=1bbb5e24e8b048f6b291784920eaf61c)|1/2 mile buffer around new rail and ferry projects|Rail&Ferry|Planned
 
-##### Planned Bus  
-
-name|description|TPA type
------|--------|------
-[geneva_route_1_4_mile](http://mtc.maps.arcgis.com/home/item.html?id=c076e3dd52b1422bbf2ea122bbd280f3)|1/4 mile buffer around the new geneva route|1    
-[geneva_route_1_2_mile](http://www.arcgis.com/home/item.html?id=1e65df8b816c4dd2b41c811dcbdd540c)|1/2 mile buffer around the new geneva route|1   
-
-##### Existing Rail  
-
-name|description|TPA type
------|--------|----
-[rail_and_ferry_1_2_mile_buffer](http://mtc.maps.arcgis.com/home/item.html?id=1bbb5e24e8b048f6b291784920eaf61c)|1/2 mile buffer around new rail and ferry projects|3,5
 
 #### Related Projects:
 
