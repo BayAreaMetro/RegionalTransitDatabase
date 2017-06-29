@@ -37,9 +37,10 @@ location|source data
 --------------|-------
 Existing heavy rail stations|[MTC GIS - Heavy Rail Filter on system: Rail and status: Existing](http://mtc.maps.arcgis.com/home/item.html?id=f998f0940316431b99ab5e4ca826133f)
 Existing light rail stations|[MTC GIS - Light Rail Filter on system: Light Rail and status: Existing](http://mtc.maps.arcgis.com/home/item.html?id=f998f0940316431b99ab5e4ca826133f)
-Planned rail stations in an adopted RTP|[MTC GIS - Heavy Rail Filter on system: Rail and status: Planned or Under Construction](http://mtc.maps.arcgis.com/home/item.html?id=f998f0940316431b99ab5e4ca826133f)
-Existing/Planned ferry terminals with bus or rail service|[MTC GIS - Ferry Filter on system: Ferry and status: Planned or Under Construction](http://mtc.maps.arcgis.com/home/item.html?id=f998f0940316431b99ab5e4ca826133f)
-Planned Bus Rapid Transit service|[MTC GIS - Bus Rapid Transit Ferry Filter on system: Ferry and status: Planned or Under Construction](http://mtc.maps.arcgis.com/home/item.html?id=f998f0940316431b99ab5e4ca826133f)
+Planned heavy rail stations in an adopted RTP|[MTC GIS - Heavy Rail Filter on system: Rail and status: Planned or Under Construction](http://mtc.maps.arcgis.com/home/item.html?id=f998f0940316431b99ab5e4ca826133f)
+Existing ferry terminals with bus or rail service|[MTC GIS - Ferry Filter on system: Ferry and status: Existing](http://mtc.maps.arcgis.com/home/item.html?id=f998f0940316431b99ab5e4ca826133f)
+Planned ferry terminals in an adopted RTP with bus or rail service |[MTC GIS - Ferry Filter on system: Ferry and status: Planned or Under Construction](http://mtc.maps.arcgis.com/home/item.html?id=f998f0940316431b99ab5e4ca826133f)
+Planned Bus Rapid Transit service in an adopted RTP|[MTC GIS - Bus Rapid Transit Ferry Filter on system: Ferry and status: Planned or Under Construction](http://mtc.maps.arcgis.com/home/item.html?id=f998f0940316431b99ab5e4ca826133f)
 
 ### Methodology   
 
