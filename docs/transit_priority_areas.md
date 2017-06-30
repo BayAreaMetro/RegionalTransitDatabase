@@ -83,10 +83,10 @@ Buffers:
 
 Category|Planned/Existing|Buffer|Feature Type|Link to Data
 -----|------|--------|-----|----
-Bus|Existing|1/4 mile|routes|[main_hf_rts_1_4_ml_buf](http://mtc.maps.arcgis.com/home/tem.html?id=dc818c03e86243ec8cf85b8995caab4d)
-Bus|Existing|1/2 mile|routes|[main_hf_rts_1_2_ml_buf](http://mtc.maps.arcgis.com/home/tem.html?id=303f6c62df4842af8459d2cab86b80fe)
-Bus|Planned|1/4 mile|routes|[geneva_route_1_4_mile](http://mtc.maps.arcgis.com/home/tem.html?id=c076e3dd52b1422bbf2ea122bbd280f3)
-Bus|Planned|1/2 mile|route|[geneva_route_1_2_mile](http://www.arcgis.com/home/tem.html?id=1e65df8b816c4dd2b41c811dcbdd540c)
+Bus|Existing|1/4 mile|routes|[main_hf_rts_1_4_ml_buf](http://mtc.maps.arcgis.com/home/item.html?id=dc818c03e86243ec8cf85b8995caab4d)
+Bus|Existing|1/2 mile|routes|[main_hf_rts_1_2_ml_buf](http://mtc.maps.arcgis.com/home/item.html?id=303f6c62df4842af8459d2cab86b80fe)
+Bus|Planned|1/4 mile|routes|[geneva_route_1_4_mile](http://mtc.maps.arcgis.com/home/item.html?id=c076e3dd52b1422bbf2ea122bbd280f3)
+Bus|Planned|1/2 mile|route|[geneva_route_1_2_mile](http://www.arcgis.com/home/item.html?id=1e65df8b816c4dd2b41c811dcbdd540c)
 Bus|Existing|0.2 mile|stops|[main_hf_stops_with_hf_neighbors_buffer](http://mtc.maps.arcgis.com/home/tem.html?id=a239938913e24c618bea07b6f5f34d52)
 Rail&Ferry|Planned|1/2 mile|stops|[heavy rail_and_ferry_1_2_mile_buffer](http://mtc.maps.arcgis.com/home/item.html?id=1bbb5e24e8b048f6b291784920eaf61c)
 
