@@ -2,16 +2,14 @@
 #'Flag stops for TPA candidacy (period, weekday, bus_stop)
 #'@param dataframe gtfs stops dataframe object
 #'@return dataframe with stops flagged for TPA candidacy
-flag_tpa_stop_candidates(gtfs_obj) {
-  df_sr$arrival_time <- make_hour_less_than_24(df_sr$arrival_time)
-  
+flag_tpa_candidate_trips <- function(df1){
   #flag key tpa variables on the stops
-  df_sr$f_am_peak <- is_in_time_period(df_sr$arrival_time,"06:00:00","09:59:00")
-  df_sr$f_pm_peak <- is_in_time_period(df_sr$arrival_time, "15:00:00","18:59:00")
+  df1$f_am_peak <- is_in_time_period(df1$arrival_time,"06:00:00","09:59:00")
+  df1$f_pm_peak <- is_in_time_period(df1$arrival_time, "15:00:00","18:59:00")
   
-  df_sr$f_weekday <- is_weekday(df_sr)
-  df_sr$f_bus_stop <-  df_sr$route_type == 3
-  gtfs_obj$mtc_stops_df <- df_sr
+  df1$f_weekday <- is_weekday(df1)
+  df1$f_bus_stop <-  df1$route_type == 3
+  return(df1)
 }
 
 
@@ -113,7 +111,7 @@ get_priority_routes <- function(gtfs_obj) {
   ###############################################
   # Section 4. Join all the GTFS provider tables into 1 table based around stops
   
-  df_sr <- make_mtc_tpa_stops_table(gtfs_obj)
+  df_sr <- make_mtc_tpa_trips_table(gtfs_obj)
   df_sr <- make_arrival_hour_less_than_24(df_sr)
   
   gtfs_obj$mtc_combined_gtfs <- as.data.frame(df_sr)
@@ -123,12 +121,12 @@ get_priority_routes <- function(gtfs_obj) {
   
   am_stops <- flag_and_filter_peak_periods_by_time(df_sr,"AM")
   am_stops <- remove_duplicate_stops(am_stops) #todo: see https://github.com/MetropolitanTransportationCommission/RegionalTransitDatabase/issues/31
-  am_stops <- count_trips(am_stops) 
+  am_stops <- count_trips_at_stops(am_stops) 
   gtfs_obj$mtc_am_stops <- am_stops
   
   pm_stops <- flag_and_filter_peak_periods_by_time(df_sr,"PM")
   pm_stops <- remove_duplicate_stops(pm_stops) #todo: see https://github.com/MetropolitanTransportationCommission/RegionalTransitDatabase/issues/31
-  pm_stops <- count_trips(pm_stops)
+  pm_stops <- count_trips_at_stops(pm_stops)
   gtfs_obj$mtc_pm_stops <- pm_stops 
   
   #create an mtc routes table on the gtfs object
@@ -269,7 +267,7 @@ flag_route_qualifications <- function(gtfs_obj) {
 #' Make a dataframe GTFS tables all joined together for route frequency calculations
 #' @param a GTFSr object for a given provider with routes, stops, stop_times, etc
 #' @return a mega-GTFSr data frame with stops, stop_times, trips, calendar, and routes all joined
-make_mtc_tpa_stops_table <- function(g) {
+make_mtc_tpa_trips_table <- function(g) {
   df <- list(g$stops_df,g$stop_times_df,g$trips_df,g$calendar_df,g$routes_df)
   Reduce(inner_join,df) %>%
     select(agency_id, stop_id, trip_id, service_id,
@@ -353,23 +351,6 @@ remove_duplicate_stops <- function(df1){
   return(df1_out)
 }
 
-
-#' for a mega-GTFSr dataframe, count the number of trips a bus takes through a given stop within a given time period
-#' @param a mega-GTFSr dataframe
-#' @return a dataframe of stops with a "Trips" variable representing the count trips taken through each stop for a route within a given time frame
-count_trips<- function(rt_df) {
-  rt_df_out <- rt_df %>%
-    group_by(agency_id,
-             route_id,
-             direction_id,
-             trip_headsign,
-             stop_id,
-             Peak_Period) %>%
-    count(stop_sequence) %>%
-    mutate(Headways = round(240/n,0))
-  colnames(rt_df_out)[colnames(rt_df_out)=="n"] <- "Trips"
-  return(rt_df_out)
-}
 
 #' for a mega-GTFSr dataframe, reduce it to just a listing of routes
 #' @param a mega-GTFSr dataframe
@@ -535,8 +516,8 @@ is_weekday <- function(df1) {
 
 #' for a mega-GTFSr dataframe, count the number of trips a bus takes through a given stop within a given time period
 #' @param a mega-GTFSr dataframe
-#' @return a dataframe of stops with a "Trips" variable representing the count trips taken through each stop for a route within a given time frame
-count_trips<- function(rt_df) {
+#' @return a column with a "Trips" variable representing the count trips taken through each stop for a route within a given time frame
+count_trips_at_stops<- function(rt_df) {
   rt_df_out <- rt_df %>%
     group_by(agency_id,
              route_id,
