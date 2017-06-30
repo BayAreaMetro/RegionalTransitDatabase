@@ -1,7 +1,7 @@
 #be sure to set the project path
 PROJECT_PATH <- "C:/projects/RTD/RegionalTransitDatabase"
 
-GTFS_PATH <- paste0(PROJECT_PATH,"/data/gtfs_interpolated_05_01_20175/",collapse="")
+GTFS_PATH <- paste0(PROJECT_PATH,"/data/gtfs_interpolated_05_01_2017/",collapse="")
 R_HELPER_FUNCTIONS_PATH <- paste0(PROJECT_PATH,"/R/r511.R",collapse="")
 source(R_HELPER_FUNCTIONS_PATH)
 CREDENTIALS_PATH <- paste0(PROJECT_PATH,"/credentials.R",collapse="") 

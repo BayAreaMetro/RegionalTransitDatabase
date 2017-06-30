@@ -383,14 +383,19 @@ filter_by_time <- function(rt_df, start_filter,end_filter) {
 #' for a mega-GTFSr dataframe, remove rows with duplicate stop times 
 #' @param a dataframe of stops with a stop_times column 
 #' @return a dataframe of stops with a stop_times column in which there are no duplicate stop times for a given stop
-remove_duplicate_stops <- function(rt_df){
-  rt_df %>%
+remove_duplicate_stops <- function(df1){
+  df1 %>%
     distinct(agency_id, route_id, direction_id,
              trip_headsign, stop_id, stop_sequence, arrival_time, Peak_Period) %>%
     arrange(agency_id, route_id, direction_id,
-            arrival_time,stop_sequence)->rt_df_out
-  return(rt_df_out)
+            arrival_time,stop_sequence)->df1_out
+  return(df1_out)
 }
+
+
+
+
+
 
 #' for a mega-GTFSr dataframe, count the number of trips a bus takes through a given stop within a given time period
 #' @param a mega-GTFSr dataframe
@@ -551,14 +556,14 @@ join_all_gtfs_tables <- function(g) {
 #' Make a dataframe GTFS arrival_time column into standard time variable
 #' @param dataframe containing a GTFS-style "arrival_time" column (time values at +24:00:00)
 #' @return dataframe containing a GTFS-style "arrival_time" column (no time values at +24:00:00)
-make_arrival_hour_less_than_24 <- function(df) {
-  t1 <- df$arrival_time
+make_arrival_hour_less_than_24 <- function(arrival_time_col) {
+  t1 <- arrival_time_col
   if (!(typeof(t1) == "character")) {
     stop("column not a character string--may already be fixed")
   }
-  df$arrival_time <- sapply(t1,FUN=fix_hour)
-  df$arrival_time <- as.POSIXct(df$arrival_time, format= "%H:%M:%S")
-  df
+  t1 <- sapply(t1,FUN=fix_hour)
+  t1 <- as.POSIXct(df$arrival_time, format= "%H:%M:%S")
+  return(t1)
 }
 
 #' Format a time string in the expected format
@@ -597,59 +602,33 @@ fix_hour <- function(x) {
 }
 
 ######
-##Custom Bus Frequency Functions
+##Stop Flagging Functions
 ######
 
-#' Filter a mega-GTFSr dataframe to rows/stops that occur on all weekdays, are buses, and
-#' have a stop_time between 2 time periods
-#' @param a mega-GTFSr dataframe made with the join_all_gtfs_tables() function
-#' @param period - "AM" or "PM"
-#' @return a mega-GTFSr dataframe filtered to TPA peak periods and flagged as AM or PM peak
-flag_and_filter_peak_periods_by_time <- function(mega_df, period) {
-  if (period=="AM"){
-    time_start <- "06:00:00"
-    time_end <- "09:59:00"
-  } else {
-    time_start <- "15:00:00"
-    time_end <- "18:59:00"
-  }
-  
-  mega_df <- filter_by_time(mega_df,
-                                  time_start,
-                                  time_end)
-  
-  if (!(is.data.frame(mega_df) && nrow(mega_df)==0) && period=="AM"){
-    mega_df["Peak_Period"] <-"AM Peak"
-  } else if (!(is.data.frame(mega_df) && nrow(mega_df)==0) && period=="PM" ) {
-    mega_df["Peak_Period"] <-"PM Peak" 
-  } else
-  {
-  mega_df$Peak_Period <-  mega_df$route_id
-  }
-  return(mega_df)
+#takes a column of arrival times
+#and a start and stop time
+#returns a boolean on whether the column entry is within the period
+is_in_time_period <- function(arrival_time, time_start, time_end) {
+  time_start <- paste(c(format(Sys.Date(), "%Y-%m-%d"),
+                        time_start),collapse=" ")
+  time_end <- paste(c(format(Sys.Date(), "%Y-%m-%d"),
+                      time_end),collapse=" ")
+  boolean1 <- arrival_time > time_start &
+              arrival_time < time_end
+  return(boolean1)
 }
 
-#' Filter a mega-GTFSr dataframe to rows/stops that occur on all weekdays, are buses, and
-#' have a stop_time between 2 time periods
-#' @param a dataframe made by joining all the GTFS tables together
-#' @param a start time filter hh:mm:ss
-#' @param an end time filter hh:mm:ss
-#' @return a mega-GTFSr dataframe filtered to rows of interest
-filter_by_time <- function(rt_df, start_filter,end_filter) {
-  time_start <- paste(c(format(Sys.Date(), "%Y-%m-%d"),
-                        start_filter),collapse=" ")
-  time_end <- paste(c(format(Sys.Date(), "%Y-%m-%d"),
-                      end_filter),collapse=" ")
-  rt_df_out <- subset(rt_df, rt_df$monday == 1
-                           & rt_df$tuesday == 1
-                           & rt_df$wednesday == 1
-                           & rt_df$thursday == 1
-                           & rt_df$friday == 1
-                           & rt_df$route_type == 3
-                           & rt_df$arrival_time >time_start
-                           & rt_df$arrival_time < time_end)
-  return(rt_df_out)
+#takes a dataframe with date boolean columns
+#returns a boolean on whether the row is a weekday item
+#works for calendar and mega-stops df
+is_weekday <- function(df1) {
+  boolean1 <- df1$monday == 1 &
+   df1$tuesday == 1 &
+   df1$wednesday == 1 &
+   df1$thursday == 1  &
+   df1$friday == 1
 }
+
 
 #' for a mega-GTFSr dataframe, remove rows with duplicate stop times 
 #' @param a dataframe of stops with a stop_times column 
