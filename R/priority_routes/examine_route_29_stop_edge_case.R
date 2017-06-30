@@ -43,3 +43,26 @@ table(am_stops[am_stops$stop_id==16557 & am_stops$f_am_peak==TRUE,]$stop_sequenc
 am_stops[am_stops$stop_id==16557 & am_stops$f_am_peak==TRUE & am_stops$stop_sequence==27,]
 #a look at the sfmta schedule for this route (29) shows that a few trips in the early am skip stops
 
+# tripcount <- count_trips(am_stops[am_stops$stop_id==16557 & am_stops$f_am_peak==TRUE,])
+# agency_id route_id direction_id  trip_headsign stop_id f_am_peak f_pm_peak stop_sequence Trips Headways
+# <chr>    <chr>        <int>          <chr>   <chr>     <lgl>     <lgl>         <int> <int>    <dbl>
+#   1        SF       29            1    Baker Beach   16557      TRUE     FALSE            27     2      120
+#   2        SF       29            1    Baker Beach   16557      TRUE     FALSE            62    24       10
+#   3        SF       29            1 Noriega Street   16557      TRUE     FALSE            62     4       60
+
+#if we drop the stop_sequence from the count() in the count_trips() function then 
+#it counts trips for the route regardless of the stop sequence--this might be a good option
+#since it then represents the stops by that route at that stop regardless of any skipping at
+#other stops
+#agency_id route_id direction_id  trip_headsign stop_id f_am_peak f_pm_peak Trips Headways
+#<chr>    <chr>        <int>          <chr>   <chr>     <lgl>     <lgl> <int>    <dbl>
+#  1        SF       29            1    Baker Beach   16557      TRUE     FALSE    26        9
+#  2        SF       29            1 Noriega Street   16557      TRUE     FALSE     4       60
+
+#and since we take the average over the route later should represent trips on average
+#in any case, shouldn't make much of a difference
+#count(stop_sequence) %>% --> count() 
+
+
+
+

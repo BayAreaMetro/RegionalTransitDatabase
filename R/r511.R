@@ -652,8 +652,9 @@ count_trips<- function(rt_df) {
              direction_id,
              trip_headsign,
              stop_id,
-             Peak_Period) %>%
-    count(stop_sequence) %>%
+             f_am_peak,
+             f_pm_peak) %>%
+    count() %>%
     mutate(Headways = round(240/n,0))
   colnames(rt_df_out)[colnames(rt_df_out)=="n"] <- "Trips"
   return(rt_df_out)
