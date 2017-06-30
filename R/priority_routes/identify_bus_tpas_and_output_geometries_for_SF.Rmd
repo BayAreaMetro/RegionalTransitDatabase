@@ -1,0 +1,95 @@
+---
+title: "MS Example"
+author: "tombuckley"
+date: "June 29, 2017"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+#be sure to set the project path
+PROJECT_PATH <- "C:/projects/RTD/RegionalTransitDatabase"
+
+GTFS_PATH <- paste0(PROJECT_PATH,"/data/gtfs_interpolated_05_01_2017/",collapse="")
+R_HELPER_FUNCTIONS_PATH <- paste0(PROJECT_PATH,"/R/r511.R",collapse="")
+source(R_HELPER_FUNCTIONS_PATH)
+CREDENTIALS_PATH <- paste0(PROJECT_PATH,"/credentials.R",collapse="") 
+
+library(gtfsr)
+library(dplyr)
+library(rgeos)
+library(reshape2)
+library(sp)
+
+setwd(GTFS_PATH)
+
+```
+
+### Use GTFSr to import GTFS zip file:
+
+```{r cars, include=FALSE}
+  provider <- "SF"
+  zip_path <- paste0(GTFS_PATH,provider,".zip",collapse="")
+  gtfs_obj <- import_gtfs(zip_path,local=TRUE)
+
+```
+
+### Make a Common Table of stops and their routes in order to calculate statistics
+
+
+```{r}
+  df_sr <- join_all_gtfs_tables(gtfs_obj)
+  df_sr <- make_arrival_hour_less_than_24(df_sr)
+  print(names(df_sr))
+```
+
+### Calculate Headways and Trips for routes at stops:
+
+```{r}
+  am_stops <- flag_and_filter_peak_periods_by_time(df_sr,"AM")
+  am_stops <- remove_duplicate_stops(am_stops) 
+  am_stops <- count_trips(am_stops) 
+  gtfs_obj$mtc_am_stops <- am_stops
+print(head(gtfs_obj$mtc_am_stops))
+  pm_stops <- flag_and_filter_peak_periods_by_time(df_sr,"PM")
+  pm_stops <- remove_duplicate_stops(pm_stops) 
+  pm_stops <- count_trips(pm_stops)
+  gtfs_obj$mtc_pm_stops <- pm_stops
+print(head(gtfs_obj$mtc_pm_stops))
+```
+  
+### Create an mtc routes table on the gtfs object
+
+#### We will use this to store tpa qualification flags
+
+```{r}
+
+  gtfs_obj$mtc_routes_df <- gtfs_obj$routes_df[,-6][,-6]
+
+  am_routes <- get_routes(am_stops)
+  pm_routes <- get_routes(pm_stops)
+  
+  #subset stops to those that meet the headway  
+  am_stops_hdwy <- subset(am_stops,
+                          am_stops$Headways < 16)
+  am_routes_hdwy <- get_routes(am_stops_hdwy)
+  gtfs_obj$mtc_am_routes <- am_routes_hdwy
+  
+  pm_stops_hdwy <- subset(pm_stops,
+                          pm_stops$Headways < 16)
+  pm_routes_hdwy <- get_routes(pm_stops_hdwy)
+  gtfs_obj$mtc_pm_routes <- am_routes_hdwy
+  print(head(gtfs_obj$mtc_am_routes))
+  print(head(gtfs_obj$mtc_pm_routes))
+
+```
+
+#### Flag simplest TPA qualifications on the routes table
+
+```{r}
+  gtfs_obj$mtc_routes_df$f_am <- gtfs_obj$mtc_routes_df$route_id %in% am_routes$route_id
+  gtfs_obj$mtc_routes_df$f_pm <- gtfs_obj$mtc_routes_df$route_id %in% pm_routes$route_id
+  gtfs_obj$mtc_routes_df$f_am_ls_thn_15m <- gtfs_obj$mtc_routes_df$route_id %in% am_routes_hdwy$route_id
+  gtfs_obj$mtc_routes_df$f_pm_ls_thn_15m <- gtfs_obj$mtc_routes_df$route_id %in% pm_routes_hdwy$route_id
+  print(head(gtfs_obj$mtc_routes_df))
+```

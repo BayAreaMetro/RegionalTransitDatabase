@@ -121,6 +121,9 @@ get_priority_routes <- function(gtfs_obj) {
   #########
   ######get all routes with stats
   ########
+  #get_routes should probably be "get_routes_with_stats" or similar
+  #since gtfsr already has routes tables
+  #we arent getting routes, but pulling their headways off the stops table
   am_routes <- get_routes(am_stops)
   pm_routes <- get_routes(pm_stops)
   
@@ -136,10 +139,7 @@ get_priority_routes <- function(gtfs_obj) {
   gtfs_obj$mtc_pm_routes <- am_routes_hdwy
   
   #update the flags for these on the mtc routes df
-  gtfs_obj$mtc_routes_df$f_am <- gtfs_obj$mtc_routes_df$route_id %in% am_routes$route_id
-  gtfs_obj$mtc_routes_df$f_pm <- gtfs_obj$mtc_routes_df$route_id %in% pm_routes$route_id
-  gtfs_obj$mtc_routes_df$f_am_ls_thn_15m <- gtfs_obj$mtc_routes_df$route_id %in% am_routes_hdwy$route_id
-  gtfs_obj$mtc_routes_df$f_pm_ls_thn_15m <- gtfs_obj$mtc_routes_df$route_id %in% pm_routes_hdwy$route_id
+  
   
   ########
   ##Routes-Qualifying Check
@@ -154,35 +154,8 @@ get_priority_routes <- function(gtfs_obj) {
   
   ###### 1
 
-  gtfs_obj$mtc_routes_df$f_am_bdl <- rep(FALSE,nrow(gtfs_obj$mtc_routes_df))
-  gtfs_obj$mtc_routes_df$f_pm_bdl <- rep(FALSE,nrow(gtfs_obj$mtc_routes_df))
-  gtfs_obj$mtc_routes_df$f_tpa_qual <- rep(FALSE,nrow(gtfs_obj$mtc_routes_df))
-  
-  if (dim(am_routes_hdwy)[1] > 0) {
-    am_routes_qual <- am_routes_hdwy[!duplicated(as.list(am_routes_hdwy)),]
-    am_routes_qual <- am_routes_qual[is_in_both_directions(am_routes_qual[,c("route_id","direction_id")]) 
-                                     | is_loop_route(am_routes_qual$trip_headsign),]
-    gtfs_obj$mtc_routes_df$f_am_bdl <- gtfs_obj$mtc_routes_df$route_id %in% am_routes_qual$route_id
-  }
-  
-  if (dim(pm_stops_hdwy)[1] > 0) {
-    pm_routes_qual <- pm_routes[!duplicated(as.list(pm_stops_hdwy)),]
-    pm_routes_qual <- pm_routes_qual[is_in_both_directions(pm_routes_qual[,c("route_id","direction_id")]) 
-                                     | is_loop_route(pm_routes_qual$trip_headsign),]
-    gtfs_obj$mtc_routes_df$f_pm_bdl <- gtfs_obj$mtc_routes_df$route_id %in% pm_routes_qual$route_id
-  }
-  
-  #this is a terrible way to do things--should just be flagging and uysing route_id
-  if (exists("am_routes_qual") && is.data.frame(get("am_routes_qual")) &&
-      exists("pm_routes_qual") && is.data.frame(get("pm_routes_qual")) &&
-      dim(am_routes_qual)[1] > 0 && dim(pm_routes_qual)[1] > 0) {
-        am_pm_union <- union(am_routes_qual$route_id, pm_routes_qual$route_id)
-        am_pm_intersection <- intersect(am_routes_qual$route_id, pm_routes_qual$route_id)
-        df1 <- rbind(am_routes_qual,pm_routes_qual)
-        df_qualifying_routes <- df1[df1$route_id %in% am_pm_intersection,]
-        gtfs_obj$mtc_routes_df$f_tpa_qual <- gtfs_obj$mtc_routes_df$route_id %in% df_qualifying_routes$route_id
-  }
-  
+  gtfs_obj <- flag_route_qualifications(gtfs_obj)
+
   ########
   ##Routes - End qualifying check
   ########      
@@ -238,6 +211,44 @@ get_priority_routes <- function(gtfs_obj) {
   return(gtfs_obj)
 }
 
+#this is probably incomplete--need to clarify am_routes, pm_routes, etc
+flag_route_qualifications <- function(gtfs_obj) {
+  gtfs_obj$mtc_routes_df$f_am <- gtfs_obj$mtc_routes_df$route_id %in% gtfs_obj$mtc_routes_df$route_id
+  gtfs_obj$mtc_routes_df$f_pm <- gtfs_obj$mtc_routes_df$route_id %in% pm_routes$route_id
+  gtfs_obj$mtc_routes_df$f_am_ls_thn_15m <- gtfs_obj$mtc_routes_df$route_id %in% am_routes_hdwy$route_id
+  gtfs_obj$mtc_routes_df$f_pm_ls_thn_15m <- gtfs_obj$mtc_routes_df$route_id %in% pm_routes_hdwy$route_id
+
+  gtfs_obj$mtc_routes_df$f_am_bdl <- rep(FALSE,nrow(gtfs_obj$mtc_routes_df))
+  gtfs_obj$mtc_routes_df$f_pm_bdl <- rep(FALSE,nrow(gtfs_obj$mtc_routes_df))
+  gtfs_obj$mtc_routes_df$f_tpa_qual <- rep(FALSE,nrow(gtfs_obj$mtc_routes_df))
+  
+  if (dim(am_routes_hdwy)[1] > 0) {
+    am_routes_qual <- am_routes_hdwy[!duplicated(as.list(gtfs_obj$mtc_am_stops)),]
+    am_routes_qual <- am_routes_qual[is_in_both_directions(am_routes_qual[,c("route_id","direction_id")]) 
+                                     | is_loop_route(am_routes_qual$trip_headsign),]
+    gtfs_obj$mtc_routes_df$f_am_bdl <- gtfs_obj$mtc_routes_df$route_id %in% am_routes_qual$route_id
+  }
+  
+  if (dim(pm_stops_hdwy)[1] > 0) {
+    pm_routes_qual <- pm_routes[!duplicated(as.list(gtfs_obj$mtc_pm_stops)),]
+    pm_routes_qual <- pm_routes_qual[is_in_both_directions(pm_routes_qual[,c("route_id","direction_id")]) 
+                                     | is_loop_route(pm_routes_qual$trip_headsign),]
+    gtfs_obj$mtc_routes_df$f_pm_bdl <- gtfs_obj$mtc_routes_df$route_id %in% pm_routes_qual$route_id
+  }
+  
+  #this is a terrible way to do things--should just be flagging and uysing route_id
+  if (exists("am_routes_qual") && is.data.frame(get("am_routes_qual")) &&
+      exists("pm_routes_qual") && is.data.frame(get("pm_routes_qual")) &&
+      dim(am_routes_qual)[1] > 0 && dim(pm_routes_qual)[1] > 0) {
+        am_pm_union <- union(am_routes_qual$route_id, pm_routes_qual$route_id)
+        am_pm_intersection <- intersect(am_routes_qual$route_id, pm_routes_qual$route_id)
+        df1 <- rbind(am_routes_qual,pm_routes_qual)
+        df_qualifying_routes <- df1[df1$route_id %in% am_pm_intersection,]
+        gtfs_obj$mtc_routes_df$f_tpa_qual <- gtfs_obj$mtc_routes_df$route_id %in% df_qualifying_routes$route_id
+  }
+  return(gtfs_obj)
+}
+
 #' Make a dataframe GTFS tables all joined together for route frequency calculations
 #' @param a GTFSr object for a given provider with routes, stops, stop_times, etc
 #' @return a mega-GTFSr data frame with stops, stop_times, trips, calendar, and routes all joined
@@ -258,7 +269,7 @@ join_all_gtfs_tables <- function(g) {
   df_sr$Route_Pattern_ID<-paste0(df_sr$agency_id,
                                  "-",df_sr$route_id,"-",
                                  df_sr$direction_id)
-  return(df_sr)
+  return(as.data.frame(df_sr))
 }
 
 
@@ -990,7 +1001,7 @@ bind_df_list <- function(l1) {
 #'write a spatial dataframe to the current working directory as a geopackage (with date in name-seconds since the epoch)
 #'@param spatial dataframe
 #'@return nothing
-write_to_geopackage_with_date <- function(spdf, project_data_path="C:/projects/RTD/RegionalTransitDatabase/data") {
+write_to_geopackage_with_date <- function(spdf, project_data_path="C:/projects/RTD/RegionalTransitDatabase/data/") {
   library(rgdal)
   the_name <- deparse(substitute(spdf))
   writeOGR(spdf,
