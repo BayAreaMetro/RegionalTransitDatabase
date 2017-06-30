@@ -277,17 +277,16 @@ join_all_gtfs_tables <- function(g) {
 ##Custom Time Format Functions
 ######
 
-#' Make a dataframe GTFS arrival_time column into standard time variable
-#' @param dataframe containing a GTFS-style "arrival_time" column (time values at +24:00:00)
-#' @return dataframe containing a GTFS-style "arrival_time" column (no time values at +24:00:00)
-make_arrival_hour_less_than_24 <- function(df) {
-  t1 <- df$arrival_time
+#' Make a column into standard time variable with fixes to 24hr+ times
+#' @param column containing a GTFS-style "arrival_time" column (time values at +24:00:00)
+#' @return column containing a GTFS-style "arrival_time" column (no time values at +24:00:00)
+make_hour_less_than_24 <- function(t1) {
   if (!(typeof(t1) == "character")) {
     stop("column not a character string--may already be fixed")
   }
-  df$arrival_time <- sapply(t1,FUN=fix_hour)
-  df$arrival_time <- as.POSIXct(df$arrival_time, format= "%H:%M:%S")
-  df
+  t1 <- sapply(t1,FUN=fix_hour)
+  t1 <- as.POSIXct(t1, format= "%H:%M:%S")
+  return(t1)
 }
 
 #' Format a time string in the expected format
