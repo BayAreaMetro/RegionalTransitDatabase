@@ -490,16 +490,18 @@ fix_hour <- function(x) {
 ##Stop Flagging Functions
 ######
 
+format_time_string <- function(time_string){
+  formatted_time <- paste(c(format(Sys.Date(), "%Y-%m-%d"),
+                        time_string),collapse=" ")
+  return(formatted_time)
+}
+
 #takes a column of arrival times
 #and a start and stop time
 #returns a boolean on whether the column entry is within the period
 is_in_time_period <- function(arrival_time, time_start, time_end) {
-  time_start <- paste(c(format(Sys.Date(), "%Y-%m-%d"),
-                        time_start),collapse=" ")
-  time_end <- paste(c(format(Sys.Date(), "%Y-%m-%d"),
-                      time_end),collapse=" ")
-  boolean1 <- arrival_time > time_start &
-              arrival_time < time_end
+  boolean1 <- arrival_time > format_time_string(time_start) &
+              arrival_time < format_time_string(time_end)
   return(boolean1)
 }
 
@@ -516,18 +518,32 @@ is_weekday <- function(df1) {
 
 #' for a mega-GTFSr dataframe, count the number of trips a bus takes through a given stop within a given time period
 #' @param a mega-GTFSr dataframe
+#' @param time_start
+#' @param time_end
+#' @param weekday, default True
+#' @param route_type, default 3, bus
 #' @return a column with a "Trips" variable representing the count trips taken through each stop for a route within a given time frame
-count_trips_at_stops<- function(rt_df) {
+count_trips_at_stops<- function(rt_df, 
+                                time_start, 
+                                time_end, 
+                                weekday=TRUE, 
+                                route_type=3) {
+  b1 <- is_in_time_period(rt_df$arrival_time,time_start,time_end)
+  rt_df <- rt_df[b1,]
+  rt_df <-  rt_df[rt_df$route_type == route_type,]
+  if(weekday==TRUE){rt_df <- rt_df[is_weekday(rt_df),]}
+  time_difference <- abs(as.integer(
+                              difftime(format_time_string(time_end),
+                              format_time_string(time_start))
+                              ))
   rt_df_out <- rt_df %>%
     group_by(agency_id,
              route_id,
              direction_id,
              trip_headsign,
-             stop_id,
-             f_am_peak,
-             f_pm_peak) %>%
+             stop_id) %>%
     count() %>%
-    mutate(Headways = round(240/n,0))
+    mutate(Headways = round(time_difference/n,0))
   colnames(rt_df_out)[colnames(rt_df_out)=="n"] <- "Trips"
   return(rt_df_out)
 }

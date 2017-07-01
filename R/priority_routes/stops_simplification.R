@@ -29,16 +29,11 @@ print(as.data.frame(table(df_mtc_trips[,c('f_am_peak','f_pm_peak','f_weekday','f
 gtfs_obj$mtc_trips_df <- df_mtc_trips
 rm(df_mtc_trips)
 
-b1 <- gtfs_obj$mtc_trips_df$f_weekday &
-      gtfs_obj$mtc_trips_df$f_bus_stop &
-      gtfs_obj$mtc_trips_df$f_am_peak
+gtfs_obj$mtc_am_peak_stop_headways <- count_trips_at_stops(gtfs_obj$mtc_trips_df,
+                                 time_start = "06:00:00",
+                                 time_end="09:59:00")
 
-am_stops <- count_trips_at_stops(gtfs_obj$mtc_trips_df[b1,])
-
-b2 <- gtfs_obj$df_mtc_trips$f_weekday &
-      gtfs_obj$df_mtc_trips$f_bus_stop &
-      gtfs_obj$df_mtc_trips$f_pm_peak
-
-pm_stops <- count_trips_at_stops(gtfs_obj$df_mtc_trips[b2,])
-
+gtfs_obj$mtc_pm_peak_stop_headways <- count_trips_at_stops(gtfs_obj$mtc_trips_df,
+                                 time_start = "15:00:00",
+                                 time_end="18:59:00")
 
