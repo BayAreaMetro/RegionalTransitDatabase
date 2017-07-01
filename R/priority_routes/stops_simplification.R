@@ -20,7 +20,7 @@ gtfs_obj <- import_gtfs(zip_path,local=TRUE)
 df_mtc_trips <- make_mtc_tpa_trips_table(gtfs_obj)
 df_mtc_trips$arrival_time <- make_hour_less_than_24(df_mtc_trips$arrival_time)
 
-df_mtc_trips <- flag_tpa_candidate_trips(df_mtc_trips)
+#df_mtc_trips <- flag_tpa_candidate_trips(df_mtc_trips)
 #verification:
 print(as.data.frame(table(df_mtc_trips[,c('f_am_peak','f_pm_peak','f_weekday','f_bus_stop')])))
 #there are no stops in both am and pm, which is good!
