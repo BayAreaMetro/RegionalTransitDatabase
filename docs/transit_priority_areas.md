@@ -79,6 +79,9 @@ Using the buffers generated in the previous step, dissolve and merge using spati
 
 #### Data Subsets  
 
+Stops:  
+[High Frequency Bus Stops](http://mtc.maps.arcgis.com/home/item.html?id=1937588fdce446559a5a6de9af3f1900)
+
 Buffers:  
 
 Category|Planned/Existing|Buffer|Feature Type|Link to Data
