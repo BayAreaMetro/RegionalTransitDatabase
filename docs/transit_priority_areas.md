@@ -79,9 +79,6 @@ Using the buffers generated in the previous step, dissolve and merge using spati
 
 #### Data Subsets  
 
-Stops:  
-[High Frequency Bus Stops](http://mtc.maps.arcgis.com/home/item.html?id=1937588fdce446559a5a6de9af3f1900)
-
 Buffers:  
 
 Category|Planned/Existing|Buffer|Feature Type|Link to Data
@@ -105,6 +102,8 @@ Light Rail|Existing|[GeoJSON](https://services3.arcgis.com/i2dkYWmb4wHvYPda/arcg
 Rail|Planned or Under Construction|[GeoJSON](https://services3.arcgis.com/i2dkYWmb4wHvYPda/arcgis/rest/services/TPA_Non_Bus_Eligible_Stops_2017/FeatureServer/0/query?where=system+%3D+%27Rail%27+AND+%28status%3D%27Planned%27+OR+status%3D%27Under+Construction%27%29&objectIds=&time=&geometry=&geometryType=esriGeometryEnvelope&inSR=&spatialRel=esriSpatialRelIntersects&resultType=none&distance=0.0&units=esriSRUnit_Meter&returnGeodetic=false&outFields=&returnGeometry=true&multipatchOption=xyFootprint&maxAllowableOffset=&geometryPrecision=&outSR=&returnIdsOnly=false&returnCountOnly=false&returnExtentOnly=false&returnDistinctValues=false&orderByFields=&groupByFieldsForStatistics=&outStatistics=&resultOffset=&resultRecordCount=&returnZ=false&returnM=false&quantizationParameters=&sqlFormat=none&f=pgeojson&token=)
 Ferry|Planned or Under Construction|[GeoJSON](https://services3.arcgis.com/i2dkYWmb4wHvYPda/arcgis/rest/services/TPA_Non_Bus_Eligible_Stops_2017/FeatureServer/0/query?where=system+%3D+%27Ferry%27+AND+%28status%3D%27Planned%27+OR+status%3D%27Under+Construction%27%29&objectIds=&time=&geometry=&geometryType=esriGeometryEnvelope&inSR=&spatialRel=esriSpatialRelIntersects&resultType=none&distance=0.0&units=esriSRUnit_Meter&returnGeodetic=false&outFields=&returnGeometry=true&multipatchOption=xyFootprint&maxAllowableOffset=&geometryPrecision=&outSR=&returnIdsOnly=false&returnCountOnly=false&returnExtentOnly=false&returnDistinctValues=false&orderByFields=&groupByFieldsForStatistics=&outStatistics=&resultOffset=&resultRecordCount=&returnZ=false&returnM=false&quantizationParameters=&sqlFormat=none&f=pgeojson&token=)
 Bus Rapid Transit|Planned or Under Construction|[GeoJSON](https://services3.arcgis.com/i2dkYWmb4wHvYPda/arcgis/rest/services/TPA_Non_Bus_Eligible_Stops_2017/FeatureServer/0/query?where=system+%3D+%27Bus+Rapid+Transit%27+AND+%28status%3D%27Planned%27+OR+status%3D%27Under+Construction%27%29&objectIds=&time=&geometry=&geometryType=esriGeometryEnvelope&inSR=&spatialRel=esriSpatialRelIntersects&resultType=none&distance=0.0&units=esriSRUnit_Meter&returnGeodetic=false&outFields=&returnGeometry=true&multipatchOption=xyFootprint&maxAllowableOffset=&geometryPrecision=&outSR=&returnIdsOnly=false&returnCountOnly=false&returnExtentOnly=false&returnDistinctValues=false&orderByFields=&groupByFieldsForStatistics=&outStatistics=&resultOffset=&resultRecordCount=&returnZ=false&returnM=false&quantizationParameters=&sqlFormat=none&f=pgeojson&token=)
+Bus|Existing|[High Frequency Bus Stops](http://mtc.maps.arcgis.com/home/item.html?id=1937588fdce446559a5a6de9af3f1900)  
+
 
 #### Related Projects:
 
