@@ -90,10 +90,13 @@ Bus|Planned|1/2 mile|route|[geneva_route_1_2_mile](http://www.arcgis.com/home/it
 Bus|Existing|0.2 mile|stops|[main_hf_stops_with_hf_neighbors_buffer](http://mtc.maps.arcgis.com/home/tem.html?id=a239938913e24c618bea07b6f5f34d52)
 Rail&Ferry|Planned|1/2 mile|stops|[heavy rail_and_ferry_1_2_mile_buffer](http://mtc.maps.arcgis.com/home/item.html?id=1bbb5e24e8b048f6b291784920eaf61c)
 
+Individual Points: 
 
-Individual Points:  
+[TPA Eligible High Frequency Bus Stops](http://mtc.maps.arcgis.com/home/item.html?id=1937588fdce446559a5a6de9af3f1900)  
 
-Below are relevant subsets from [TPA Eligible Non Bus Stops](http://mtc.maps.arcgis.com/home/item.html?id=f998f0940316431b99ab5e4ca826133f):   
+[TPA Eligible Non Bus Stops](http://mtc.maps.arcgis.com/home/item.html?id=f998f0940316431b99ab5e4ca826133f):   
+
+Below are relevant subsets from the Non Bus Stops:  
 
 System|Status|Link to Data
 ------|-------|----
