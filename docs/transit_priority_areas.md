@@ -73,9 +73,7 @@ Using the buffers generated in the previous step, dissolve and merge using spati
 
 #### Transit Priority Areas  
 
--  [Transit Priority Area Buffer Review Map](http://www.arcgis.com/home/webmap/viewer.html?webmap=3f89d2b053bf4dbc81318a0e707531fb&extent=-122.5562,37.5907,-122.0491,37.8571) 
-
-- [Transit Priority Area Buffer Dataset](http://mtc.maps.arcgis.com/home/item.html?id=ff94bb94a2e64f648ae93b528ca0e7b1)
+- [Transit Priority Area Buffer Dataset](http://mtc.maps.arcgis.com/home/item.html?id=67cd7a362d364e0190a9566279c61ae4)
 
 #### Data Subsets  
 
