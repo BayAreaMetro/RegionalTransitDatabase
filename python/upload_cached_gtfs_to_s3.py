@@ -8,6 +8,7 @@ import requests
 def upload_file_from_local(transfer_filename,k):
 	file_handle = open(transfer_filename, 'rb')
 	k.key = transfer_filename
+	print("uploading:" + transfer_filename)
 	k.set_contents_from_file(file_handle)
 	k.make_public()
 
@@ -23,7 +24,7 @@ def main():
 	for filename in transfer_filenames1:
 		upload_file_from_local(filename,k)
 	transfer_filenames2 = list("data/gtfsexch/" + df1[df1.source=="gtfs_data_exchange"].filename)
-	for filename in transfer_filenames1:
+	for filename in transfer_filenames2:
 		upload_file_from_local(filename,k)
 
 if __name__ == "__main__":

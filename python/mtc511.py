@@ -25,7 +25,7 @@ def write_511_gtfs_to_disk(r, path):
     		shutil.copyfileobj(r.raw, f)
 
 def get_org_acronyms_from_511(dictionary):
-    orgs_list = d['siri:Siri']['siri:ServiceDelivery']['DataObjectDelivery']['dataObjects']['ResourceFrame']['organisations']['Operator']
+    orgs_list = dictionary['siri:Siri']['siri:ServiceDelivery']['DataObjectDelivery']['dataObjects']['ResourceFrame']['organisations']['Operator']
     org_acronyms = []
     for org_acronym in orgs_list:
         org_acronyms.append(org_acronym['PrivateCode'])
@@ -37,14 +37,15 @@ def get_org_acronyms_from_511(dictionary):
     # with open('org_acroynms.pickle', 'wb') as f:
     #     pickle.dump(org_acronyms, f) 
 
-
-def get_zip_from_511(org_acronyms, datadir = "../data")
+def get_zip_from_511(org_acronyms, datadir = "../data"):
     for org in org_acronyms:
         org_zip = '{}/{}.zip'.format(datadir,org)
         if not os.path.exists(os.path.dirname(org_zip)):
             os.makedirs(os.path.dirname(org_zip))
             r = get_511_gtfs_zip(org)
             write_511_gtfs_to_disk(r, org_zip)
+
+
 
 def read_gtfs_zip_using_dao(datadir,operator_acronym):
     from gtfslib.dao import Dao
@@ -54,3 +55,4 @@ def read_gtfs_zip_using_dao(datadir,operator_acronym):
         # print(stop.stop_name)
     for route in dao.routes():
         print("%s: %d trips" % (route.route_long_name, len(route.trips)))
+
