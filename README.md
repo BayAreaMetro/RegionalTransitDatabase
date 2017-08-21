@@ -22,7 +22,7 @@ We use existing GTFS libraries, primarily [gtfs-lib](https://github.com/afimb/gt
 
 - [Transit Priority Areas](https://github.com/MetropolitanTransportationCommission/RegionalTransitDatabase/blob/master/docs/transit_priority_areas.md) 
 
-- [Routes by Transit Provider from 2009 to 2012](https://github.com/MetropolitanTransportationCommission/RegionalTransitDatabase/blob/master/data/routes/) 
+- [Routes by Transit Provider from 2009 to 2012](https://github.com/BayAreaMetro/rtd-data) 
 
 - Stops by Provider from 2009 to 2012 - to come. 
 
