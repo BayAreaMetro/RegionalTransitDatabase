@@ -10,7 +10,7 @@ Process transit data from The Bay Area's Transit operators to satisfy statutory 
 
 GTFS as published by operators and MTC 511 is the main data source
 
-`data/cached_gtfs.csv` contains a reference to cached GTFS data that are available to us.  
+[`data/cached_gtfs.csv`](https://github.com/BayAreaMetro/RegionalTransitDatabase/blob/master/data/cached_gtfs.csv) contains a reference to cached GTFS data that are available to us.  
 
 ## Methodology 
 
