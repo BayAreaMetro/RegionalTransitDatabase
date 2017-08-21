@@ -31,3 +31,13 @@ process_one_feed <- function(cg_row) {
 results <- apply(cg, 1, function(x) try(process_one_feed(x)))
 is.error <- function(x) inherits(x, "try-error")
 succeeded <- !vapply(results, is.error, logical(1))
+get.error.message <- function(x) {attr(x,"condition")$message}
+message <- vapply(results[!succeeded], get.error.message, "")
+
+#write processing records back out
+cg['processed'] <- TRUE
+cg['succeeded'] <- succeeded
+cg['error_message'] <- ""
+cg[!succeeded,'error_message'] <- message
+write_csv(cg,"~/Documents/Projects/rtd2/data/cached_gtfs.csv")
+
