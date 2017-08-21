@@ -21,7 +21,6 @@ join_all_gtfs_tables <- function(g) {
   return(df_sr)
 }
 
-
 ######
 ##Custom Time Format Functions
 ######

@@ -1,0 +1,154 @@
+[
+ {
+   "511_PrivateCode": "5E",
+   "dataexchange_id": ""
+ },
+ {
+   "511_PrivateCode": "5F",
+   "dataexchange_id": ""
+ },
+ {
+   "511_PrivateCode": "5O",
+   "dataexchange_id": ""
+ },
+ {
+   "511_PrivateCode": "5S",
+   "dataexchange_id": ""
+ },
+ {
+   "511_PrivateCode": "AC",
+   "dataexchange_id": "ac-transit"
+ },
+ {
+   "511_PrivateCode": "HF",
+   "dataexchange_id": ""
+ },
+ {
+   "511_PrivateCode": "CE",
+   "dataexchange_id": ""
+ },
+ {
+   "511_PrivateCode": "AY",
+   "dataexchange_id": ""
+ },
+ {
+   "511_PrivateCode": "AT",
+   "dataexchange_id": ""
+ },
+ {
+   "511_PrivateCode": "BA",
+   "dataexchange_id": "bay-area-rapid-transit"
+ },
+ {
+   "511_PrivateCode": "BG",
+   "dataexchange_id": "blue-gold-fleet"
+ },
+ {
+   "511_PrivateCode": "CT",
+   "dataexchange_id": "caltrain"
+ },
+ {
+   "511_PrivateCode": "AM",
+   "dataexchange_id": "capitol-corridor-joint-powers-authority"
+ },
+ {
+   "511_PrivateCode": "CM",
+   "dataexchange_id": ""
+ },
+ {
+   "511_PrivateCode": "CC",
+   "dataexchange_id": "county-connection"
+ },
+ {
+   "511_PrivateCode": "DE",
+   "dataexchange_id": ""
+ },
+ {
+   "511_PrivateCode": "EM",
+   "dataexchange_id": ""
+ },
+ {
+   "511_PrivateCode": "FS",
+   "dataexchange_id": "fairfield-and-suisun-transit"
+ },
+ {
+   "511_PrivateCode": "GF",
+   "dataexchange_id": "golden-gate-ferry"
+ },
+ {
+   "511_PrivateCode": "GG",
+   "dataexchange_id": "golden-empire-transit-district"
+ },
+ {
+   "511_PrivateCode": "MA",
+   "dataexchange_id": "marin-transit"
+ },
+ {
+   "511_PrivateCode": "PE",
+   "dataexchange_id": ""
+ },
+ {
+   "511_PrivateCode": "RV",
+   "dataexchange_id": "rio-vista-delta-breeze"
+ },
+ {
+   "511_PrivateCode": "SM",
+   "dataexchange_id": "samtrans"
+ },
+ {
+   "511_PrivateCode": "SB",
+   "dataexchange_id": ""
+ },
+ {
+   "511_PrivateCode": "SR",
+   "dataexchange_id": "santa-rosa-citybus"
+ },
+ {
+   "511_PrivateCode": "SF",
+   "dataexchange_id": "san-francisco-municipal-transportation-agency"
+ },
+ {
+   "511_PrivateCode": "SA",
+   "dataexchange_id": ""
+ },
+ {
+   "511_PrivateCode": "ST",
+   "dataexchange_id": "soltrans"
+ },
+ {
+   "511_PrivateCode": "SO",
+   "dataexchange_id": "sonoma-county-transit"
+ },
+ {
+   "511_PrivateCode": "MS",
+   "dataexchange_id": ""
+ },
+ {
+   "511_PrivateCode": "3D",
+   "dataexchange_id": ""
+ },
+ {
+   "511_PrivateCode": "UC",
+   "dataexchange_id": ""
+ },
+ {
+   "511_PrivateCode": "VC",
+   "dataexchange_id": ""
+ },
+ {
+   "511_PrivateCode": "VN",
+   "dataexchange_id": "napa-county"
+ },
+ {
+   "511_PrivateCode": "SC",
+   "dataexchange_id": "vta"
+ },
+ {
+   "511_PrivateCode": "WC",
+   "dataexchange_id": ""
+ },
+ {
+   "511_PrivateCode": "WH",
+   "dataexchange_id": ""
+ }
+]

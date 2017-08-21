@@ -1,0 +1,5 @@
+﻿Agency Name,Service Area,Daily Ridership,Clipper?,local_routes,rapid_limited_routes,express_commuter_routes,shuttle_routes,all_nighter_routes,Mass Transit ConnectionsAC Transit,"Entire: Inner East Bay (western Alameda County and western Contra Costa County)
+ Parts of: San Francisco, San Mateo, and Santa Clara counties","215,800[5]",Yes,68,4,29,None,6,"Amtrak, BART, Caltrain, ferries and VTA Light Rail"SamTrans,"Entire: San Mateo County
+ Parts of: San Francisco and Santa Clara County","41,400[5]",Yes,30,None,1,None,2,"BART, Caltrain, and Muni Metro"Muni,"Entire: San Francisco
+ Parts of: Marin and San Mateo counties","494,400[5]",Yes,42,5,16,None,10,"BART, Caltrain, ferries and Muni Metro"VTA,"Entire: Santa Clara County
+ Parts of: Alameda and San Mateo counties","104,700[5]",Yes,54,5,12,12,1,"Amtrak, BART, Caltrain and VTA Light Rail"
