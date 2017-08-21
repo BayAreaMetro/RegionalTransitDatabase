@@ -24,9 +24,9 @@ We use existing GTFS libraries, primarily [gtfs-lib](https://github.com/afimb/gt
 
 - [Routes by Transit Provider from 2009 to 2012](https://github.com/BayAreaMetro/rtd-data) 
 
-- Stops by Provider from 2009 to 2012 - to come. 
+- Stops by Provider from 2009 to 2012 - in progress. 
 
-- Route Statistics by Provider from 2009 to 2012 - to come. 
+- Route Statistics by Provider from 2009 to 2012 - in progress. 
 
 ### Folders
 
