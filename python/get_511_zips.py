@@ -1,3 +1,5 @@
+#requires a postgres db
+#see setup here for mac: https://keita.blog/2016/01/09/homebrew-and-postgresql-9-5/
 import pickle
 import os
 from credentials import APIKEY
@@ -7,12 +9,15 @@ from credentials import AWS_KEY, AWS_SECRET
 from boto.s3.key import Key
 from boto.s3.connection import S3Connection
 import pandas as pd
+from gtfslib.dao import Dao
+import subprocess
 
 working_dir = "/Users/tommtc/Documents/Projects/rtd2/data"
 timestamp = datetime.datetime.now().strftime('%Y-%m-%d-%H-%M-%S')
 date = datetime.datetime.now().strftime('%Y.%m.%d')
 year = datetime.datetime.now().strftime('%Y')
 source = 'mtc511cache'
+dbstring = "postgresql:///tmp_gtfs"
 
 def get_511_orgs_dict():
 	import requests
@@ -33,7 +38,45 @@ def get_org_acronyms_from_511(dictionary):
 		org_acronyms.append(org_acronym['PrivateCode'])
 	return(org_acronyms)
 
-def get_zip_from_511(org, path = "."):
+def export_shapefiles(operator):
+	shpexport = ['gtfsrun',dbstring,
+	'ShapefileExport',
+	'--feed_id={}'.format(operator),
+	'--cluster=50',
+	'--stopshp=data/{}-stops2.shp'.format(operator),
+	'--hopshp=data/{}-hops2.shp'.format(operator)]
+	print(subprocess.call(shpexport))
+
+def export_frequencies(operator):
+	shpexport = ['gtfsrun',dbstring,
+	'Frequencies',
+	'--cluster=1',
+	'--samename=True',
+	'--csv=data/{}-freq.csv'.format(operator)]
+	print(subprocess.call(shpexport))
+
+def process_one(org_zip,org):
+	operator=org
+	s3name = write_511_gtfs_to_s3(org_zip)
+	try:
+		dao = Dao(dbstring)
+		dao.load_gtfs(org_zip,feed_id=operator)
+		export_shapefiles(org)
+		export_frequencies(dbstring,operator)
+		dao.delete_feed(operator)
+		processed = 1
+	except ZeroDivisionError:
+   		processed = 0
+	os.remove(org_zip)
+
+	d = {
+		"s3name":s3name,
+		"processed":processed
+	}
+
+	return(d)
+
+def process_org(org, path = "."):
 	org_zip = '{}/{}-{}.zip'.format(path,timestamp,org)
 	if not os.path.exists(os.path.dirname(org_zip)):
 		os.makedirs(os.path.dirname(org_zip))
@@ -41,9 +84,8 @@ def get_zip_from_511(org, path = "."):
 		r = get_511_gtfs_zip(org)
 		write_511_gtfs_to_disk(r, org_zip)
 		if os.path.exists(org_zip):
-			s3name = write_511_gtfs_to_s3(org_zip)
-			os.remove(org_zip)
-			return(s3name)
+			d = process_one(org_zip,org)
+			return(d)
 		else: 
 			return("nodata")
 			
@@ -75,18 +117,16 @@ def main():
 	df = pd.read_csv('data/cached_gtfs.csv')
 	for org in org_acronyms:
 		print("fetching:" + org)
-		s3path = get_zip_from_511(org)
-		d = {'s3pathname': s3path,
+		d1 = process_org(org)
+		d = {'s3pathname': d1['s3path'],
 			'operator': org,
 			'year': year,
 			'date_exported': date,
 			'source': source,
-			'processed':0,
+			'processed':d1['processed'],
 			'filename':os.path.basename(s3path)}
 		df = df.append(d,ignore_index=True)
 	df.to_csv('data/cached_gtfs.csv')
-
-
 
 if __name__ == "__main__":
 	main()

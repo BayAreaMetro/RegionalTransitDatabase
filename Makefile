@@ -6,9 +6,9 @@ data/AC.zip:
 #	source activate gtfslib
 	python "python/get_511_zips.py"
 
-load_ac: data/AC.zip
+load_ac:
 #	source activate gtfslib
-	gtfsdbloader  "postgresql:///tmp_gtfs" --load=data/AC.zip
+	gtfsdbloader "postgresql:///tmp_gtfs" --load=data/AC.zip --
 
 dump_ac:
 	gtfsrun "postgresql:///tmp_gtfs" GtfsExport --bundle=data/ACint.zip --skip_shape_dist
