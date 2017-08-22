@@ -70,7 +70,6 @@ def process_one(org_zip,org):
 		filedict = export_shapefiles(operator,operator_filename)
 		filedict["frequencies"] = export_frequencies(operator,operator_filename)
 		dao.delete_feed(operator)
-		s3name = write_511_gtfs_to_s3(org_zip)
 		s3dict = {key:write_511_gtfs_to_s3(value) 
 					for key, value 
 					in filedict.items()}
@@ -78,6 +77,10 @@ def process_one(org_zip,org):
 		s3dict["processed"] = 1
 	except:
 		s3dict = {"processed":0}
+		s3dict["frequencies"] = ""
+		s3dict["stopsfile"] = ""
+		s3dict["hopsfile"] = ""
+		s3dict["s3pathname"] = s3name
 	os.remove(org_zip)
 	return(s3dict)
 
@@ -123,10 +126,10 @@ def main():
 	df["frequencies"] = ""
 	df["stopsfile"] = ""
 	df["hopsfile"] = ""
-	for org in ["3D","ST"]:
+	for org in org_acronyms:
 		print("fetching:" + org)
 		d1 = process_org(org)
-		d = {'s3pathname': d1['s3pathname'],
+		d = {'s3pathname': "https://s3-us-west-2.amazonaws.com/mtc511gtfs/"+d1['s3pathname'],
 			'frequencies': d1['frequencies'],
 			'stopsfile': d1['stopsfile'],
 			'hopsfile': d1['hopsfile'],
@@ -135,7 +138,7 @@ def main():
 			'date_exported': date,
 			'source': source,
 			'processed':d1['processed'],
-			'filename':os.path.basename(s3path)}
+			'filename':os.path.basename(d1['s3pathname'])}
 		df = df.append(d,ignore_index=True)
 	df.to_csv('data/cached_gtfs2.csv')
 
