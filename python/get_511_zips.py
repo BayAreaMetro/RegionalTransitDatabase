@@ -43,8 +43,8 @@ def export_shapefiles(operator):
 	'ShapefileExport',
 	'--feed_id={}'.format(operator),
 	'--cluster=50',
-	'--stopshp=data/{}-stops2.shp'.format(operator),
-	'--hopshp=data/{}-hops2.shp'.format(operator)]
+	'--stopshp=data/{}-stops.shp'.format(operator),
+	'--hopshp=data/{}-hops.shp'.format(operator)]
 	print(subprocess.call(shpexport))
 
 def export_frequencies(operator):
