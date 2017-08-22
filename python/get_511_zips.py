@@ -38,22 +38,27 @@ def get_org_acronyms_from_511(dictionary):
 		org_acronyms.append(org_acronym['PrivateCode'])
 	return(org_acronyms)
 
-def export_shapefiles(operator):
+def export_shapefiles(operator, filename):
+	filename1 = '{}-stops.csv'.format(filename)
+	filename2 = '{}-hops.csv'.format(filename)
 	shpexport = ['gtfsrun',dbstring,
 	'ShapefileExport',
 	'--feed_id={}'.format(operator),
 	'--cluster=50',
-	'--stopshp=data/{}-stops.shp'.format(operator),
-	'--hopshp=data/{}-hops.shp'.format(operator)]
+	'--stopshp={}'.format(filename1),
+	'--hopshp={}'.format(filename2)]
 	print(subprocess.call(shpexport))
+	return({'stopsfile':filename1,'hopsfile':filename2})
 
-def export_frequencies(operator):
+def export_frequencies(operator, filename):
+	filename1 = '{}-freq.csv'.format(filename)
 	shpexport = ['gtfsrun',dbstring,
 	'Frequencies',
 	'--cluster=1',
 	'--samename=True',
-	'--csv=data/{}-freq.csv'.format(operator)]
+	'--csv=data/{}'.format(filename1)]
 	print(subprocess.call(shpexport))
+	return(filename1)
 
 def process_one(org_zip,org):
 	operator=org
@@ -61,20 +66,20 @@ def process_one(org_zip,org):
 	try:
 		dao = Dao(dbstring)
 		dao.load_gtfs(org_zip,feed_id=operator)
-		export_shapefiles(org)
-		export_frequencies(dbstring,operator)
+		operator_filename = '{}/{}-{}'.format(path,timestamp,operator)
+		filedict = export_shapefiles(operator,operator_filename)
+		filedict["frequencies"] = export_frequencies(operator,operator_filename)
 		dao.delete_feed(operator)
-		processed = 1
-	except ZeroDivisionError:
-   		processed = 0
+		s3name = write_511_gtfs_to_s3(org_zip)
+		s3dict = {key:write_511_gtfs_to_s3(value) 
+					for key, value 
+					in filedict.items()}
+		s3dict["s3pathname"] = s3name
+		s3dict["processed"] = 1
+	except:
+		s3dict = {"processed":0}
 	os.remove(org_zip)
-
-	d = {
-		"s3name":s3name,
-		"processed":processed
-	}
-
-	return(d)
+	return(s3dict)
 
 def process_org(org, path = "."):
 	org_zip = '{}/{}-{}.zip'.format(path,timestamp,org)
@@ -115,10 +120,16 @@ def main():
 	d = get_511_orgs_dict()
 	org_acronyms = get_org_acronyms_from_511(d)
 	df = pd.read_csv('data/cached_gtfs.csv')
-	for org in org_acronyms:
+	df["frequencies"] = ""
+	df["stopsfile"] = ""
+	df["hopsfile"] = ""
+	for org in ["3D","ST"]:
 		print("fetching:" + org)
 		d1 = process_org(org)
-		d = {'s3pathname': d1['s3path'],
+		d = {'s3pathname': d1['s3pathname'],
+			'frequencies': d1['frequencies'],
+			'stopsfile': d1['stopsfile'],
+			'hopsfile': d1['hopsfile'],
 			'operator': org,
 			'year': year,
 			'date_exported': date,
@@ -126,7 +137,7 @@ def main():
 			'processed':d1['processed'],
 			'filename':os.path.basename(s3path)}
 		df = df.append(d,ignore_index=True)
-	df.to_csv('data/cached_gtfs.csv')
+	df.to_csv('data/cached_gtfs2.csv')
 
 if __name__ == "__main__":
 	main()
