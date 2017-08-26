@@ -49,8 +49,6 @@ def shp_to_js(shapefile_path):
 	with fiona.drivers():
 		with fiona.open(shapefile_path) as source:
 			meta = source.meta
-			print(meta)
-			meta['schema']['geometry'] = 'Point'
 			meta['driver'] = 'GeoJSON'
 			meta['crs'] = fiona.crs.from_epsg(4326)
 			with fiona.open(geojson_path, 'w', **meta) as sink:
