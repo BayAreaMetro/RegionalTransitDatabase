@@ -11,6 +11,9 @@ from boto.s3.connection import S3Connection
 import pandas as pd
 from gtfslib.dao import Dao
 import subprocess
+import sqlalchemy
+
+from subprocess import STDOUT, check_output
 
 working_dir = "/Users/tommtc/Documents/Projects/rtd2/data"
 timestamp = datetime.datetime.now().strftime('%Y-%m-%d-%H-%M-%S')
@@ -18,6 +21,34 @@ date = datetime.datetime.now().strftime('%Y.%m.%d')
 year = datetime.datetime.now().strftime('%Y')
 source = 'mtc511cache'
 dbstring = "postgresql:///tmp_gtfs"
+cached_gtfs_csv = 'data/cached_gtfs_cut_2012.csv'
+
+
+from functools import wraps
+import errno
+import os
+import signal
+
+class TimeoutError(Exception):
+    pass
+
+def timeout(seconds=2000, error_message=os.strerror(errno.ETIME)):
+    def decorator(func):
+        def _handle_timeout(signum, frame):
+            raise TimeoutError(error_message)
+
+        def wrapper(*args, **kwargs):
+            signal.signal(signal.SIGALRM, _handle_timeout)
+            signal.alarm(seconds)
+            try:
+                result = func(*args, **kwargs)
+            finally:
+                signal.alarm(0)
+            return result
+
+        return wraps(func)(wrapper)
+
+    return decorator
 
 
 def get_511_operators_dict():
@@ -56,7 +87,7 @@ def shp_to_js(shapefile_path):
 					   sink.write(f)
 	return geojson_path
 
-
+@timeout(2000)
 def export_shapefiles(operator, operator_base_filename):
 	filename1 = '{}/stops.shp'.format(operator_base_filename)
 	filename2 = '{}/hops.shp'.format(operator_base_filename)
@@ -79,6 +110,7 @@ def export_shapefiles(operator, operator_base_filename):
 		filename2 = False
 	return({'stopsfile':filename1,'hopsfile':filename2})
 
+@timeout(2000)
 def export_frequencies(operator, operator_base_filename):
 	filename_freq = '{}/freq.csv'.format(operator_base_filename)
 	freqexport = ['gtfsrun',dbstring,
@@ -98,6 +130,7 @@ def try_to_clear_db(dao, operator):
 	except Exception as e:
 		return(e)
 
+@timeout(2000)
 def try_to_load_db(dao,operator,operator_zip):
 	try:
 		print("loading {} to database".format(operator))
@@ -113,15 +146,10 @@ def try_to_write_processed_files_to_s3(filedict, processing_dict):
 				for key, value 
 				in filedict.items()}
 		processing_dict["processed"] = 1
-		processing_dict["stopsfile"] = s3dict['stopsfile']
-		processing_dict["hopsfile"] = s3dict['hopsfile']
-		processing_dict["frequencies"] = s3dict['frequencies']
+		processing_dict.update(s3dist)
 		return(processing_dict)
 	except Exception as e:
-		processing_dict["processed"] = 2
-		processing_dict["stopsfile"] = filedict['stopsfile']
-		processing_dict["hopsfile"] = filedict['hopsfile']
-		processing_dict["frequencies"] = filedict['frequencies']
+		print(e)
 		return(processing_dict)
 
 def get_cached_zipfile(operator_base_filename, url):
@@ -192,25 +220,49 @@ def write_to_s3(filename):
 		s3name = "na"
 	return(s3name)
 
+def update_df_log(r,d_process_log):
+	d_cached = dict(r)
+	d_cached.update(d_process_log)
+	new_data = pd.Series(d_cached)
+	r = new_data
+	return(r)
+
+d1 = {"operator":"test",
+		"url":"test",
+		'year': "test",
+		'source': "test",
+		"processed":0,
+		"frequencies" : "",
+		"stopsfile" : "",
+		"frequencies_error" : "",
+		"stopsfile_error" : "",
+		"db_load_error" : "",
+		"db_clear_error" : "",
+		"hopsfile" : "",
+		"s3pathname" : ""}
+
 def main():
 #	d = get_511_operators_dict()
 #	operator_acronyms = get_operator_acronyms_from_511(d)
-	df = pd.read_csv('data/cached_gtfs.csv')
+	df = pd.read_csv(cached_gtfs_csv)
+	df = df.set_index('index')
+	df_upd = df.copy()
 	df = df[df.stops_processed==0]
 	df["frequencies"] = ""
 	df["stopsfile"] = ""
 	df["hopsfile"] = ""
 	operator_urls = list(df.s3pathname)
 	operator_names = list(df.operator)
-	cached_years = list(df.year)
-	cached_sources = list(df.source)
 	dao = Dao(dbstring)
-	for idx, url in enumerate(operator_urls):
-		operator = operator_names[idx]
+	for i,r in df.iterrows():
+		operator = r['operator']
+		url = r['s3pathname']
 		print("fetching:" + operator)
 		#create an empty dict to capture s3 uploads/processing in
 		processing_dict = {"operator":operator,
 				"url":url,
+				'year': r['year'],
+				'source': r['source'],
 				"processed":0,
 				"frequencies" : "",
 				"stopsfile" : "",
@@ -223,32 +275,18 @@ def main():
 
 		operator_base_filename = '{}/{}/{}/{}/processed/{}'.format(
 			working_dir,
-			cached_years[idx],
+			r['year'],
 			operator,
-			cached_sources[idx],
+			r['source'],
 			timestamp)
 
 		processing_dict = process_one(dao, operator, url, processing_dict, operator_base_filename)
-
+		
 		if len(processing_dict)>0:
-			d = {'s3pathname': url,
-				'frequencies': processing_dict['frequencies'],
-				'stopsfile': processing_dict['stopsfile'],
-				'hopsfile': processing_dict['hopsfile'],
-				'operator': operator,
-				'year': year,
-				'date_exported': date,
-				'source': source,
-				'stops_processed':processing_dict['processed'],
-				'filename':"na",
-				"frequencies_error" : processing_dict["frequencies_error"],
-				"stopsfile_error" : processing_dict["stopsfile_error"],
-				"db_load_error" : processing_dict["db_load_error"],
-				"db_clear_error" : processing_dict["db_clear_error"]}
-			df = df.append(d,ignore_index=True)
+			df_upd[i] = update_df_log(r,processing_dict)
 		else:
 			next
-		df.to_csv('data/cached_gtfs_log.csv')
+		df_upd.to_csv('data/cached_gtfs_log_test.csv')
 
 if __name__ == "__main__":
 	main()
