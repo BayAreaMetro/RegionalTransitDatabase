@@ -2,6 +2,13 @@
 #example get from s3:aws s3 cp s3://landuse/zoning/match_fields_tables_zoning_2012_source.csv match_fields_tables_zoning_2012_source.csv
 get = aws s3 cp s3://landuse/mtc-gtfs-archive/
 
+stops_and_frequencies:
+#	source activate gtfslib
+	python "python/process_cached_gtfs_zipfiles.py"
+
+routes:
+	R R/historical_routes/output_historical_routes_by_region.R
+
 data/AC.zip:
 #	source activate gtfslib
 	python "python/get_511_zips.py"
