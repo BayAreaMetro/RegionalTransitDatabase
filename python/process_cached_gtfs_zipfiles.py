@@ -11,7 +11,6 @@ from boto.s3.connection import S3Connection
 import pandas as pd
 from gtfslib.dao import Dao
 import subprocess
-import sqlalchemy
 
 from subprocess import STDOUT, check_output
 
