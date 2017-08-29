@@ -21,7 +21,8 @@ date = datetime.datetime.now().strftime('%Y.%m.%d')
 year = datetime.datetime.now().strftime('%Y')
 source = 'mtc511cache'
 dbstring = "postgresql:///tmp_gtfs"
-cached_gtfs_csv = 'data/cached_gtfs_cut_2012.csv'
+cached_gtfs_csv = 'data/cached_gtfs.csv'
+cached_gtfs_log_out = 'data/cached_gtfs_log.csv'
 
 
 from functools import wraps
@@ -94,7 +95,7 @@ def export_shapefiles(operator, operator_base_filename):
 	shpexport = ['gtfsrun',dbstring,
 	'ShapefileExport',
 	'--feed_id={}'.format(operator),
-	'--cluster=50',
+	'--cluster=1',
 	'--stopshp={}'.format(filename1),
 	'--hopshp={}'.format(filename2)]
 	print(subprocess.call(shpexport))
@@ -115,7 +116,7 @@ def export_frequencies(operator, operator_base_filename):
 	filename_freq = '{}/freq.csv'.format(operator_base_filename)
 	freqexport = ['gtfsrun',dbstring,
 	'Frequencies',
-	'--cluster=100',
+	'--cluster=1',
 	'--csv={}'.format(filename_freq)]
 	print(subprocess.call(freqexport))
 	if os.path.exists(filename_freq):
@@ -123,21 +124,24 @@ def export_frequencies(operator, operator_base_filename):
 	else:
 		return("na")
 
-def try_to_clear_db(dao, operator):
+def try_to_clear_db(dao):
 	try:
-		dao.delete_feed(operator)
-		return("na")
+		operators = [x.feed_id for x in dao.agencies()]
+		for operator in operators:
+			dao.delete_feed(operator)
+			print("cleared {} from db".format(operator))
 	except Exception as e:
 		return(e)
 
 @timeout(2000)
 def try_to_load_db(dao,operator,operator_zip):
 	try:
-		print("loading {} to database".format(operator))
-		dao.load_gtfs(operator_zip,feed_id=operator)
+		print("trying to load {} to database".format(operator))
+		dao.load_gtfs(operator_zip,feed_id=operator,lenient=True)
 		print("loaded {} to database".format(operator))
-		return("loaded {} to database".format(operator))
+		return("success")
 	except Exception as e:
+		print("failed to load {} to database. errors in log".format(operator))
 		return(e)
 
 def try_to_write_processed_files_to_s3(filedict, processing_dict):
@@ -146,14 +150,14 @@ def try_to_write_processed_files_to_s3(filedict, processing_dict):
 				for key, value 
 				in filedict.items()}
 		processing_dict["processed"] = 1
-		processing_dict.update(s3dist)
+		processing_dict.update(s3dict)
 		return(processing_dict)
 	except Exception as e:
 		print(e)
 		return(processing_dict)
 
 def get_cached_zipfile(operator_base_filename, url):
-	operator_zip_name = '{}.zip'.format(operator_base_filename)
+	operator_zip_name = '{}-GTFS.zip'.format(operator_base_filename)
 	if not os.path.exists(os.path.dirname(operator_zip_name)):
 		os.makedirs(os.path.dirname(operator_zip_name))
 	if not os.path.exists(operator_zip_name):
@@ -177,7 +181,7 @@ def get_stops_and_frequencies(dao,operator,operator_base_filename,processing_dic
 		processing_dict["frequencies_error"] = e
 		print("error exporting frequencies for operator:".format(operator))
 		print(e)
-	try_to_clear_db(dao,operator)
+	try_to_clear_db(dao)
 	processing_dict["local_files_dict"] = local_files_dict
 	return(processing_dict)
 
@@ -185,11 +189,10 @@ def get_stops_and_frequencies(dao,operator,operator_base_filename,processing_dic
 def process_one(dao, operator, url, processing_dict, operator_base_filename, path = "."):
 	operator_zip_name = get_cached_zipfile(operator_base_filename, url)
 	if os.path.exists(operator_zip_name):
-		processing_dict["db_clear_error"] = try_to_clear_db(dao, operator)
 		processing_dict["db_load_error"] = try_to_load_db(dao,operator,operator_zip_name)
 		processing_dict	= get_stops_and_frequencies(dao,operator, operator_base_filename, processing_dict)
 		local_files_dict = processing_dict["local_files_dict"]
-		s3dict = try_to_write_processed_files_to_s3(local_files_dict, processing_dict)
+		processing_dict = try_to_write_processed_files_to_s3(local_files_dict, processing_dict)
 	return(processing_dict)
 
 			
@@ -223,23 +226,9 @@ def write_to_s3(filename):
 def update_df_log(r,d_process_log):
 	d_cached = dict(r)
 	d_cached.update(d_process_log)
+	print(d_cached)
 	new_data = pd.Series(d_cached)
-	r = new_data
-	return(r)
-
-d1 = {"operator":"test",
-		"url":"test",
-		'year': "test",
-		'source': "test",
-		"processed":0,
-		"frequencies" : "",
-		"stopsfile" : "",
-		"frequencies_error" : "",
-		"stopsfile_error" : "",
-		"db_load_error" : "",
-		"db_clear_error" : "",
-		"hopsfile" : "",
-		"s3pathname" : ""}
+	return(new_data)
 
 def main():
 #	d = get_511_operators_dict()
@@ -251,16 +240,13 @@ def main():
 	df["frequencies"] = ""
 	df["stopsfile"] = ""
 	df["hopsfile"] = ""
-	operator_urls = list(df.s3pathname)
-	operator_names = list(df.operator)
 	dao = Dao(dbstring)
-	for i,r in df.iterrows():
+	for idx,r in df.iterrows():
 		operator = r['operator']
 		url = r['s3pathname']
 		print("fetching:" + operator)
 		#create an empty dict to capture s3 uploads/processing in
 		processing_dict = {"operator":operator,
-				"url":url,
 				'year': r['year'],
 				'source': r['source'],
 				"processed":0,
@@ -270,8 +256,7 @@ def main():
 				"stopsfile_error" : "",
 				"db_load_error" : "",
 				"db_clear_error" : "",
-				"hopsfile" : "",
-				"s3pathname" : ""}
+				"hopsfile" : ""}
 
 		operator_base_filename = '{}/{}/{}/{}/processed/{}'.format(
 			working_dir,
@@ -279,14 +264,14 @@ def main():
 			operator,
 			r['source'],
 			timestamp)
-
+		try_to_clear_db(dao)
 		processing_dict = process_one(dao, operator, url, processing_dict, operator_base_filename)
-		
+		try_to_clear_db(dao)
 		if len(processing_dict)>0:
-			df_upd[i] = update_df_log(r,processing_dict)
+			df_upd.iloc[idx] = update_df_log(r,processing_dict)
 		else:
 			next
-		df_upd.to_csv('data/cached_gtfs_log_test.csv')
+		df_upd.to_csv(cached_gtfs_log_out)
 
 if __name__ == "__main__":
 	main()
