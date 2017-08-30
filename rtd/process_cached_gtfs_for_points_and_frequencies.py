@@ -1,5 +1,7 @@
-#requires a postgres db
-#see setup here for mac: https://keita.blog/2016/01/09/homebrew-and-postgresql-9-5/
+#requires any database. 
+#i used postgres
+#see setup here for mac here: https://keita.blog/2016/01/09/homebrew-and-postgresql-9-5/
+#db is a requirement of the gtfslib-python package from AFIMB
 import pickle
 import os
 from credentials import APIKEY
