@@ -27,4 +27,10 @@ see `/rtd/process_cached_gtfs_for_points_and_frequencies.py`
 
 ### Outcome
 
-Intermediate data are staged here for now: https://github.com/BayAreaMetro/transit-data
+- [Routes by Transit Provider from 2009 to 2017](https://github.com/BayAreaMetro/transit-data) 
+
+- Stops by Provider from 2009 to 2017 - in progress. 
+
+- Route Statistics by Provider from 2009 to 2017 - in progress. 
+
+
