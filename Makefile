@@ -2,14 +2,25 @@
 #example get from s3:aws s3 cp s3://landuse/zoning/match_fields_tables_zoning_2012_source.csv match_fields_tables_zoning_2012_source.csv
 get = aws s3 cp s3://landuse/mtc-gtfs-archive/
 
-data/cached/source_zips/AC.zip: 
-	python get_511_zips.py
+stops_and_frequencies:
+#	source activate gtfslib
+	python "python/process_cached_gtfs_zipfiles.py"
 
-interpolated_zipfiles: data/cached/source_zips/AC.zip temp_db
-	gtfsdbloader  "postgresql:///tmp_gtfs" --load=data/cached/source_zips/MS.zip
-	gtfsrun "postgresql:///tmp_gtfs" GtfsExport --bundle=data/cached/MS2.zip --logsql --skip_shape_dist
+routes:
+	R R/historical_routes/output_historical_routes_by_region.R
 
-temp_db:
+data/AC.zip:
+#	source activate gtfslib
+	python "python/get_511_zips.py"
+
+load_ac:
+#	source activate gtfslib
+	gtfsdbloader "postgresql:///tmp_gtfs" --load=data/AC.zip --
+
+dump_ac:
+	gtfsrun "postgresql:///tmp_gtfs" GtfsExport --bundle=data/ACint.zip --skip_shape_dist
+
+the_db:
 	dropdb tmp_gtfs
 	createdb tmp_gtfs -w
 

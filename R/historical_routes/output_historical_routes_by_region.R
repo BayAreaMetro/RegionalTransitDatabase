@@ -1,13 +1,13 @@
 library(sf)
 mainDir <- "~/Documents/Projects/rtd2"
 setwd(mainDir)
-#devtools::install_github('ropensci/gtfsr')
+if (!require(devtools)) {
+    install.packages('devtools')
+}
+devtools::install_github('ropensci/gtfsr')
 library(gtfsr)
-R_HELPER_FUNCTIONS_PATH <- paste0(PROJECT_PATH,"/R/r511.R",collapse="")
-source(R_HELPER_FUNCTIONS_PATH)
 library(dplyr)
 library(readr)
-library(dplyr)
 
 #read gtfs cache metadata
 cg <- read_csv("~/Documents/Projects/rtd2/data/cached_gtfs.csv")
