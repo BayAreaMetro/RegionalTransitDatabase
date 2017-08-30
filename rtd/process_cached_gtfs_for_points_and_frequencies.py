@@ -11,6 +11,7 @@ from boto.s3.connection import S3Connection
 import pandas as pd
 from gtfslib.dao import Dao
 import subprocess
+import time
 
 from subprocess import STDOUT, check_output
 
@@ -20,35 +21,19 @@ date = datetime.datetime.now().strftime('%Y.%m.%d')
 year = datetime.datetime.now().strftime('%Y')
 source = 'mtc511cache'
 dbstring = "postgresql:///tmp_gtfs"
-cached_gtfs_csv = 'data/cached_gtfs.csv'
-cached_gtfs_log_out = 'data/cached_gtfs_log.csv'
+cached_gtfs_csv = "data/cached_gtfs_log_one_provider_per_year2.csv"
+cached_gtfs_log_out = 'data/cached_gtfs_log_one_provider_per_year_no_cluster_time.csv'
 
-
-from functools import wraps
-import errno
-import os
 import signal
 
-class TimeoutError(Exception):
+class TimeoutException(Exception):   # Custom exception class
     pass
 
-def timeout(seconds=2000, error_message=os.strerror(errno.ETIME)):
-    def decorator(func):
-        def _handle_timeout(signum, frame):
-            raise TimeoutError(error_message)
+def timeout_handler(signum, frame):   # Custom signal handler
+    raise TimeoutException
 
-        def wrapper(*args, **kwargs):
-            signal.signal(signal.SIGALRM, _handle_timeout)
-            signal.alarm(seconds)
-            try:
-                result = func(*args, **kwargs)
-            finally:
-                signal.alarm(0)
-            return result
-
-        return wraps(func)(wrapper)
-
-    return decorator
+# Change the behavior of SIGALRM
+signal.signal(signal.SIGALRM, timeout_handler)
 
 def get_cached_gtfs_zip(url):
 	return requests.get(url, stream=True)
@@ -67,14 +52,13 @@ def shp_to_js(shapefile_path):
 					   sink.write(f)
 	return geojson_path
 
-@timeout(2000)
 def export_shapefiles(operator, operator_base_filename):
 	filename1 = '{}/stops.shp'.format(operator_base_filename)
 	filename2 = '{}/hops.shp'.format(operator_base_filename)
 	shpexport = ['gtfsrun',dbstring,
 	'ShapefileExport',
 	'--feed_id={}'.format(operator),
-	'--cluster=1',
+	'--cluster=0',
 	'--stopshp={}'.format(filename1),
 	'--hopshp={}'.format(filename2)]
 	print(subprocess.call(shpexport))
@@ -90,12 +74,11 @@ def export_shapefiles(operator, operator_base_filename):
 		filename2 = False
 	return({'stopsfile':filename1,'hopsfile':filename2})
 
-@timeout(2000)
 def export_frequencies(operator, operator_base_filename):
 	filename_freq = '{}/freq.csv'.format(operator_base_filename)
 	freqexport = ['gtfsrun',dbstring,
 	'Frequencies',
-	'--cluster=1',
+	'--cluster=0',
 	'--csv={}'.format(filename_freq)]
 	print(subprocess.call(freqexport))
 	if os.path.exists(filename_freq):
@@ -112,7 +95,7 @@ def try_to_clear_db(dao):
 	except Exception as e:
 		return(e)
 
-@timeout(2000)
+
 def try_to_load_db(dao,operator,operator_zip):
 	try:
 		print("trying to load {} to database".format(operator))
@@ -128,7 +111,7 @@ def try_to_write_processed_files_to_s3(filedict, processing_dict):
 		s3dict = {key:write_to_s3(value) if value else "na"
 				for key, value 
 				in filedict.items()}
-		processing_dict["processed"] = 1
+		processing_dict["stops_processed"] = 1
 		processing_dict.update(s3dict)
 		return(processing_dict)
 	except Exception as e:
@@ -174,7 +157,6 @@ def process_one(dao, operator, url, processing_dict, operator_base_filename, pat
 		processing_dict = try_to_write_processed_files_to_s3(local_files_dict, processing_dict)
 	return(processing_dict)
 
-			
 def write_zip_to_disk(r, path):
 	import shutil
 	if r.status_code == 200:
@@ -202,54 +184,64 @@ def write_to_s3(filename):
 		s3name = "na"
 	return(s3name)
 
-def update_df_log(r,d_process_log):
-	d_cached = dict(r)
-	d_cached.update(d_process_log)
-	print(d_cached)
-	new_data = pd.Series(d_cached)
-	return(new_data)
-
+	
 def main():
 	df = pd.read_csv(cached_gtfs_csv)
 	df = df.set_index('index')
-	df_upd = df.copy()
+	dict_update = df.to_dict(orient='index')
+	#subset to just one provider dataset per year for shorter processing time
+	df = df.groupby(['operator','year'], as_index=False).head(1)
 	df = df[df.stops_processed==0]
+	#drop 2012 since its fully processed
+	df = df[df.year!=2012]
 	df["frequencies"] = ""
 	df["stopsfile"] = ""
 	df["hopsfile"] = ""
 	dao = Dao(dbstring)
 	for idx,r in df.iterrows():
-		operator = r['operator']
-		url = r['s3pathname']
-		print("fetching:" + operator)
-		#create an empty dict to capture s3 uploads/processing in
-		processing_dict = {"operator":operator,
-				'year': r['year'],
-				'source': r['source'],
-				"processed":0,
-				"frequencies" : "",
-				"stopsfile" : "",
-				"frequencies_error" : "",
-				"stopsfile_error" : "",
-				"db_load_error" : "",
-				"db_clear_error" : "",
-				"hopsfile" : ""}
+		# Start the timer. Once 5 seconds are over, a SIGALRM signal is sent.
+		signal.alarm(2000)
+		# This try/except loop ensures that 
+		#   you'll catch TimeoutException when it's sent.
+		try:
+			operator = r['operator']
+			url = r['s3pathname']
+			print("fetching:" + operator)
+			#create an empty dict to capture s3 uploads/processing in
+			processing_dict = {"operator":operator,
+					'year': r['year'],
+					'source': r['source'],
+					"stops_processed":0,
+					"frequencies" : "",
+					"stopsfile" : "",
+					"frequencies_error" : "",
+					"stopsfile_error" : "",
+					"db_load_error" : "",
+					"db_clear_error" : "",
+					"hopsfile" : ""}
 
-		operator_base_filename = '{}/{}/{}/{}/{}/{}'.format(
-			working_dir,
-			r['year'],
-			operator,
-			r['date_exported'],
-			r['source'],
-			timestamp)
-		try_to_clear_db(dao)
-		processing_dict = process_one(dao, operator, url, processing_dict, operator_base_filename)
-		try_to_clear_db(dao)
-		if len(processing_dict)>0:
-			df_upd.iloc[idx] = update_df_log(r,processing_dict)
+			operator_base_filename = '{}/{}/{}/{}/{}/{}'.format(
+				working_dir,
+				r['year'],
+				operator,
+				r['date_exported'],
+				r['source'],
+				timestamp)
+			try_to_clear_db(dao)
+			print("processing {} for {}".format(operator,r['source']))
+			processing_dict = process_one(dao, operator, url, processing_dict, operator_base_filename)
+			try_to_clear_db(dao)
+			if len(processing_dict)>0:
+				dict_update[idx].update(processing_dict)
+			else:
+				next
+			df_upd = pd.DataFrame.from_dict(dict_update,orient='index')
+			df_upd.to_csv(cached_gtfs_log_out, index_label="index")
+		except TimeoutException:
+			continue
 		else:
-			next
-		df_upd.to_csv(cached_gtfs_log_out)
+			# Reset the alarm
+			signal.alarm(0)
 
 if __name__ == "__main__":
 	main()
