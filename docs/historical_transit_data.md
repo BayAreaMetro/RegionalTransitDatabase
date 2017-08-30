@@ -19,11 +19,11 @@ Process each GTFS file listed in `data/cached_gtfs.csv` for routes, stops, and f
 
 #### Routes
 
-see `/R/historical_routes/output_historical_routes_by_region.R`
+see [`/R/historical_routes/output_historical_routes_by_region.R`](https://github.com/BayAreaMetro/RegionalTransitDatabase/blob/afad7ec4096aad89d1d69aa9b22ae3cb7486fdf7/R/historical_routes/output_historical_routes_by_region.R)
 
 #### Stops and Frequencies
 
-see `/rtd/process_cached_gtfs_for_points_and_frequencies.py`
+see [`/rtd/process_cached_gtfs_for_points_and_frequencies.py`](https://github.com/BayAreaMetro/RegionalTransitDatabase/blob/f9359cd88d8879bb6fe348f20fed0db5a5d372e3/rtd/process_cached_gtfs_for_points_and_frequencies.py)
 
 ### Outcome
 
