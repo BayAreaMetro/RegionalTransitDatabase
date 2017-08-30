@@ -50,28 +50,8 @@ def timeout(seconds=2000, error_message=os.strerror(errno.ETIME)):
 
     return decorator
 
-
-def get_511_operators_dict():
-	import requests
-	import xmltodict
-	operator_url = "http://api.511.operator/transit/operators?api_key={}&Format=XML".format(APIKEY)
-	j = requests.get(operator_url)
-	d = xmltodict.parse(j.content)
-	return d
-
-def get_511_gtfs_zip(private_code, apikey=APIKEY):
-	request_url = 'http://api.511.operator/transit/datafeeds?api_key={}&operator_id={}'.format(apikey,private_code)	
-	return requests.get(request_url, stream=True) #todo: add error handling
-
 def get_cached_gtfs_zip(url):
 	return requests.get(url, stream=True)
-
-def get_operator_acronyms_from_511(dictionary):
-	operators_list = dictionary['siri:Siri']['siri:ServiceDelivery']['DataObjectDelivery']['dataObjects']['ResourceFrame']['operatoranisations']['Operator']
-	operator_acronyms = []
-	for operator_acronym in operators_list:
-		operator_acronyms.append(operator_acronym['PrivateCode'])
-	return(operator_acronyms)
 
 def shp_to_js(shapefile_path):
 	import fiona
@@ -230,8 +210,6 @@ def update_df_log(r,d_process_log):
 	return(new_data)
 
 def main():
-#	d = get_511_operators_dict()
-#	operator_acronyms = get_operator_acronyms_from_511(d)
 	df = pd.read_csv(cached_gtfs_csv)
 	df = df.set_index('index')
 	df_upd = df.copy()
