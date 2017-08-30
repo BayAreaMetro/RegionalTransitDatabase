@@ -18,15 +18,12 @@ We use existing GTFS libraries, primarily [gtfs-lib](https://github.com/afimb/gt
 
 ## Outcomes
 
-## Applications
+### Applications
 
 - [Transit Priority Areas](https://github.com/MetropolitanTransportationCommission/RegionalTransitDatabase/blob/master/docs/transit_priority_areas.md) 
 
-- [Routes by Transit Provider from 2009 to 2012](https://github.com/BayAreaMetro/rtd-data) 
+- [Routes, Stops, and Frequencies by Transit Provider from 2008 to 2017](https://github.com/MetropolitanTransportationCommission/RegionalTransitDatabase/blob/master/docs/historical_transit_data.md) 
 
-- Stops by Provider from 2009 to 2012 - in progress. 
-
-- Route Statistics by Provider from 2009 to 2012 - in progress. 
 
 ### Folders
 
