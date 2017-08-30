@@ -7,9 +7,11 @@ The expected output of these scripts is a set (CSV, DBF, GeoPackage) of bus stop
 
 ### File List  
 
--  `RouteBuilderStuff_KS.R`
-a draft script for route building. 
 -  `r511.R`     
-a library of helper functions for processing gtfs data into tpa eligible routes/stops   
+a library of helper functions for processing gtfs data
 -  `priority_routes/`  
 scripts for fetching high frequency routes by provider, and some tools to compare outputs  
+-  `historical_routes/`  
+scripts for fetching all routes by provider.
+-  `RouteBuilderStuff_KS.R`
+a draft script for TPA's.
