@@ -31,4 +31,4 @@ We use existing GTFS libraries, primarily [gtfs-lib](https://github.com/afimb/gt
 - data: small, important inputs and outputs 
 - docs: documentation
 - images: used in documentation
-- rtd: python scripts for fetching data from 511 and (deprecated) executing network analyst functions
+- rtd: python scripts for fetching and processing data
