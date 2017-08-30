@@ -4,21 +4,10 @@ get = aws s3 cp s3://landuse/mtc-gtfs-archive/
 
 stops_and_frequencies:
 #	source activate gtfslib
-	python "python/process_cached_gtfs_zipfiles.py"
+	python "rtd/process_cached_gtfs_for_points_and_frequencies.py"
 
 routes:
 	R R/historical_routes/output_historical_routes_by_region.R
-
-data/AC.zip:
-#	source activate gtfslib
-	python "python/get_511_zips.py"
-
-load_ac:
-#	source activate gtfslib
-	gtfsdbloader "postgresql:///tmp_gtfs" --load=data/AC.zip --
-
-dump_ac:
-	gtfsrun "postgresql:///tmp_gtfs" GtfsExport --bundle=data/ACint.zip --skip_shape_dist
 
 the_db:
 	dropdb tmp_gtfs

@@ -1,6 +1,8 @@
-`process_cached_gtfs_for_points_and_frequencies.py`:this script does most of the heavy lifting of processing points and frequencies for all the cached gtfs data (`../data/cached_gtfs.csv`)
+files in this directory:
 
-the following scripts were used in the tpa process:
+`process_cached_gtfs_for_points_and_frequencies.py`:this script can be used to do most of the heavy lifting of processing stops and frequencies for any cached gtfs data (`../data/cached_gtfs.csv`)
+
+the following scripts were used in the transit priority area identification process:
 - tpa/TPA_Geoprocessing.py. 
 - tpa/make_tpa_polygons.py  
 

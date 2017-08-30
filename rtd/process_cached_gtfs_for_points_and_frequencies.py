@@ -183,7 +183,7 @@ def write_zip_to_disk(r, path):
 
 def upload_file_from_local(filename,k):
     file_handle = open(filename, 'rb')
-    s3name = "mtc_cache/" + filename.replace("/Users/tommtc/Documents/Projects/rtd2/data","")
+    s3name = "processed/" + filename.replace("/Users/tommtc/Documents/Projects/rtd2/data","")
     k.key = s3name
     print("uploading:" + s3name)
     k.set_contents_from_file(file_handle)
@@ -235,10 +235,11 @@ def main():
 				"db_clear_error" : "",
 				"hopsfile" : ""}
 
-		operator_base_filename = '{}/{}/{}/{}/processed/{}'.format(
+		operator_base_filename = '{}/{}/{}/{}/{}/{}'.format(
 			working_dir,
 			r['year'],
 			operator,
+			r['date_exported'],
 			r['source'],
 			timestamp)
 		try_to_clear_db(dao)
