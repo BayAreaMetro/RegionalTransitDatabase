@@ -17,7 +17,7 @@ Collected by staff at MTC and from GTFS Data Exchange. Listed in `data/cached_gt
 
 Process each GTFS file listed in `data/cached_gtfs.csv` for routes, stops, and frequencies.  
 
-We use existing GTFS libraries, primarily [gtfs-lib](https://github.com/afimb/gtfslib-python) and [gtfsr](https://github.com/ropensci/gtfsr), to load data and validate it. 
+We use existing GTFS libraries, primarily [gtfs-lib](https://github.com/afimb/gtfslib-python) and [gtfsr](https://github.com/ropensci/gtfsr), to load, validate, transform (to spatial standard formats), and calculate frequencies. Processing steps are logged in `data/cached_gtfs.csv`.
 
 
 #### Routes
