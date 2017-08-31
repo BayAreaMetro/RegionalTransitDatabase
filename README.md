@@ -14,12 +14,6 @@ GTFS as published by operators and MTC 511 is the main data source
 
 ## Methodology 
 
-We use existing GTFS libraries, primarily [gtfs-lib](https://github.com/afimb/gtfslib-python) and [gtfsr](https://github.com/ropensci/gtfsr), to load data and validate it. Then we process the data with one-off scripts depending on the policy question.  
-
-## Outcomes
-
-### Applications
-
 - [Transit Priority Areas](https://github.com/MetropolitanTransportationCommission/RegionalTransitDatabase/blob/master/docs/transit_priority_areas.md) 
 
 - [Routes, Stops, and Frequencies by Transit Provider from 2008 to 2017](https://github.com/MetropolitanTransportationCommission/RegionalTransitDatabase/blob/master/docs/historical_transit_data.md) 
