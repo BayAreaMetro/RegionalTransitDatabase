@@ -17,6 +17,9 @@ Collected by staff at MTC and from GTFS Data Exchange. Listed in `data/cached_gt
 
 Process each GTFS file listed in `data/cached_gtfs.csv` for routes, stops, and frequencies.  
 
+We use existing GTFS libraries, primarily [gtfs-lib](https://github.com/afimb/gtfslib-python) and [gtfsr](https://github.com/ropensci/gtfsr), to load data and validate it. Then we process the data with one-off scripts depending on the policy question.  
+
+
 #### Routes
 
 see [`/R/historical_routes/output_historical_routes_by_region.R`](https://github.com/BayAreaMetro/RegionalTransitDatabase/blob/afad7ec4096aad89d1d69aa9b22ae3cb7486fdf7/R/historical_routes/output_historical_routes_by_region.R)
