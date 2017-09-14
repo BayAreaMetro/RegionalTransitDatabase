@@ -7,7 +7,8 @@
 
 ### Problem Statement  
 
-Identify bus routes and stops that match the definition of a Transit Priority Area (TPA).  Output geometries for them.     
+Identify bus routes and stops that match the definition of a Transit Priority Area (TPA).  Output geometries for them.  
+See Senate Bill 375 for more detailed definition of a TPA [SB 375 Legislation](http://leginfo.legislature.ca.gov/faces/billNavClient.xhtml?bill_id=200720080SB375).
  
 #### Bus Routes
 -  [1/4](http://www.leginfo.ca.gov/pub/11-12/bill/asm/ab_0901-0950/ab_904_bill_20120612_amended_sen_v94.html) and/or [1/2](http://leginfo.legislature.ca.gov/faces/billCompareClient.xhtml?bill_id=201320140SB743) mile Buffer around existing or planned *high-frequency* bus routes (lines).
