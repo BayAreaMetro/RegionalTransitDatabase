@@ -14,7 +14,7 @@ See Senate Bill 375 for more detailed definition of a TPA [SB 375 Legislation](h
 -  [1/4](http://www.leginfo.ca.gov/pub/11-12/bill/asm/ab_0901-0950/ab_904_bill_20120612_amended_sen_v94.html) and/or [1/2](http://leginfo.legislature.ca.gov/faces/billCompareClient.xhtml?bill_id=201320140SB743) mile Buffer around existing or planned *high-frequency* bus routes (lines).
 
 #### Bus Stops
--  0.2 mile Buffer around existing or planned *high-frequency* bus stops.
+"Intersection of at least two existing or planned bus routes with headways of 15 minutes or better during both the morning and evening peak periods" -- An "intersection" is defined as: stops within 0.2 miles from another existing or planned *high-frequency* bus stops. 
 
 *See Qualifying Criteria in Methods for a more thorough definition of *high frequency*
 
@@ -44,8 +44,7 @@ Columns and values were used to select TPA eligible Rail & Ferry stops from the 
 -  Peak periods were defined as 6 AM to 10 AM and 3 PM to 7 PM (as filtered by [this function](https://github.com/MetropolitanTransportationCommission/RegionalTransitDatabase/blob/9c370d72e9fa0d788fedf33d1cbec5a844e96c19/R/r511.R#L352-L379)) 
 -  Bus routes had to meet the criterion for both AM and PM peaks (as checked [here](https://github.com/MetropolitanTransportationCommission/RegionalTransitDatabase/blob/9c370d72e9fa0d788fedf33d1cbec5a844e96c19/R/priority_routes/identify_bus_tpas_and_output_geometries.R#L137-L143)) 
 -  Average headway (as calculated [here](https://github.com/MetropolitanTransportationCommission/RegionalTransitDatabase/blob/9c370d72e9fa0d788fedf33d1cbec5a844e96c19/R/r511.R#L144-L159)) during the 4-hour window was used to identify achievement of [15 minute threshold](https://github.com/BayAreaMetro/RegionalTransitDatabase/blob/51aa706e3d422888cf7180c330399d3ab295c55f/R/priority_routes/identify_bus_tpas_and_output_geometries.R#L65-L66)  
--  Bus stops have to be less than 0.2 miles in distance from one another, as calculated [here](https://github.com/MetropolitanTransportationCommission/RegionalTransitDatabase/blob/9c370d72e9fa0d788fedf33d1cbec5a844e96c19/R/priority_routes/identify_bus_tpas_and_output_geometries.R#L198-L200) (i.e., short walk to transfer) 
--  Intersection of at least two existing or planned bus routes with headways of 15 minutes or better during both the morning and evening peak periods 
+-  Intersection of at least two existing or planned bus routes with headways of 15 minutes or better during both the morning and evening peak periods. We specified intersection as less than 0.2 miles in distance from one another, as calculated [here](https://github.com/MetropolitanTransportationCommission/RegionalTransitDatabase/blob/9c370d72e9fa0d788fedf33d1cbec5a844e96c19/R/priority_routes/identify_bus_tpas_and_output_geometries.R#L198-L200) (i.e., short walk to transfer) (Note that this definition of intersecting stops was chosen to capture a "walking distance" heuristic given that there is not further specification for intersection of stops in the legislation. It is unrelated to the specified 1/4 and 1/2 mile distances that are later used to capture definitions of areas such as Transit Priority Areas and Transit Priority Project Areas in legislation.)  
 -  Bus service had to originate from a single route (i.e., not combined headways of multiple routes)  
 
 #### Bus Stops & Routes Step By Step Processing:  
