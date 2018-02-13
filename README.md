@@ -1,4 +1,4 @@
-# RegionalTransitDatabase  
+# Regional Transit Database  
 
 Tools for Processing 511 API Datasets for MTC's Regional Transit Database
 [511 API Documentation](http://assets.511.org/pdf/RTT%20API%20V2.0%20Reference.pdf)  
